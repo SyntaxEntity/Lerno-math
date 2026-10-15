@@ -162,5 +162,6 @@ python3 数学二/scripts/build.py                  # 组装成品
 python3 数学二/scripts/validate.py               # 校验成品
 python3 数学二/scripts/verify_math.py            # sympy 复算全部数值
 node 数学二/scripts/check_mermaid.mjs --strict   # mermaid 真实解析（逐块）
+node 数学二/scripts/test_site_js.mjs             # 外壳脚本行为测试（jsdom）
 python3 数学二/scripts/build_html.py             # 生成 HTML 站点
 ```

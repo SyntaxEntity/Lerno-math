@@ -59,7 +59,10 @@ X02 = os.path.join(PARTS, "xiandai", "02-矩阵.md")
 D01 = os.path.join(CONTENT, "高等数学", "01-函数极限与连续.md")
 D05 = os.path.join(CONTENT, "高等数学", "05-定积分与反常积分.md")
 D01H = os.path.join(CONTENT, "高等数学", "01-函数极限与连续.html")
+D05H = os.path.join(CONTENT, "高等数学", "05-定积分与反常积分.html")
 G08 = os.path.join(PARTS, "gaoshu", "08-数二高数综合与证明专题.md")
+HOMEH = os.path.join(CONTENT, "index.html")      # 全科单页合集（= 站点首页）
+SITEJS = os.path.join(CONTENT, "assets", "site.js")
 
 FENCE = "```"
 FIELD = "**核心讲解**"
@@ -203,11 +206,14 @@ def _bare_latex(t):
 def _html_placeholder(t):
     """HTML 里残留公式占位符（还原失败）。
 
-    直接往 <body> 后插一个占位符即可，不依赖正文的具体结构
-    （正文结构改版过一次，早期版本依赖 <p id="sec-core"> 导致用例失效）。
+    直接往页面开头插一个占位符即可，不依赖正文的具体结构。
+    早期版本依赖 `<p id="sec-core">`、后来又依赖 `<div id="wrap">`，两次都因为
+    外壳改版而**悄悄变成空操作**（反向测试会报"反例未改变内容"）。现在挂在
+    P2 契约的 `.site-body` 上——它是契约类名，不会随排版改版消失。
     """
-    return t.replace("<body", "<body", 1).replace(
-        '<div id="wrap">', '<div id="wrap"><p>@@MATH7@@</p>', 1)
+    anchor = '<div class="site-body">'
+    assert anchor in t, "锚点 %s 不在页面里：请同步更新这条反例" % anchor
+    return t.replace(anchor, anchor + "<p>@@MATH7@@</p>", 1)
 
 
 def _html_em_in_math(t):
@@ -216,8 +222,59 @@ def _html_em_in_math(t):
 
 
 def _html_bad_nav(t):
-    """上一章链接指向不存在的文件。"""
-    return t.replace('class="cb-btn" href="', 'class="cb-btn" href="nope-', 1)
+    """上一章链接指向不存在的文件（P2 起翻页类名是 .cn-prev / .cn-next）。
+
+    目标必须是**中间章**：第一章的上一章是 `.cn-prev off` + `href="#"` 占位，
+    对它做替换等于没改，反例会失效（实测被抓出来过）。
+    """
+    old = '<a class="cn-prev" href="'
+    assert old in t, "目标页没有可用的上一章链接，请换一个中间章做反例"
+    return t.replace(old, '<a class="cn-prev" href="nope-', 1)
+
+
+def _html_drop_display_math(t):
+    """把页面里的 `$$` 定界符删掉（模拟公式保护/还原失效）。
+
+    这是 F20 在 P2 修掉的那个**假通过**：旧判据只要求"正文里出现过 $$"，
+    而当时内联的 KaTeX 配置里正好有 `'$$'` 字面量，于是永远满足。
+    现在判据改成"与内容源等量"，删掉定界符必须报错。
+    """
+    return t.replace("$$", "$")
+
+
+def _html_drop_topbar(t):
+    """删掉顶栏（F22 形式层：外壳四件之一）。"""
+    return re.sub(r'<header class="site-topbar">.*?</header>', "", t, count=1, flags=re.S)
+
+
+def _html_drop_footer(t):
+    """删掉页脚。"""
+    return re.sub(r'<footer class="site-footer">.*?</footer>', "", t, count=1, flags=re.S)
+
+
+def _html_break_site_js(t):
+    """把 site.js 的深色类名改错 —— F22 的**行为层**必须因此报错。
+
+    这条反例验的是"第二层校验真的在跑"：形式层（HTML 里类名齐全）看不出任何问题，
+    只有把脚本放进 jsdom 真跑一遍才会暴露。
+    """
+    return t.replace("root.classList.toggle('dark', t === 'dark')",
+                     "root.classList.toggle('darkX', t === 'dark')", 1)
+
+
+def _html_inline_style(t):
+    """把外置样式内联回去（F23：P2 的主要收益不能被悄悄退回）。"""
+    return t.replace("</head>", "<style>body{color:#000}</style></head>", 1)
+
+
+def _html_break_css_ref(t):
+    """把 site.css 的引用改坏（F23）。"""
+    return t.replace("assets/site.css", "assets/nope.css", 1)
+
+
+def _home_drop_card(t):
+    """首页删掉一张科目卡片（F22：卡片数必须 = 科目数）。"""
+    return re.sub(r'<a class="hs-card".*?</a>', "", t, count=1, flags=re.S)
 
 
 def _dup_heading(t):
@@ -326,12 +383,19 @@ case("F14", "字段标签被上一段吞并（模板粘连）", D01, _join_field
 case("F18", "成品 md 引用不存在的图片", D01, _bad_image_ref, mode="full")
 case("F20", "HTML 残留公式占位符", D01H, _html_placeholder, mode="full")
 case("F20", "公式区间被 <em> 污染", D01H, _html_em_in_math, mode="full")
-case("F20", "上一章链接不可达", D01H, _html_bad_nav, mode="full")
+case("F20", "上一章链接不可达", D05H, _html_bad_nav, mode="full")
 case("F20", "字段区块内容为空（内容被切到区块外）", D01H, _empty_section, mode="full")
 case("F20", "区块内重复字段名", D01H, _dup_field_label, mode="full")
 case("F21", "正文标题重复", D01H, _dup_heading, mode="full")
 case("F21", "正文出现第二个 h1", D01H, _two_h1, mode="full")
 case("F17", "行间公式 $ 不成对（成品）", D05, _odd_dollar_full, mode="full")
+case("F20", "公式块 $$ 定界符丢失（与内容源不等量）", D01H, _html_drop_display_math, mode="full")
+case("F22", "删掉顶栏（外壳形式层）", D01H, _html_drop_topbar, mode="full")
+case("F22", "删掉页脚（外壳形式层）", D01H, _html_drop_footer, mode="full")
+case("F22", "首页少一张科目卡片", HOMEH, _home_drop_card, mode="full")
+case("F22", "site.js 深色类名写错（行为层必须抓到）", SITEJS, _html_break_site_js, mode="full")
+case("F23", "把外置样式内联回页面", D01H, _html_inline_style, mode="full")
+case("F23", "样式表引用不可达", D01H, _html_break_css_ref, mode="full")
 case("F3", "mermaid 标签含圆括号未加引号（真实解析器层·成品）", D05, _bad_mermaid_syntax,
      mode="full", mermaid=True)
 case("F3", "mermaid 标签含圆括号未加引号（真实解析器层·内容源）", G05, _bad_mermaid_syntax,

@@ -32,6 +32,7 @@ website/math2-kaoyan/
 │   ├── README.md / README.html  说明（README.md 由 build_readme.py 生成）
 │   ├── 高等数学/ 线性代数/        各章 .md 与 .html
 │   ├── assets/                  matplotlib 生成的 PNG
+│   ├── assets/site.css site.js  外置样式与外壳脚本（类名契约见 PLAN §2.4）
 │   ├── katex/  mermaid.min.js   离线运行时
 │   └── scripts/                 生成与校验工具链
 ├── parts/gaoshu/  parts/xiandai/   ★ 内容源，只写这里
@@ -47,8 +48,9 @@ website/math2-kaoyan/
 python3 scripts/run_all.py         # 一键全流程：绘图→复算→组装→校验→反向测试→HTML
 python3 scripts/run_all.py --quick # 跳过反向测试与绘图，只重建 + 校验
 python3 scripts/verify_math.py     # sympy 复算全部数值（含图上坐标）
-python3 scripts/validate.py        # 校验 F1—F21
+python3 scripts/validate.py        # 校验 F1—F23（含 F22 外壳 + site.js 行为层）
 python3 scripts/reverse_tests.py   # 反向测试：每条规则注入反例，确认它真会报错
+node scripts/test_site_js.mjs      # 单独跑外壳脚本行为测试（jsdom，12 条）
 ```
 
 Python 依赖按用途分两个文件（PLAN §1.2.1）：`数学二/scripts/requirements.txt`
@@ -60,7 +62,7 @@ Python 依赖按用途分两个文件（PLAN §1.2.1）：`数学二/scripts/req
 ## 四、发布
 
 `math2-site/` 是**构建产物，不入库**。发布走 `.github/workflows/pages.yml`：
-推 `main` → 装依赖 → 两道门禁（`validate.py` 形式校验 / `verify_math.py` 数值复算）
+推 `main` → 装依赖 → 两道门禁（`validate.py` 形式校验 F1—F23 / `verify_math.py` 数值复算）
 → `pack_site.py math2-site` → 上传。任一门禁不过即中止部署。
 
 本地预览：`python3 数学二/scripts/pack_site.py math2-site`，

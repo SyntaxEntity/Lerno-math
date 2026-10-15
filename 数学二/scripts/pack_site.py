@@ -272,6 +272,20 @@ def main():
         shutil.copyfile(p, tgt)
         n_html += 1
 
+    # 2.4) 站点必备文件——**必须在修链接之前写**：
+    #      否则页脚里指向 THIRD-PARTY.md / README.md 的链接会因为目标尚不存在
+    #      而被判成死链去掉（实测 19 个页面各丢一条）。
+    # 3) 站点必备文件
+    open(os.path.join(out, ".nojekyll"), "w").close()
+    with open(os.path.join(out, "LICENSE"), "w", encoding="utf-8") as f:
+        f.write(MIT.format(year="2026"))
+    for name, body in (("LICENSE-CONTENT", CONTENT_LICENSE),
+                       ("THIRD-PARTY.md", third_party_md()),
+                       ("README.md", SITE_README),
+                       (".gitignore", SITE_GITIGNORE)):
+        with open(os.path.join(out, name), "w", encoding="utf-8") as f:
+            f.write(body)
+
     # 2.5) 修正站内链接。
     #
     # 源文件里的 href 有**两种口径**混用，必须都认：
@@ -323,17 +337,6 @@ def main():
             # 被标记为死链的 <a>，把标签去掉只保留文字，避免点进去没反应
             body = re.sub(r'<a\b[^>]*data-dead="1"[^>]*>(.*?)</a>', r"\1", body, flags=re.S)
             open(fp, "w", encoding="utf-8").write(body)
-
-    # 3) 站点必备文件
-    open(os.path.join(out, ".nojekyll"), "w").close()
-    with open(os.path.join(out, "LICENSE"), "w", encoding="utf-8") as f:
-        f.write(MIT.format(year="2026"))
-    for name, body in (("LICENSE-CONTENT", CONTENT_LICENSE),
-                       ("THIRD-PARTY.md", third_party_md()),
-                       ("README.md", SITE_README),
-                       (".gitignore", SITE_GITIGNORE)):
-        with open(os.path.join(out, name), "w", encoding="utf-8") as f:
-            f.write(body)
 
     # 3.5) 放回暂存的 VCS 元数据
     if stash:

@@ -54,6 +54,10 @@ MERMAID_CHECKER = os.path.join(CONTENT, "scripts", "check_mermaid.mjs")
 FIELD_ORDER = ["**考频统计**", "**核心讲解**", "**关键结论速记**",
                "**示意图**", "**易错点**", "**真题示例**"]
 SEGMENTS = ["核心讲解", "关键结论速记", "示意图", "易错点", "真题示例"]
+# 外壳契约里**逐字一致**的六段锚点 id（PLAN-对齐与改版 §2.4）。
+# 这里再写一份是有意的：校验器要能独立于生成器判断"契约有没有被遵守"，
+# 同时用 check_shell() 里的自比对防止两边悄悄分叉。
+SHELL_ANCHORS = ["sec-freq", "sec-core", "sec-key", "sec-fig", "sec-err", "sec-real"]
 FENCE_LANGS = ("text", "mermaid")
 ALLOWED_BOX = set("─│┌┐└┘├┤┬┴┼▲▼→←↑↓")
 PLACEHOLDER = re.compile(r"TODO|FIXME|待补充讲解|此处省略|\bTBD\b|XXX|待填写|占位符")
@@ -906,7 +910,10 @@ def check_figs():
         text = strip_code(open(f, encoding="utf-8").read())
         for m in re.finditer(r"!\[[^\]]*\]\(assets/([^)\s]+)\)", text):
             used.add(m.group(1))
-    have = {os.path.basename(p) for p in glob.glob(os.path.join(ASSETS, "*"))}
+    # 只统计图片：assets/ 里现在也放 site.css / site.js（P2 外置资源），
+    # 它们不是"未被引用的图片"，不该在这里告警。
+    have = {os.path.basename(p) for p in glob.glob(os.path.join(ASSETS, "*"))
+            if os.path.splitext(p)[1].lower() in (".png", ".svg", ".jpg", ".jpeg", ".webp")}
     for u in sorted(used - have):
         err("数学二/assets", 0, "F18", "正文引用的图片不存在：assets/%s" % u)
     for u in sorted(have - used):
@@ -996,9 +1003,9 @@ def check_html_math_and_nav():
                     "公式被 Markdown 强调标记污染（* 或 _ 被吃掉）：%s"
                     % m.group(0)[:70].replace("\n", " "))
                 break
-        # 导航链接可达性
+        # 导航链接可达性（契约类名 .cn-prev / .cn-next，见 PLAN §2.4）
         d = os.path.dirname(f)
-        for attr in re.findall(r'class="cb-btn[^"]*" href="([^"]*)"', body):
+        for attr in re.findall(r'class="cn-(?:prev|next)[^"]*" href="([^"]*)"', body):
             if attr in ("", "#"):
                 continue
             if not os.path.exists(os.path.normpath(os.path.join(d, attr))):
@@ -1023,17 +1030,55 @@ def check_html_math_and_nav():
             if re.match(r"\s*<p[^>]*>\s*<strong>[^<]+</strong>：", inner):
                 err(rp, 0, "F20",
                     "字段 %s 的区块内又重复了一遍字段名（标题栏已显示）" % aid)
-        # 独立成行的 $$…$$ 必须原样存活：它们会被 Markdown 包进 <p> 或 <pre>，
-        # 若段落保护失效，KaTeX 就收不到这些定界符，公式会以源码示人。
-        if "<main>" in body:
+        # 独立成行的 $$…$$ 必须**与内容源等量**存活。
+        #
+        # 这条原来写的是"正文里至少出现一次 $$"，看起来能用，其实是**假通过**：
+        # 当时 KaTeX 的初始化配置（含 `'$$'` 字面量）内联在页面里、且位于 <main> 之后，
+        # 于是「一个公式都没有的科目总览页」也照样满足判据。P2 把脚本外置后真相暴露：
+        # 总览页的 $$ 数从 2 变成 0，而内容源本来就没有公式。
+        # 正确判据是"HTML 里有多少 $$，内容源里就该有多少"——公式保护/还原失效时
+        # 这个等量关系会破，而与页面是否恰好含公式无关。
+        want_dollars = _source_dollar_count(rp)
+        if want_dollars is not None and "<main>" in body:
             mainpart = body[body.find("<main>"):]
-            if "$$" not in mainpart:
+            got = mainpart.count("$$")
+            if got < want_dollars:
                 err(rp, 0, "F20",
-                    "正文里没有任何 `$$…$$` 公式块（可能公式保护/还原失效）")
+                    "正文的 `$$…$$` 公式块少了：内容源 %d 处，页面只剩 %d 处"
+                    "（公式保护/还原可能失效）" % (want_dollars, got))
         for attr in re.findall(r'data-(?:prev|next)="([^"]+)"', body):
             if not os.path.exists(os.path.normpath(os.path.join(d, attr))):
                 err(rp, 0, "F20", "键盘翻章目标不可达：%s" % attr)
     stats["html_math"] = n_math
+
+
+def _source_dollar_count(html_rel):
+    """该 HTML 对应的内容源里 `$$` 的个数（用于 F20 的等量比对）。
+
+    映射：章节页 → 同名 .md；部分首页 → 00-科目总览.md；全科合集 → 全部 md 之和；
+    README.html → README.md。找不到对应源文件时返回 None（不做这项判定）。
+    """
+    def count(p):
+        if not os.path.exists(p):
+            return None
+        return strip_code(open(p, encoding="utf-8").read()).count("$$")
+
+    if html_rel.endswith("README.html"):
+        return count(os.path.join(CONTENT, "README.md"))
+    if html_rel == "数学二/index.html":
+        total, seen = 0, False
+        for k in T.ORDER:
+            d = os.path.join(CONTENT, T.SUBJECTS[k]["dir"])
+            for name in ["00-科目总览.md"] + [t[6] + ".md" for t in T.TOPICS[k]]:
+                c = count(os.path.join(d, name))
+                if c is not None:
+                    total += c
+                    seen = True
+        return total if seen else None
+    if html_rel.endswith("/index.html"):
+        d = os.path.dirname(os.path.join(ROOT, html_rel))
+        return count(os.path.join(d, "00-科目总览.md"))
+    return count(os.path.join(ROOT, html_rel[:-5] + ".md"))
 
 
 # 模板六字段的纯文本名（用于 F21 排除"设计如此"的重复）
@@ -1095,6 +1140,151 @@ def check_html_headings():
                 seen[key] = seen.get(key, 0) + 1
 
 
+def check_shell():
+    """F22：外壳骨架完整性（PLAN-对齐与改版 §2.3—§2.5.1 的契约）。
+
+    分两层：
+      (a) 形式层——每页必须齐备顶栏/面包屑/页脚/侧栏；章节页还要有
+          正文底部的 .chapter-nav 与六段 .sec-* 锚点；首页要有科目卡片入口；
+      (b) 行为层——把 assets/site.js 放进 jsdom 真跑一遍（scripts/test_site_js.mjs），
+          确认契约钩子确实驱动得了行为。**缺 node/jsdom 是 error，不是跳过**——
+          与 F3 同一条规矩：跑不起来的校验等于没有校验。
+    """
+    shell = {"topbar": '<header class="site-topbar">', "sidebar": '<nav class="site-sidebar">',
+             "footer": '<footer class="site-footer">'}
+    anchor_ids = list(SHELL_ANCHORS)
+    # 自比对：生成器 build_html.section_anchors() 的清单必须与上面的契约常量一致，
+    # 否则"校验器认的"和"生成器产出的"会各说各话（这类分叉肉眼看不出来）。
+    try:
+        import build_html as _BH
+        gen = [a for a, _n, _i, _h in _BH.section_anchors()]
+        if gen != anchor_ids:
+            err("数学二/scripts", 0, "F22",
+                "生成器与校验器的六段锚点清单不一致：%s vs %s" % (gen, anchor_ids))
+    except ImportError:
+        pass
+    for f in sorted(glob.glob(os.path.join(CONTENT, "*", "*.html"))
+                    + glob.glob(os.path.join(CONTENT, "*.html"))):
+        rp = rel(f)
+        body = open(f, encoding="utf-8").read()
+        for what, needle in shell.items():
+            if needle not in body:
+                err(rp, 0, "F22", "外壳缺少 %s（契约类名 %s）" % (what, needle))
+        if '<nav class="tb-crumbs"' not in body:
+            err(rp, 0, "F22", "顶栏缺少面包屑 .tb-crumbs")
+        if 'class="tb-brand"' not in body or 'class="tb-search"' not in body:
+            err(rp, 0, "F22", "顶栏缺少 .tb-brand 或 .tb-search")
+        for cls in re.findall(r'<nav class="tb-crumbs".*?</nav>', body, re.S):
+            # 面包屑至少一项，最后一项必须是带 aria-current 的当前位置；
+            # 多于一项时必须有 .tb-sep 分隔（首页只有"首页"一项，此时不需要分隔符）。
+            n_items = len(re.findall(r"<a\b", cls)) + len(re.findall(r"aria-current=", cls))
+            if n_items < 1:
+                err(rp, 0, "F22", "面包屑是空的")
+            if n_items > 1 and 'class="tb-sep"' not in cls:
+                err(rp, 0, "F22", "面包屑多于一项却没有层级分隔符 .tb-sep")
+            if "aria-current" not in cls:
+                err(rp, 0, "F22", "面包屑最后一项缺少 aria-current（当前位置标记）")
+        # 章节页：正文底部翻页 + 六段锚点
+        stem = os.path.basename(f)[:-5]
+        is_chapter = any(stem == t[6] for k in T.ORDER for t in T.TOPICS[k])
+        if is_chapter:
+            if '<nav class="chapter-nav">' not in body:
+                err(rp, 0, "F22", "章节页缺少正文底部翻页 .chapter-nav")
+            for cls in ("cn-prev", "cn-next"):
+                if 'class="%s' % cls not in body:
+                    err(rp, 0, "F22", "章节页翻页缺少 .%s" % cls)
+            miss = [a for a in anchor_ids if 'id="%s"' % a not in body]
+            if miss:
+                err(rp, 0, "F22", "六段锚点缺失：%s（契约 id 必须逐字一致）" % "、".join(miss))
+        # 首页：科目卡片入口，卡片数 = 科目数
+        if rp == "数学二/index.html":
+            if '<nav class="home-subjects"' not in body:
+                err(rp, 0, "F22", "首页缺少科目卡片入口 .home-subjects")
+            else:
+                cards = re.findall(r'<a class="hs-card"[^>]*>(.*?)</a>', body, re.S)
+                if len(cards) != len(T.ORDER):
+                    err(rp, 0, "F22", "首页科目卡片 %d 张，应为 %d 张"
+                        % (len(cards), len(T.ORDER)))
+                for c in cards:
+                    if 'class="hs-name"' not in c or 'class="hs-meta"' not in c:
+                        err(rp, 0, "F22", "科目卡片缺少 .hs-name 或 .hs-meta")
+    stats["shell_pages"] = (len(glob.glob(os.path.join(CONTENT, "*", "*.html")))
+                            + len(glob.glob(os.path.join(CONTENT, "*.html"))))
+    run_site_js_test()
+
+
+def run_site_js_test():
+    """F22 的行为层：node + jsdom 真跑 assets/site.js（scripts/test_site_js.mjs）。"""
+    script = os.path.join(CONTENT, "scripts", "test_site_js.mjs")
+    hint = ("（装依赖：mkdir -p .tools && "
+            "cp 数学二/scripts/tools-package.json .tools/package.json && "
+            "npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund）")
+    if not os.path.exists(script):
+        err("数学二/scripts", 0, "F22", "找不到外壳行为测试脚本 %s%s" % (rel(script), hint))
+        return
+    if shutil.which("node") is None:
+        err("数学二/scripts", 0, "F22", "找不到 node，无法验证外壳行为%s" % hint)
+        return
+    try:
+        r = subprocess.run(["node", script], cwd=ROOT, capture_output=True,
+                           text=True, timeout=300)
+    except Exception as e:                                   # noqa: BLE001
+        err("数学二/assets/site.js", 0, "F22", "调用外壳行为测试失败：%s" % e)
+        return
+    try:
+        data = json.loads(r.stdout)
+    except Exception:                                        # noqa: BLE001
+        err("数学二/assets/site.js", 0, "F22",
+            "外壳行为测试未产出 JSON（返回码 %d）：%s%s"
+            % (r.returncode, (r.stderr or r.stdout or "")[-200:], hint))
+        return
+    if r.returncode != 0:
+        err("数学二/assets/site.js", 0, "F22", "外壳行为测试返回码 %d：%s"
+            % (r.returncode, str(data.get("error") or r.stderr or "")[:200]))
+        return
+    stats["shell_js_ok"] = data.get("ok", 0)
+    stats["shell_js_total"] = data.get("total", 0)
+    for t in data.get("failed", []):
+        err("数学二/assets/site.js", 0, "F22",
+            "外壳行为测试失败：%s —— %s" % (t.get("name", "?"), str(t.get("error", ""))[:160]))
+    if not data.get("total"):
+        err("数学二/assets/site.js", 0, "F22",
+            "外壳行为测试一条都没跑——等于 F22 的行为层没生效")
+
+
+def check_external_assets():
+    """F23：外置资源（assets/site.css + assets/site.js）真的外置、且处处可达。
+
+    为什么要单独一条：P2 的主要收益就是"别把 13.6 KB CSS 内联进 19 个页面"。
+    若谁哪天又把它内联回去，页面上看不出任何异常，但冗余会悄悄涨回来——
+    这条规则就是那个"看不出异常"的守卫。
+    """
+    for name in ("site.css", "site.js"):
+        p = os.path.join(ASSETS, name)
+        if not os.path.exists(p):
+            err("数学二/assets", 0, "F23", "缺少外置资源 %s" % name)
+    for f in sorted(glob.glob(os.path.join(CONTENT, "*", "*.html"))
+                    + glob.glob(os.path.join(CONTENT, "*.html"))):
+        rp = rel(f)
+        d = os.path.dirname(f)
+        body = open(f, encoding="utf-8").read()
+        for attr in re.findall(r'<link[^>]+href="([^"]+)"', body):
+            if attr.startswith(("http", "data:")):
+                continue
+            if not os.path.exists(os.path.normpath(os.path.join(d, attr))):
+                err(rp, 0, "F23", "样式表链接不可达：%s" % attr)
+        if "assets/site.css" not in body:
+            err(rp, 0, "F23", "页面没有引用外置样式 assets/site.css（被内联回去了？）")
+        if "assets/site.js" not in body:
+            err(rp, 0, "F23", "页面没有引用外置脚本 assets/site.js")
+        if "<style" in body:
+            err(rp, 0, "F23", "页面出现内联 <style>：样式必须外置到 assets/site.css")
+        inline_js = [s for s in re.findall(r"<script(?![^>]*\bsrc=)[^>]*>", body)]
+        if inline_js:
+            err(rp, 0, "F23", "页面出现 %d 段内联 <script>：脚本必须外置到 assets/site.js"
+                % len(inline_js))
+
+
 def check_completeness():
     """F16：交付物完整性——不得静默缺失。"""
     need = [os.path.join(CONTENT, "README.md"), os.path.join(CONTENT, "index.html")]
@@ -1125,6 +1315,11 @@ def report(title):
           % (stats.get("html_math", 0), stats["hot"],
              stats.get("orig", 0), stats.get("orig_cites", 0),
              stats.get("adapt", 0), stats.get("mermaid_parsed", 0), stats.get("figs", 0)))
+    # 外壳行为测试跑了几条也要打出来：**"0 条"必须看得见**，否则 F22 的行为层
+    # 会像 F3 曾经那样"静默没跑却显示全绿"。
+    print("  外壳页 %d 个 | site.js 行为测试通过 %d/%d 条"
+          % (stats.get("shell_pages", 0), stats.get("shell_js_ok", 0),
+             stats.get("shell_js_total", 0)))
     print("-" * 78)
     if errors:
         print("  ✗ 错误 %d 条：" % len(errors))
@@ -1170,6 +1365,8 @@ def main():
         check_html()
         check_html_math_and_nav()
         check_html_headings()
+        check_shell()               # F22：外壳骨架（形式层 + site.js 行为层）
+        check_external_assets()     # F23：外置样式/脚本真的外置且可达
     else:
         for k in T.ORDER:
             for t in T.TOPICS[k]:
