@@ -50,7 +50,9 @@
   /* ASCII 面板（中性深色，保证等宽对齐可读） */
   --ascii-bg:#22201c; --ascii-fg:#e8e2d6;
   /* 非颜色 */
-  --radius:10px; --mw:780px; --topbar-h:54px;
+  /* --mw = 正文列**含内边距**的直接宽度（契约 2026-10-15 裁定）：
+     直接 `max-width:var(--mw)`，不要写带魔法数的 calc 形式 */
+  --radius:10px; --mw:872px; --topbar-h:54px;
   --sans:-apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
   --serif:"Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", serif;
   --sh:0 1px 2px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
@@ -76,7 +78,7 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
   font-size:16.5px;line-height:1.85;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 main{flex:1;min-width:0;padding:0 0 100px}
-.inner{max-width:calc(var(--mw) + 92px);margin:0 auto;padding:0 46px}
+.inner{max-width:var(--mw);margin:0 auto;padding:0 46px}
 h1{font-family:var(--serif);font-size:30px;line-height:1.35;font-weight:700;
   margin:34px 0 18px;letter-spacing:.01em}
 h2{font-family:var(--serif);font-size:25px;margin:42px 0 8px;font-weight:700;
@@ -169,7 +171,7 @@ a{color:var(--acc)}
 /* ---------- 页脚 ---------- */
 .site-footer{border-top:1px solid var(--line);background:var(--panel);color:var(--mut);
   font-size:13px}
-.sf-inner{max-width:calc(var(--mw) + 92px);margin:0 auto;padding:22px 46px 34px;line-height:2;
+.sf-inner{max-width:var(--mw);margin:0 auto;padding:22px 46px 34px;line-height:2;
   display:flex;flex-wrap:wrap;align-items:center;gap:6px 4px}
 .sf-inner p{margin:0;width:100%}
 .site-footer a{color:var(--acc);text-decoration:none}

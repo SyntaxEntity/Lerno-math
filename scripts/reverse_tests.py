@@ -434,6 +434,14 @@ def _break_style_token(t):
     return t.replace(old, "--bg:#f7f7f5", 1)
 
 
+
+def _mw_magic_calc(t):
+    """把正文列的 max-width 改回带魔法数的 calc 形式 —— 触发 F27 的第二条判据。"""
+    old = ".inner{max-width:var(--mw);"
+    assert old in t, "锚点没找到：site.css 里 .inner 的 max-width 写法变了"
+    return t.replace(old, ".inner{max-width:calc(var(--mw) + 92px);", 1)
+
+
 def _dup_heading(t):
     """在**同一章节区块内**重复一个标题（F21 的判据范围）。
 
@@ -565,6 +573,7 @@ case("F26", "把某个扫描型规则的受检数改成 0（H3 空转通过）",
 case("F26", "在文档里硬编码 F 范围（H4 漂移）", AGENTSmd, _hardcode_rule_range, mode="full")
 case("F26", "把一条规则的 err 降级成 warn（只 warn 拦不住发布）", VALIDATEpy, _downgrade_rule_to_warn, mode="full")
 case("F27", "把 site.css 的 --bg 改成表外的色值", SITECSS, _break_style_token)
+case("F27", "正文列改回 calc(var(--mw) + 92px)（契约禁止魔法数）", SITECSS, _mw_magic_calc)
 case("F22", "site.js 深色类名写错（行为层必须抓到）", SITEJS, _html_break_site_js, mode="full")
 case("F23", "把外置样式内联回页面", D01H, _html_inline_style, mode="full")
 case("F23", "样式表引用不可达", D01H, _html_break_css_ref, mode="full")

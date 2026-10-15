@@ -1591,7 +1591,9 @@ WP_DARK = {
     "--sec-freq": "#38bdf8", "--sec-key": "#e879f9", "--sec-fig": "#2dd4bf",
     "--sec-err": "#fbbf24", "--sec-real": "#4ade80",
 }
-WP_SCALAR = {"--radius": "10px", "--mw": "780px", "--topbar-h": "54px"}
+# --mw 是「含内边距的直接宽度」（契约 2026-10-15 裁定）：只断言值，
+# 另外禁止写带魔法数的 calc 形式（见 WP_MW_CALC）。
+WP_SCALAR = {"--radius": "10px", "--mw": "872px", "--topbar-h": "54px"}
 WP_ALIAS = {"--sec-core": "var(--acc)"}
 WP_PRESENT = ["--sans", "--serif", "--sh"]
 WP_DEPRECATED = ["--paper", "--codebg", "--hi", "--warnbg", "--warnbd",
@@ -1668,6 +1670,12 @@ def check_style_tokens():
                 err(rp, 0, "F27",
                     "使用了已废弃的旧 token 名 %s（%s块）：PLAN §5.2.2 已列明废弃，请改用新名"
                     % (token, where))
+    checked += 1
+    # 契约裁定：--mw 就是含内边距的列宽，直接 max-width:var(--mw)。
+    # 只查**取值位置**，不要把注释或文档字符串里的示例算进来（F26 那边踩过同款）。
+    if re.search(r"max-width:\s*calc\(var\(--mw\)", css):
+        err(rp, 0, "F27",
+            "不要写 calc(var(--mw) + N)：--mw 已含内边距，直接 max-width:var(--mw)")
     stats["tokens_checked"] = checked
     stats["tokens_deprecated"] = sum(1 for t in WP_DEPRECATED if t in light or t in dark)
 
