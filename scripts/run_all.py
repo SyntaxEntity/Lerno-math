@@ -14,8 +14,8 @@
 
 用法
 ----
-    python3 数学二/scripts/run_all.py            # 全部跑一遍
-    python3 数学二/scripts/run_all.py --quick    # 跳过反向测试与绘图（只重建+校验）
+    python3 scripts/run_all.py            # 全部跑一遍
+    python3 scripts/run_all.py --quick    # 跳过反向测试与绘图（只重建+校验）
 
 解释器：绘图与复算需要 matplotlib/sympy（= `requirements-dev.txt`）。若当前解释器
 缺少依赖，本脚本会自动改用仓库内的 `.tools/venv/bin/python`（存在时）。
@@ -26,7 +26,7 @@ import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(HERE))
+ROOT = os.path.dirname(HERE)
 VENV = os.path.join(ROOT, ".tools", "venv", "bin", "python")
 
 # matplotlib 需要一个**可写**的配置缓存目录：本机 $HOME/.config 是只读的，
@@ -38,7 +38,7 @@ os.makedirs(os.environ["MPLCONFIGDIR"], exist_ok=True)
 # Node 依赖的版本**只写在 tools-package.json 里**（PLAN-对齐与改版 §1.2 单一数据源）。
 # 这里读它、不抄它：CI 装的是同一份清单，所以本地与线上不可能装出两个版本。
 TOOLS_MANIFEST = os.path.join(HERE, "tools-package.json")
-INSTALL_HINT = ("mkdir -p .tools && cp 数学二/scripts/tools-package.json .tools/package.json\n"
+INSTALL_HINT = ("mkdir -p .tools && cp scripts/tools-package.json .tools/package.json\n"
                 "    npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund")
 
 
@@ -82,7 +82,7 @@ def check_node_deps():
     if not problems:
         return True
     print("! Node 依赖有问题：%s" % "；".join(problems))
-    print("  重装（版本以 数学二/scripts/tools-package.json 为准）：")
+    print("  重装（版本以 scripts/tools-package.json 为准）：")
     print("    %s" % INSTALL_HINT)
     return False
 
@@ -104,7 +104,7 @@ def need_deps():
     print("! 找不到同时具备 matplotlib / sympy / markdown 的解释器。")
     print("  先运行（版本以 requirements-dev.txt 为准，它会带入 requirements.txt）：")
     print("    python3 -m venv .tools/venv && "
-          ".tools/venv/bin/python -m pip install -r 数学二/scripts/requirements-dev.txt")
+          ".tools/venv/bin/python -m pip install -r scripts/requirements-dev.txt")
     sys.exit(1)
 
 

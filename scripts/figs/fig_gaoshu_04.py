@@ -10,7 +10,7 @@
   gaoshu-06-fig1.png  y=√x 与 y=x² 围成的区域及其绕 x 轴的旋转体
   gaoshu-06-fig2.png  微元法流程
 
-运行： 数学二/scripts/figs/fig_gaoshu_04.py
+运行： scripts/figs/fig_gaoshu_04.py
 """
 import os
 import sys

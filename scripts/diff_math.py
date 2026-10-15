@@ -23,8 +23,8 @@
 
 用法
 ----
-    python3 数学二/scripts/diff_math.py HEAD        # 工作区 vs HEAD
-    python3 数学二/scripts/diff_math.py HEAD~1      # 工作区 vs 上一个提交
+    python3 scripts/diff_math.py HEAD        # 工作区 vs HEAD
+    python3 scripts/diff_math.py HEAD~1      # 工作区 vs 上一个提交
 
 退出码：0 = 公式内容一致（可能含合并/拆分提示）；1 = 有文件公式内容被改动。
 """
@@ -34,7 +34,7 @@ import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(HERE))
+ROOT = os.path.dirname(HERE)
 PARTS = os.path.join(ROOT, "parts")
 
 # 只算「纯间距」的宏：它们不承载数学含义，允许在合并/拆分行内公式时增减

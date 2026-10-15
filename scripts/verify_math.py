@@ -17,9 +17,9 @@
 
 用法
 ----
-    python3 数学二/scripts/verify_math.py          # 全部复算
-    python3 数学二/scripts/verify_math.py -v       # 打印每条断言
-    python3 数学二/scripts/verify_math.py --list   # 只列断言名录
+    python3 scripts/verify_math.py          # 全部复算
+    python3 scripts/verify_math.py -v       # 打印每条断言
+    python3 scripts/verify_math.py --list   # 只列断言名录
 """
 import json
 import os
@@ -29,7 +29,7 @@ import sys
 import sympy as sp
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(HERE))
+ROOT = os.path.dirname(HERE)
 FIGDATA = os.path.join(HERE, "figs", "data")
 
 x, y, t, u, v, a, b, c, k, m, n, p = sp.symbols("x y t u v a b c k m n p")

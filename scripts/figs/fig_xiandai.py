@@ -13,7 +13,7 @@
   xiandai-05-fig1.png  相似对角化 P^{-1}AP=Lambda 的列对应关系
   xiandai-06-fig1.png  二次型三种形态与正交变换 A=QLambdaQ^T
 
-运行： 数学二/scripts/figs/fig_xiandai.py
+运行： scripts/figs/fig_xiandai.py
 """
 import os
 import sys

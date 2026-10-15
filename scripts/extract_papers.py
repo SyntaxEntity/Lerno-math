@@ -10,10 +10,10 @@
 
 用法
 ----
-    python3 数学二/scripts/extract_papers.py --list
-    python3 数学二/scripts/extract_papers.py --year 2024        # 打印该年题面
-    python3 数学二/scripts/extract_papers.py --year 2024 --n 5  # 只打印第 5 题
-    python3 数学二/scripts/extract_papers.py --search 二重积分   # 全语料检索
+    python3 scripts/extract_papers.py --list
+    python3 scripts/extract_papers.py --year 2024        # 打印该年题面
+    python3 scripts/extract_papers.py --year 2024 --n 5  # 只打印第 5 题
+    python3 scripts/extract_papers.py --search 二重积分   # 全语料检索
 
 注意
 ----

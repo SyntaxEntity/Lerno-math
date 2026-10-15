@@ -1,8 +1,8 @@
 # 内容源写作契约（parts/）
 
 > 本文件是 `parts/<部分>/<slug>.md` 的**写作规范**。成品 Markdown 由
-> `数学二/scripts/build.py` 生成，**永远不要手工编辑 `数学二/` 下的 .md**（会被覆盖）。
-> 校验器 `数学二/scripts/validate.py --parts` 会逐条检查本文件所述约束。
+> `scripts/build.py` 生成，**永远不要手工编辑 `数学二/` 下的 .md**（会被覆盖）。
+> 校验器 `scripts/validate.py --parts` 会逐条检查本文件所述约束。
 
 ---
 
@@ -108,7 +108,7 @@ $$ 公式单独成行 $$
 - 行内：`$f'(x)$`；行间：独立成段的 `$$ ... $$`。
 - **`$` 必须成对**，校验器会检查。
 - 行间公式块 `$$` 单独成行，前后留空行。
-- 全部数值结果必须能用 `数学二/scripts/verify_math.py` 里的 sympy 代码复算出来，
+- 全部数值结果必须能用 `scripts/verify_math.py` 里的 sympy 代码复算出来，
   **图上标注的坐标必须等于 sympy 算出的值**。
 
 ---
@@ -119,7 +119,7 @@ $$ 公式单独成行 $$
 
 **禁止手写 SVG、禁止用 ASCII 硬凑函数图像。** 流程固定为：
 
-1. 在 `数学二/scripts/figs/` 下写自包含的 matplotlib 脚本 `fig_XX_<name>.py`；
+1. 在 `scripts/figs/` 下写自包含的 matplotlib 脚本 `fig_XX_<name>.py`；
 2. 运行它，把 PNG 输出到 `数学二/assets/`；
 3. 正文用 `![说明](assets/xxx.png)` 引用（**相对 `数学二/` 目录**，不要写 `../`）。
 
@@ -144,7 +144,7 @@ $$ 公式单独成行 $$
 - 行内不得出现 HTML 标签、不得出现分号 `;`、双引号必须成对。
 - 不得出现孤立的 `{` / `}` 行。
 
-**怎么验的**：`数学二/scripts/check_mermaid.mjs` 调官方 mermaid 逐块 `parse()`
+**怎么验的**：`scripts/check_mermaid.mjs` 调官方 mermaid 逐块 `parse()`
 （版本与站内运行时一致）。`validate.py` 在 **解析器缺失 / node 不在 / 返回码非 0 /
 一块图都没扫到** 这四种情况下**直接判错**，不会打一句「跳过」然后照样全绿；
 要离线跳过必须显式写 `--no-mermaid`。反向测试第 40 条就专门造了
@@ -168,7 +168,7 @@ $$ 公式单独成行 $$
 
 - **绝不把改编题伪装成原题。宁可标注保守。**
 - 年份必须落在 `meta.py` 的 `YEAR_MIN`—`YEAR_MAX` 区间内。
-- 核对方式：`python3 数学二/scripts/extract_papers.py --year 2024 --n 12`
+- 核对方式：`python3 scripts/extract_papers.py --year 2024 --n 12`
   打印真题原件题面，逐字比对后再落笔。
 - 每道标注为**原题**的题目，都必须登记进 `数学二/README.md` 的「已核对原题清单」，
   格式为表格行：`| \`2024\` | 第 \`12\` 题 | 填空题 |` ← 校验器 F12 双向比对，
@@ -179,14 +179,14 @@ $$ 公式单独成行 $$
 ## 六、自检命令
 
 ```bash
-python3 数学二/scripts/normalize_md.py --check   # 空行是否规范
-python3 数学二/scripts/validate.py --parts       # 校验内容源
-python3 数学二/scripts/build.py                  # 组装成品
-python3 数学二/scripts/validate.py               # 校验成品
-python3 数学二/scripts/verify_math.py            # sympy 复算全部数值
-node 数学二/scripts/check_mermaid.mjs --strict   # mermaid 真实解析（逐块）
-node 数学二/scripts/test_site_js.mjs             # 外壳脚本行为测试（jsdom）
-python3 数学二/scripts/build_html.py             # 生成 HTML 站点
-python3 数学二/scripts/validate.py --parts       # F24/F25 会在内容源阶段就报出来
-python3 数学二/scripts/diff_math.py HEAD         # 改排版后：确认公式正文一字未改
+python3 scripts/normalize_md.py --check   # 空行是否规范
+python3 scripts/validate.py --parts       # 校验内容源
+python3 scripts/build.py                  # 组装成品
+python3 scripts/validate.py               # 校验成品
+python3 scripts/verify_math.py            # sympy 复算全部数值
+node scripts/check_mermaid.mjs --strict   # mermaid 真实解析（逐块）
+node scripts/test_site_js.mjs             # 外壳脚本行为测试（jsdom）
+python3 scripts/build_html.py             # 生成 HTML 站点
+python3 scripts/validate.py --parts       # F24/F25 会在内容源阶段就报出来
+python3 scripts/diff_math.py HEAD         # 改排版后：确认公式正文一字未改
 ```

@@ -11,7 +11,7 @@
   gaoshu-03-fig2.png  中值定理选择与辅助函数构造流程
 
 图中所有关键点坐标由 numpy/sympy 计算得出后标注，并落盘供 verify_math.py 复核。
-运行： 数学二/scripts/figs/fig_gaoshu_01.py
+运行： scripts/figs/fig_gaoshu_01.py
 """
 import os
 import sys

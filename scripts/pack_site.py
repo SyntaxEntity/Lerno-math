@@ -21,8 +21,8 @@
 
 用法
 ----
-    python3 数学二/scripts/pack_site.py math2-site   # 仓库根的 math2-site/（发布用，CI 同款）
-    python3 数学二/scripts/pack_site.py dist         # 仓库根的 dist/（临时预览）
+    python3 scripts/pack_site.py math2-site   # 仓库根的 math2-site/（发布用，CI 同款）
+    python3 scripts/pack_site.py dist         # 仓库根的 dist/（临时预览）
 
     路径按**仓库根**（即本脚本往上两级）解析，所以从仓库根执行时写目录名即可。
 
@@ -37,7 +37,7 @@ import shutil
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(HERE))
+ROOT = os.path.dirname(HERE)
 SRC = os.path.join(ROOT, "数学二")
 
 # 「输出目录不是纯粹的生成物」时会被保留的元数据（--keep-vcs）
@@ -123,7 +123,7 @@ THIRD_PARTY = """# 第三方组件
 {mermaid_row}
 
 两者的许可均为 MIT，允许随作品再分发；MIT 许可全文见各组件仓库内的 `LICENSE`。
-版本取自 `数学二/scripts/tools-package.json`（唯一数据源），不在此处另写一份。
+版本取自 `scripts/tools-package.json`（唯一数据源），不在此处另写一份。
 
 ---
 

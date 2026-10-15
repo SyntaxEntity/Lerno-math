@@ -9,11 +9,11 @@
 //
 // 用法
 // ----
-//   node 数学二/scripts/test_site_js.mjs          # stdout 输出 JSON，stderr 输出人读摘要
-//   node 数学二/scripts/test_site_js.mjs --strict # 有失败时退出码 1
-//   node 数学二/scripts/test_site_js.mjs --site-js <path>   # 换被测文件（408 复用本测试用）
+//   node scripts/test_site_js.mjs          # stdout 输出 JSON，stderr 输出人读摘要
+//   node scripts/test_site_js.mjs --strict # 有失败时退出码 1
+//   node scripts/test_site_js.mjs --site-js <path>   # 换被测文件（408 复用本测试用）
 //
-// 依赖：jsdom（版本见 数学二/scripts/tools-package.json，与 F3 用的是同一份）
+// 依赖：jsdom（版本见 scripts/tools-package.json，与 F3 用的是同一份）
 //
 // 退出码
 // ------
@@ -25,8 +25,8 @@ import { readFileSync, existsSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const HERE = dirname(fileURLToPath(import.meta.url));       // 数学二/scripts
-const ROOT = resolve(HERE, '..', '..');                     // 仓库根
+const HERE = dirname(fileURLToPath(import.meta.url));       // scripts
+const ROOT = resolve(HERE, '..');                          // 仓库根（U2：脚本已在仓库根下）
 const argv = process.argv.slice(2);
 const ji = argv.indexOf('--site-js');
 const SITE_JS = ji >= 0 && argv[ji + 1]
@@ -34,7 +34,7 @@ const SITE_JS = ji >= 0 && argv[ji + 1]
   : join(ROOT, '数学二', 'assets', 'site.js');              // 408 复用时可传自己的路径
 const TOOLS = join(ROOT, '.tools', 'node_modules');
 
-const INSTALL = 'mkdir -p .tools && cp 数学二/scripts/tools-package.json .tools/package.json && '
+const INSTALL = 'mkdir -p .tools && cp scripts/tools-package.json .tools/package.json && '
   + 'npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund';
 
 function fail(code, msg) {
@@ -45,7 +45,7 @@ function fail(code, msg) {
 
 if (!existsSync(SITE_JS)) fail(3, `找不到被测文件：${SITE_JS}`);
 if (!existsSync(join(TOOLS, 'jsdom'))) {
-  fail(2, `未安装 jsdom（版本见 数学二/scripts/tools-package.json）。安装：\n  ${INSTALL}`);
+  fail(2, `未安装 jsdom（版本见 scripts/tools-package.json）。安装：\n  ${INSTALL}`);
 }
 
 const { JSDOM, VirtualConsole } = await import(join(TOOLS, 'jsdom', 'lib', 'api.js'));

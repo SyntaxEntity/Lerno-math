@@ -18,9 +18,9 @@ Markdown 中**单换行不产生换行**。块级元素（标题、代码围栏�
 
 用法
 ----
-    python3 数学二/scripts/normalize_md.py            # 规范化 parts/（内容源）
-    python3 数学二/scripts/normalize_md.py --check    # 只报告需要改动的位置
-    python3 数学二/scripts/normalize_md.py <dir>      # 规范化指定目录下的 *.md（递归）
+    python3 scripts/normalize_md.py            # 规范化 parts/（内容源）
+    python3 scripts/normalize_md.py --check    # 只报告需要改动的位置
+    python3 scripts/normalize_md.py <dir>      # 规范化指定目录下的 *.md（递归）
 """
 import glob
 import os

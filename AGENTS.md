@@ -28,14 +28,17 @@
 website/math2-kaoyan/
 ├── .github/workflows/pages.yml  Pages 工作流：三道门禁（validate → reverse_tests → verify_math）
 │                                → pack_site → 上传 math2-site
+├── scripts/                     ★ 工具链（U2 起在仓库根，与 408 一致）
+│   ├── meta.py                  统计数字的唯一数据源（U3：两边同名）
+│   ├── figs/                    绘图脚本 + data/*.json
+│   └── requirements*.txt  tools-package.json   依赖声明（CI 从它们读版本）
 ├── 数学二/                      ★ 生成物 + 站点资源
 │   ├── index.html               全科单页合集（高数 9 章 + 线代 6 章，主学习界面）
 │   ├── README.md / README.html  说明（README.md 由 build_readme.py 生成）
 │   ├── 高等数学/ 线性代数/        各章 .md 与 .html
 │   ├── assets/                  matplotlib 生成的 PNG
 │   ├── assets/site.css site.js  外置样式与外壳脚本（类名契约见 PLAN §2.4）
-│   ├── katex/  mermaid.min.js   离线运行时
-│   └── scripts/                 生成与校验工具链
+│   └── katex/  mermaid.min.js   离线运行时
 ├── parts/gaoshu/  parts/xiandai/   ★ 内容源，只写这里
 ├── math2-site/                  ★ 站点构建产物（.gitignore，不入库）
 ├── PLAYBOOK-速成资料工程化.md
@@ -43,7 +46,7 @@ website/math2-kaoyan/
 └── .git-old-408-history/        归档：本目录早年 408 项目的 git 历史（勿使用）
 ```
 
-## 三、再生成与校验（在 `数学二/` 目录下执行）
+## 三、再生成与校验（在本目录内执行）
 
 ```bash
 python3 scripts/run_all.py         # 一键全流程：绘图→复算→组装→校验→反向测试→HTML
@@ -55,26 +58,13 @@ node scripts/test_site_js.mjs      # 单独跑外壳脚本行为测试（jsdom�
 python3 scripts/diff_math.py HEAD  # 改解析排版后：证明公式正文一字未改
 ```
 
-Python 依赖按用途分两个文件（PLAN §1.2.1）：`数学二/scripts/requirements.txt`
+Python 依赖按用途分两个文件（PLAN §1.2.1）：`scripts/requirements.txt`
 = **CI 与校验**所需的全部（Markdown + sympy）；`requirements-dev.txt` = 本地生成链路
 额外所需（`-r requirements.txt` + matplotlib）。Node 侧锁在 `tools-package.json`。
 **CI 只跑校验与打包**（`validate.py` 形式 + `reverse_tests.py` 反向测试 + `verify_math.py` 数值），
 不重绘、不重生成产物，所以不装 matplotlib。
 
-## 四、发布
-
-`math2-site/` 是**构建产物，不入库**。发布走 `.github/workflows/pages.yml`：
-推 `main` → 装依赖 → **三道门禁**（`validate.py` 形式 / `reverse_tests.py` 反向测试 /
-`verify_math.py` 数值复算）
-→ `pack_site.py math2-site` → 上传。任一门禁不过即中止部署。
-
-本地预览：`python3 数学二/scripts/pack_site.py math2-site`，
-或直接打开 `数学二/index.html`（同样是离线可用的站点）。
-
-⚠️ `pack_site.py` 的输出目录若已有 `.git`/`.github` 会**拒绝执行**（防止删掉历史与工作流）。
-本仓库常态下不会触发（`math2-site/` 已 gitignore 且不含 VCS 元数据）。
-
-## 五、硬性约定
+## 四、硬性约定
 
 - **改内容只改 `parts/`**，然后重跑脚本。`数学二/` 下的 `.md`/`.html` 都是生成物，
   手工改会在下次生成时被覆盖。
@@ -86,3 +76,19 @@ Python 依赖按用途分两个文件（PLAN §1.2.1）：`数学二/scripts/req
   引用块内相邻 `>` 行会并成同一段，所以每个段落之间**必须写空 `>` 行**。
 - **加粗的闭合记号后面不能紧跟汉字**（`**…。**汉字` 不闭合，页面会露出 `**`，F24 会报）。
 - 临时依赖放 `.tools/`（已 gitignore，约 478 MB），不要提交 `__pycache__/`。
+
+## 五、发布（本项目特有：产物不入库）
+
+> 一至四节与 `../408-kaoyan/AGENTS.md` 的小节顺序、标题保持一致（U4 对齐，2026-10-15）；
+> 本节是数学二特有的内容（两个项目的产物策略**有意不同**，见 PLAN §5.2.4），故排在最后。
+
+`math2-site/` 是**构建产物，不入库**。发布走 `.github/workflows/pages.yml`：
+推 `main` → 装依赖 → **三道门禁**（`validate.py` 形式 / `reverse_tests.py` 反向测试 /
+`verify_math.py` 数值复算）
+→ `pack_site.py math2-site` → 上传。任一门禁不过即中止部署。
+
+本地预览：`python3 scripts/pack_site.py math2-site`，
+或直接打开 `数学二/index.html`（同样是离线可用的站点）。
+
+⚠️ `pack_site.py` 的输出目录若已有 `.git`/`.github` 会**拒绝执行**（防止删掉历史与工作流）。
+本仓库常态下不会触发（`math2-site/` 已 gitignore 且不含 VCS 元数据）。

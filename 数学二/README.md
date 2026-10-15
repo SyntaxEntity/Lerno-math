@@ -2,7 +2,7 @@
 
 > 面向**已经系统学过数学二、需要快速过一遍**的考生。每章固定六段式：
 > 考频统计 → 核心讲解 → 关键结论速记 → 示意图 → 易错点 → 真题示例。
-> 本资料由脚本生成（`数学二/scripts/`），**不要手工编辑 `数学二/` 下的 .md**。
+> 本资料由脚本生成（`scripts/`），**不要手工编辑 `数学二/` 下的 .md**。
 
 ---
 
@@ -204,10 +204,10 @@
 
 ## 五、图形与数值的可验证性
 
-- **图形一律「先代码后图形」**：所有精确图像由 `数学二/scripts/figs/*.py`
+- **图形一律「先代码后图形」**：所有精确图像由 `scripts/figs/*.py`
   用 matplotlib 生成到 `数学二/assets/`，正文以相对路径引用。
   **不手写 SVG，不用 ASCII 硬凑函数图像。**
-- **数值一律 sympy 复算**：`数学二/scripts/verify_math.py` 会复算资料中出现的
+- **数值一律 sympy 复算**：`scripts/verify_math.py` 会复算资料中出现的
   极限值、导数、积分、反常积分敛散性、微分方程通解/特解、行列式值、秩、逆矩阵、
   方程组的解、特征值与特征向量、二次型标准形与正定性，以及几何应用中的
   面积、体积、弧长。
@@ -215,12 +215,12 @@
   `verify_math.py` 会断言失败即报错。
 - **mermaid 图用官方解析器真实 `parse()`**：静态正则查不出「标签含圆括号未加
   引号」这类直接解析失败的写法，所以校验器调用
-  `数学二/scripts/check_mermaid.mjs`（node + 官方 mermaid）逐图真解析；
+  `scripts/check_mermaid.mjs`（node + 官方 mermaid）逐图真解析；
   扫描根跟着模式走——`--parts` 扫内容源 `parts/`，成品模式扫 `数学二/`，
   这样在「改 parts → `validate.py --parts`」的内层循环里也能立刻看到写坏的图。
   **解析器不在、node 不在、返回码非 0、一块图都没扫到——这四种情况都会让校验
   直接失败**，而不是打一句「跳过真实解析」然后照样全绿。确实要离线跳过时，
-  必须显式写 `python3 数学二/scripts/validate.py --no-mermaid`。
+  必须显式写 `python3 scripts/validate.py --no-mermaid`。
 
 ---
 
@@ -241,8 +241,8 @@
 考研数学二真题 1987—2024，含 OCR 文本与 PDF 原件）。抽取任意一题比对：
 
 ```bash
-python3 数学二/scripts/extract_papers.py --year 2024 --n 12   # 打印 2024 年第 12 题原文
-python3 数学二/scripts/extract_papers.py --search 二重积分     # 全语料检索
+python3 scripts/extract_papers.py --year 2024 --n 12   # 打印 2024 年第 12 题原文
+python3 scripts/extract_papers.py --search 二重积分     # 全语料检索
 ```
 
 ### 6.3 已逐条核对的原题清单（共 13 道，正文标注 14 处）
@@ -295,21 +295,21 @@ python3 数学二/scripts/extract_papers.py --search 二重积分     # 全语�
 ```bash
 # CI 与校验（= 工作流装的那一套；不含 matplotlib）
 python3 -m venv .tools/venv
-.tools/venv/bin/python -m pip install -r 数学二/scripts/requirements.txt
+.tools/venv/bin/python -m pip install -r scripts/requirements.txt
 
 # 本地生成链路（要重跑绘图/组装时用这个；它会把上面那套一并带入）
-.tools/venv/bin/python -m pip install -r 数学二/scripts/requirements-dev.txt
+.tools/venv/bin/python -m pip install -r scripts/requirements-dev.txt
 
 # Node 侧（mermaid 真实解析校验 + 站点内置运行时）—— 版本锁在 tools-package.json
 # 先把清单拷进 .tools/ 再让 npm 按清单装：与 CI（.github/workflows/pages.yml）
 # 走的是同一条路径，因此本地和线上不可能装出两个版本。
-mkdir -p .tools && cp 数学二/scripts/tools-package.json .tools/package.json
+mkdir -p .tools && cp scripts/tools-package.json .tools/package.json
 npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund
 ```
 
 > **为什么 CI 不装 matplotlib**：图（`assets/*.png`）与 HTML 都已入库，CI 只做
 > 「校验 + 打包」，**不重绘、不重生成产物**。matplotlib 只在本地重跑
-> `数学二/scripts/figs/*.py` 时才需要，所以它在 `requirements-dev.txt` 里。
+> `scripts/figs/*.py` 时才需要，所以它在 `requirements-dev.txt` 里。
 > 这样 `requirements.txt` 就是「CI 与校验所需」的**准确描述**，而不是一个被本地
 > 需求撑大的清单。
 
@@ -331,28 +331,28 @@ npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund
 > 这种最难查的情况。`run_all.py` 开跑前会**比对实际安装版本**，不一致直接报出来。
 >
 > `.tools/` 是 gitignore 的**本地依赖目录**，可以随时删掉重建；
-> `check_mermaid.mjs` 则放在受版本管理的 `数学二/scripts/` 下——
+> `check_mermaid.mjs` 则放在受版本管理的 `scripts/` 下——
 > 校验逻辑必须进仓库，否则「删掉 node_modules」就等于悄悄关掉了 F3。
 
 ### 7.2 跑流水线
 
 ```bash
 # 一键跑通全流水线（绘图 → 复算 → 组装 → 校验 → 反向测试 → HTML）
-python3 数学二/scripts/run_all.py
+python3 scripts/run_all.py
 
 # 或分步执行
-python3 数学二/scripts/verify_math.py            # sympy 复算全部数值 + 图文一致性
-python3 数学二/scripts/normalize_md.py --check   # 检查内容源空行
-python3 数学二/scripts/validate.py --parts       # 校验内容源
-python3 数学二/scripts/build.py                  # 组装成品 Markdown
-python3 数学二/scripts/build_readme.py           # 生成本 README
-python3 数学二/scripts/validate.py               # 校验成品（形式）
-python3 数学二/scripts/reverse_tests.py          # 反向测试：每条规则注入反例（CI 门禁②）
-python3 数学二/scripts/build_html.py             # 生成 HTML 站点
-node 数学二/scripts/check_mermaid.mjs --strict   # 单独跑 mermaid 真实解析
+python3 scripts/verify_math.py            # sympy 复算全部数值 + 图文一致性
+python3 scripts/normalize_md.py --check   # 检查内容源空行
+python3 scripts/validate.py --parts       # 校验内容源
+python3 scripts/build.py                  # 组装成品 Markdown
+python3 scripts/build_readme.py           # 生成本 README
+python3 scripts/validate.py               # 校验成品（形式）
+python3 scripts/reverse_tests.py          # 反向测试：每条规则注入反例（CI 门禁②）
+python3 scripts/build_html.py             # 生成 HTML 站点
+node scripts/check_mermaid.mjs --strict   # 单独跑 mermaid 真实解析
 
 # 打包成待发布的站点目录（仓库内，已 gitignore；注意会先清空输出目录）
-python3 数学二/scripts/pack_site.py math2-site
+python3 scripts/pack_site.py math2-site
 ```
 
 > **站点不入库、由 CI 现打包**：仓库跟踪的是源码、内容源、生成物与工具链；
@@ -401,7 +401,7 @@ python3 数学二/scripts/pack_site.py math2-site
 | F25 | 解析排版：真题示例的解析必须一步一段、关键公式独立成行——任一段的行内公式 ≤3 个、纯文字 ≤200 字 |
 | F26 | **元校验**：规则集合 ≡ 反向测试覆盖集合（缺覆盖即报错）；扫描型规则的受检对象数必须 > 0；文档与 CI 里不得硬编码 F 范围（范围只由校验器输出） |
 
-> 反向测试记录见 `数学二/scripts/REVERSE_TESTS.md`。
+> 反向测试记录见 `scripts/REVERSE_TESTS.md`。
 
 ---
 
@@ -414,7 +414,7 @@ python3 数学二/scripts/pack_site.py math2-site
    **实际渲染出的图形请你在浏览器里打开 `数学二/index.html` 看一眼。**
    若解析器或 node 依赖缺失，校验会直接失败并告诉你装什么，不会静默跳过。
 2. **考频次数的绝对值**：见第三节，只有 2023—2024 两年样本，存在 ±1 次不确定度。
-   若你手上有更完整的考频表，改 `数学二/scripts/meta.py` 一个文件后重跑
+   若你手上有更完整的考频表，改 `scripts/meta.py` 一个文件后重跑
    `build.py` 即可全局同步，无需改正文。
 3. **真题题面的 OCR 准确性**：语料来自第三方 OCR。标注为「原题」的题目我已逐字
    比对语料，但若语料本身识别有误，题面可能仍有偏差。建议你对照纸质真题复核
@@ -423,7 +423,7 @@ python3 数学二/scripts/pack_site.py math2-site
    撰写并做条件完整性检查，但「是否讲得够清楚」需你按自身基础判断。
 5. **考频次数的代表性**：样本只有 2 套（共 44 题）。
    「考察次数 7 次」这类数字是**该样本内**的计数，不是长期占比。
-   若你手上有更完整的考频表，只需改 `数学二/scripts/meta.py` 一处，
+   若你手上有更完整的考频表，只需改 `scripts/meta.py` 一处，
    重跑 `run_all.py` 即可让正文、总表、HTML 三处同步更新。
 6. **HTML 的公式与图形渲染效果**：公式用**打包在本地的 KaTeX**（`数学二/katex/`，
    含 60 个字体文件）在浏览器端渲染，mermaid 用本地 `mermaid.min.js` 渲染，均**离线可用**。

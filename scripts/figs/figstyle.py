@@ -21,7 +21,8 @@ matplotlib.use("Agg")                     # 无显示环境，必须用 Agg
 import matplotlib.pyplot as plt           # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ASSETS = os.path.normpath(os.path.join(HERE, "..", "..", "assets"))
+# HERE = <repo>/scripts/figs；资产目录在 <repo>/数学二/assets（脚本上移到仓库根后要多经一层）
+ASSETS = os.path.normpath(os.path.join(HERE, "..", "..", "数学二", "assets"))
 DATA = os.path.join(HERE, "data")
 
 # 候选 CJK 字体（按优先级）。本机实测存在 Noto Sans CJK SC。

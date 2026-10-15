@@ -10,7 +10,7 @@
   gaoshu-09-fig1.png  二重积分区域（xy=1/3、xy=3、y=x/3、y=3x 围成）与双曲线变换
   gaoshu-09-fig2.png  多元极值判定与二重积分计算路线
 
-运行： 数学二/scripts/figs/fig_gaoshu_07.py
+运行： scripts/figs/fig_gaoshu_07.py
 """
 import os
 import sys

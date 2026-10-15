@@ -16,8 +16,8 @@
 
 用法
 ----
-    python3 数学二/scripts/build.py            # 全部生成
-    python3 数学二/scripts/build.py gaoshu     # 只生成高等数学
+    python3 scripts/build.py            # 全部生成
+    python3 scripts/build.py gaoshu     # 只生成高等数学
 """
 import os
 import re
@@ -28,7 +28,7 @@ sys.path.insert(0, HERE)
 import meta as T          # noqa: E402
 import normalize_md as NM  # noqa: E402
 
-ROOT = os.path.dirname(os.path.dirname(HERE))      # 仓库根（parts/ 所在）
+ROOT = os.path.dirname(HERE)      # 仓库根（parts/ 所在）
 CONTENT = os.path.join(ROOT, "数学二")              # 成品根
 PARTS = os.path.join(ROOT, "parts")
 

@@ -25,10 +25,10 @@
 
 用法
 ----
-    python3 数学二/scripts/validate.py            # 校验成品 + HTML
-    python3 数学二/scripts/validate.py --parts    # 校验内容源 parts/
-    python3 数学二/scripts/validate.py --stats    # 只打印统计
-    python3 数学二/scripts/validate.py --no-mermaid   # 跳过真实解析器（离线时用）
+    python3 scripts/validate.py            # 校验成品 + HTML
+    python3 scripts/validate.py --parts    # 校验内容源 parts/
+    python3 scripts/validate.py --stats    # 只打印统计
+    python3 scripts/validate.py --no-mermaid   # 跳过真实解析器（离线时用）
 """
 import ast
 import glob
@@ -45,12 +45,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import meta as T          # noqa: E402
 
-ROOT = os.path.dirname(os.path.dirname(HERE))     # 仓库根
+ROOT = os.path.dirname(HERE)     # 仓库根
 CONTENT = os.path.join(ROOT, "数学二")             # 成品根
 PARTS = os.path.join(ROOT, "parts")
-FIGDIR = os.path.join(CONTENT, "scripts", "figs")
+FIGDIR = os.path.join(ROOT, "scripts", "figs")
 ASSETS = os.path.join(CONTENT, "assets")
-MERMAID_CHECKER = os.path.join(CONTENT, "scripts", "check_mermaid.mjs")
+# 工具链已上移到仓库根 scripts/（U2）；这两个是**受版本管理**的校验脚本，
+# 不在 数学二/ 下，所以从 ROOT 拼。
+MERMAID_CHECKER = os.path.join(ROOT, "scripts", "check_mermaid.mjs")
 
 FIELD_ORDER = ["**考频统计**", "**核心讲解**", "**关键结论速记**",
                "**示意图**", "**易错点**", "**真题示例**"]
@@ -242,11 +244,11 @@ def run_mermaid_parser(scan_dir):
     # 提示里**不写版本号**：版本只在 tools-package.json 里写一次
     # （PLAN-对齐与改版 §1.2），这里给的是"怎么按清单装"的命令。
     hint = ("（装依赖：mkdir -p .tools && "
-            "cp 数学二/scripts/tools-package.json .tools/package.json && "
+            "cp scripts/tools-package.json .tools/package.json && "
             "npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund；"
             "实在离线就加 --no-mermaid 显式跳过）")
     if not os.path.exists(MERMAID_CHECKER):
-        err("数学二/scripts", 0, "F3", "找不到 mermaid 解析器脚本 %s%s"
+        err("scripts", 0, "F3", "找不到 mermaid 解析器脚本 %s%s"
             % (rel(MERMAID_CHECKER), hint))
         return
     if shutil.which("node") is None:
@@ -923,7 +925,7 @@ def check_figs():
     # figs 目录存在且有脚本
     figs = sorted(glob.glob(os.path.join(FIGDIR, "*.py")))
     if not figs:
-        err("数学二/scripts/figs", 0, "F18", "缺少绘图脚本（图形必须由代码生成）")
+        err("scripts/figs", 0, "F18", "缺少绘图脚本（图形必须由代码生成）")
     stats["figs"] = len(figs)
 
 
@@ -1173,7 +1175,7 @@ def check_shell():
         import build_html as _BH
         gen = [a for a, _n, _i, _h in _BH.section_anchors()]
         if gen != anchor_ids:
-            err("数学二/scripts", 0, "F22",
+            err("scripts", 0, "F22",
                 "生成器与校验器的六段锚点清单不一致：%s vs %s" % (gen, anchor_ids))
     except ImportError:
         pass
@@ -1229,15 +1231,15 @@ def check_shell():
 
 def run_site_js_test():
     """F22 的行为层：node + jsdom 真跑 assets/site.js（scripts/test_site_js.mjs）。"""
-    script = os.path.join(CONTENT, "scripts", "test_site_js.mjs")
+    script = os.path.join(ROOT, "scripts", "test_site_js.mjs")
     hint = ("（装依赖：mkdir -p .tools && "
-            "cp 数学二/scripts/tools-package.json .tools/package.json && "
+            "cp scripts/tools-package.json .tools/package.json && "
             "npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund）")
     if not os.path.exists(script):
-        err("数学二/scripts", 0, "F22", "找不到外壳行为测试脚本 %s%s" % (rel(script), hint))
+        err("scripts", 0, "F22", "找不到外壳行为测试脚本 %s%s" % (rel(script), hint))
         return
     if shutil.which("node") is None:
-        err("数学二/scripts", 0, "F22", "找不到 node，无法验证外壳行为%s" % hint)
+        err("scripts", 0, "F22", "找不到 node，无法验证外壳行为%s" % hint)
         return
     try:
         r = subprocess.run(["node", script], cwd=ROOT, capture_output=True,
@@ -1440,9 +1442,9 @@ RANGE_DECL_FILES = [
     "AGENTS.md",
     ".github/workflows/pages.yml",
     "数学二/README.md",
-    "数学二/scripts/PARTS_FORMAT.md",
-    "数学二/scripts/REVERSE_TESTS.md",
-    "数学二/scripts/build_readme.py",
+    "scripts/PARTS_FORMAT.md",
+    "scripts/REVERSE_TESTS.md",
+    "scripts/build_readme.py",
 ]
 RANGE_RE = re.compile(r"F(\d+)\s*[—\-~～]\s*F?(\d+)")
 
@@ -1497,18 +1499,18 @@ def check_meta(parts_mode, mermaid_skipped=False):
     rt = os.path.join(HERE, "reverse_tests.py")
     cover = set()
     if not os.path.exists(rt):
-        err("数学二/scripts", 0, "F26",
+        err("scripts", 0, "F26",
             "找不到反向测试脚本 reverse_tests.py：门禁少了「规则本身有效」这一层")
     else:
         cover = set(re.findall(r'case\(\s*"F(\d+)"', open(rt, encoding="utf-8").read()))
     missing = sorted(rules - cover, key=int)
     if missing:
-        err("数学二/scripts", 0, "F26",
+        err("scripts", 0, "F26",
             "有 %d 条校验规则没有被反向测试覆盖：%s"
             % (len(missing), "、".join("F" + x for x in missing)))
     extra = sorted(cover - rules, key=int)
     if extra:
-        err("数学二/scripts", 0, "F26",
+        err("scripts", 0, "F26",
             "反向测试引用了不存在的规则：%s" % "、".join("F" + x for x in extra))
     # 每条规则在源码里至少要有一处 err(...)：只有 warn(...) 的"规则"永远拦不住发布，
     # 而它照样能被反向测试的旧判据（找 `[Fxx]` 字样）判成"已报错"。
@@ -1517,7 +1519,7 @@ def check_meta(parts_mode, mermaid_skipped=False):
     have_err = _rules_with_error_path(self_src)
     for code in sorted(rules, key=int):
         if ("F" + code) not in have_err:
-            err("数学二/scripts", 0, "F26",
+            err("scripts", 0, "F26",
                 "规则 F%s 在 validate.py 里没有 err(...) 调用——只 warn 拦不住发布，不算规则"
                 % code)
     stats["rules_with_err"] = sum(1 for c in rules if ("F" + c) in have_err)
@@ -1535,7 +1537,7 @@ def check_meta(parts_mode, mermaid_skipped=False):
         keys.append(SCANNED_WITH_MERMAID)
     zero = ["%s（stat=%s）" % (label, k) for k, label in keys if stats.get(k, 0) <= 0]
     if zero:
-        err("数学二/scripts", 0, "F26",
+        err("scripts", 0, "F26",
             "扫描型规则在空转（受检对象数为 0，等于什么都没查）：%s" % "；".join(zero))
     stats["scanned_checked"] = len(keys)
 

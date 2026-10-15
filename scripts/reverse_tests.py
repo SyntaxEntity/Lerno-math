@@ -11,8 +11,8 @@
 
 用法
 ----
-    python3 数学二/scripts/reverse_tests.py            # 跑全部反向测试
-    python3 数学二/scripts/reverse_tests.py -v         # 打印每条反例的细节
+    python3 scripts/reverse_tests.py            # 跑全部反向测试
+    python3 scripts/reverse_tests.py -v         # 打印每条反例的细节
 
 设计
 ----
@@ -30,7 +30,7 @@ import sys
 import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(HERE))
+ROOT = os.path.dirname(HERE)
 PARTS = os.path.join(ROOT, "parts")
 CONTENT = os.path.join(ROOT, "数学二")
 # 必须用**带 markdown 等依赖的解释器**跑校验器：否则 F14 会静默跳过，

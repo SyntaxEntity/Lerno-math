@@ -19,7 +19,7 @@
   列出警告框（`<p class="warn">`），而不是留白。
 - **不把大文件内联进每个页面**：CSS/JS 各自只有一份（内联一份小 CSS，mermaid 用外部文件）。
 
-用法： python3 数学二/scripts/build_html.py
+用法： python3 scripts/build_html.py
 """
 import html
 import os
@@ -31,7 +31,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import meta as T          # noqa: E402
 
-ROOT = os.path.dirname(os.path.dirname(HERE))
+ROOT = os.path.dirname(HERE)
 CONTENT = os.path.join(ROOT, "数学二")
 MERMAID_SRC = os.path.join(ROOT, ".tools", "node_modules", "mermaid", "dist", "mermaid.min.js")
 KATEX_DIR = os.path.join(ROOT, ".tools", "node_modules", "katex", "dist")
@@ -447,7 +447,7 @@ def warn_block(missing):
     if not missing:
         return ""
     return ('<p class="missing"><b>资源缺失提示：</b>本页引用了 %d 个不存在的图片文件：%s。'
-            '这些位置会显示为空白，请先运行 <code>数学二/scripts/figs/</code> 下的绘图脚本。'
+            '这些位置会显示为空白，请先运行 <code>scripts/figs/</code> 下的绘图脚本。'
             '</p>' % (len(missing), "、".join(sorted(missing))))
 
 

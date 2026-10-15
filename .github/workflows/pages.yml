@@ -13,8 +13,8 @@
 #   2. 自定义工作流不占用「每小时 10 次构建」的软性限制。
 #
 # 依赖版本**只从声明文件读，本文件里不写任何版本号**（PLAN-对齐与改版 §1.2）：
-#   Python → 数学二/scripts/requirements.txt（CI 与校验所需的全部）
-#   Node   → 数学二/scripts/tools-package.json（拷成 .tools/package.json 再装）
+#   Python → scripts/requirements.txt（CI 与校验所需的全部）
+#   Node   → scripts/tools-package.json（拷成 .tools/package.json 再装）
 # 本地生成链路额外要的 matplotlib 在 requirements-dev.txt 里，CI 不装它——
 # 图与 HTML 都已入库，CI 只校验与打包，**不重绘、不重生成产物**（§1.2.1）。
 name: Deploy static site to Pages
@@ -54,7 +54,7 @@ jobs:
       # 本地绘图才要的 matplotlib 在 requirements-dev.txt 里，这里**不装**：
       # 图是已提交的 PNG，CI 不重绘，validate.py 的 F18 只查"每张图都有生成脚本"。
       - name: 安装 Python 依赖（读 requirements.txt）
-        run: python3 -m pip install --quiet -r 数学二/scripts/requirements.txt
+        run: python3 -m pip install --quiet -r scripts/requirements.txt
 
       # F3 用官方 mermaid 解析器逐块真解析（正则查不出「标签含圆括号未加引号」
       # 这类直接解析失败的写法）。版本必须与站点内置运行时、以及 .tools 下的
@@ -63,21 +63,21 @@ jobs:
       - name: 安装 Node 依赖（读 tools-package.json）
         run: |
           mkdir -p .tools
-          cp 数学二/scripts/tools-package.json .tools/package.json
+          cp scripts/tools-package.json .tools/package.json
           npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund
 
       # 门禁 ①（形式）：模板字段、考频数字与 meta.py 逐字一致、图语法、ASCII 对齐、
       # 真题年份、链接可达、外壳完整性、渲染残留、解析排版、交付物完整性，
       # 以及 F26 元校验（规则集合 ≡ 反向测试覆盖集合、扫描型规则受检数 > 0）。
       - name: 发布前校验 · 形式
-        run: python3 数学二/scripts/validate.py
+        run: python3 scripts/validate.py
 
       # 门禁 ②（元层）：反向测试——给每条规则注入反例，确认它真的会报错。
       # validate.py 证明的是「当前内容合规」，这一步证明的是「规则本身有效」；
       # 少了它，一条判据写错的规则可以永远全绿（本项目吃过这个亏）。
       # 它会**临时改文件再还原**，所以必须排在打包之前，且脚本保证无论成败都还原。
       - name: 发布前校验 · 反向测试（规则本身必须能被触发）
-        run: python3 数学二/scripts/reverse_tests.py
+        run: python3 scripts/reverse_tests.py
 
       # 门禁 ③（数值）：sympy 独立复算资料里出现的每一个数值结果，含
       # 「图上标注的关键点坐标 == 符号计算值」。这是本仓库最强的正确性保证，
@@ -85,12 +85,12 @@ jobs:
       # 发布路径之外。只依赖 sympy，跑一次约 1.5 秒。
       # 缺 sympy 时它并非静默跳过：模块级 `import sympy` 直接失败、退出码非 0。
       - name: 发布前校验 · 数值（sympy 断言）
-        run: python3 数学二/scripts/verify_math.py
+        run: python3 scripts/verify_math.py
 
       # pack_site.py 只用标准库（os/re/shutil/sys）。
       # 输出目录不含 .git/.github，因此不会触发它的 VCS 保护。
       - name: 打包站点
-        run: python3 数学二/scripts/pack_site.py math2-site
+        run: python3 scripts/pack_site.py math2-site
 
       - uses: actions/configure-pages@v5
 

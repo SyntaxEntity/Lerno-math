@@ -6,12 +6,12 @@
 //
 // 用法
 // ----
-//   node 数学二/scripts/check_mermaid.mjs            # 输出 JSON（供 validate.py 消费）
-//   node 数学二/scripts/check_mermaid.mjs --strict   # 有解析失败时退出码 1
-//   node 数学二/scripts/check_mermaid.mjs --content <dir>   # 换扫描根（反向测试用）
+//   node scripts/check_mermaid.mjs            # 输出 JSON（供 validate.py 消费）
+//   node scripts/check_mermaid.mjs --strict   # 有解析失败时退出码 1
+//   node scripts/check_mermaid.mjs --content <dir>   # 换扫描根（反向测试用）
 //
 // 依赖（版本必须与站点内置的运行时一致，否则校验的语法与线上渲染的不是同一个版本）：
-//   mkdir -p .tools && cp 数学二/scripts/tools-package.json .tools/package.json
+//   mkdir -p .tools && cp scripts/tools-package.json .tools/package.json
 //   npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund
 //   ↑ 版本只在 tools-package.json 里写一次（PLAN-对齐与改版 §1.2），本文件不抄版本号。
 //
@@ -25,8 +25,8 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, resolve, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const HERE = dirname(fileURLToPath(import.meta.url));       // 数学二/scripts
-const ROOT = resolve(HERE, '..', '..');                     // 仓库根
+const HERE = dirname(fileURLToPath(import.meta.url));       // scripts
+const ROOT = resolve(HERE, '..');                          // 仓库根（U2：脚本已在仓库根下）
 const argv = process.argv.slice(2);
 const ci = argv.indexOf('--content');
 const CONTENT = ci >= 0 && argv[ci + 1] ? resolve(argv[ci + 1]) : join(ROOT, '数学二');  // 待扫描根
@@ -42,14 +42,14 @@ function fail(code, msg) {
 
 // 装依赖的命令只有这一份说法：**版本不在本文件里写**，一律以 tools-package.json 为准
 // （PLAN-对齐与改版 §1.2 的单一数据源要求；本地、CI、错误提示都指向同一个清单）。
-const INSTALL = 'mkdir -p .tools && cp 数学二/scripts/tools-package.json .tools/package.json && '
+const INSTALL = 'mkdir -p .tools && cp scripts/tools-package.json .tools/package.json && '
   + 'npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund';
 
 if (!existsSync(join(TOOLS, 'mermaid'))) {
-  fail(2, `未安装 mermaid 解析器（版本见 数学二/scripts/tools-package.json）。安装：\n  ${INSTALL}`);
+  fail(2, `未安装 mermaid 解析器（版本见 scripts/tools-package.json）。安装：\n  ${INSTALL}`);
 }
 if (!existsSync(join(TOOLS, 'jsdom'))) {
-  fail(2, `未安装 jsdom（版本见 数学二/scripts/tools-package.json）。安装：\n  ${INSTALL}`);
+  fail(2, `未安装 jsdom（版本见 scripts/tools-package.json）。安装：\n  ${INSTALL}`);
 }
 
 // --- 给 mermaid 准备一个最小 DOM（mermaid 12 的 parse() 需要 DOM 才能初始化）---
