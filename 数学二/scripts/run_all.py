@@ -138,7 +138,7 @@ def main():
         fails.append("build")
     if run("生成 README", [PY, os.path.join(HERE, "build_readme.py")]) != 0:
         fails.append("build_readme")
-    if run("校验成品（F1—F21）", [PY, os.path.join(HERE, "validate.py")]) != 0:
+    if run("校验成品（形式：全部规则）", [PY, os.path.join(HERE, "validate.py")]) != 0:
         fails.append("validate")
     if not quick:
         if run("反向测试（每条校验规则注入反例）",

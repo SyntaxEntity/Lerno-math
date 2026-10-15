@@ -63,6 +63,10 @@ D05H = os.path.join(CONTENT, "高等数学", "05-定积分与反常积分.html")
 G08 = os.path.join(PARTS, "gaoshu", "08-数二高数综合与证明专题.md")
 HOMEH = os.path.join(CONTENT, "index.html")      # 全科单页合集（= 站点首页）
 SITEJS = os.path.join(CONTENT, "assets", "site.js")
+READMEmd = os.path.join(CONTENT, "README.md")          # 生成物，F12 比对的两端之一
+VALIDATEpy = os.path.join(HERE, "validate.py")          # F26 读它的规则集合
+SELFpy = os.path.join(HERE, "reverse_tests.py")         # F26 读它的覆盖集合
+AGENTSmd = os.path.join(ROOT, "AGENTS.md")              # F26 的 H4 会扫它
 
 FENCE = "```"
 FIELD = "**核心讲解**"
@@ -342,6 +346,66 @@ def _merge_step_numbers(t):
     return head + sep + re.sub(r"(?m)^(> \d+\.\s.*)$", r"\1 2. 另一步。", tail, count=1)
 
 
+
+def _delete_file(_t):
+    """返回 None：让 harness 把目标文件删掉 —— 用来触发 F0（结构完整性：文件缺失）。
+
+    F0 查的是"该有的东西在不在"，内容层面的改写触发不了它，所以需要一个
+    "文件不存在"的反例类型。harness 的 finally 会把原内容写回，文件必然还原。
+    """
+    return None
+
+
+def _add_fake_orig_row(t):
+    """在 README 的原题清单里加一行**正文并不存在**的原题 —— 触发 F12 的双向比对。
+
+    （F12 是"README 声明清单 ↔ 正文标注"两个方向都要一致，这条走"声明多了"的方向。）
+    """
+    marker = "| --- | --- | --- | --- |"
+    assert marker in t, "README 里没找到原题清单表头，反例需要更新"
+    return t.replace(marker,
+                     marker + "\n| `2024` | 第 `99` 题 | 选择题，5 分 | 函数、极限与连续 |", 1)
+
+
+def _inject_fake_rule(t):
+    """往 validate.py 里塞一条"永远为真、因而永远不会报错"的假规则 —— 触发 F26 的 H2。
+
+    P4 验收项 2：注入假规则后元校验必须报 error，才说明元校验本身有效。
+    """
+    return t.replace("errors, warnings, stats = [], [], defaultdict(int)",
+                     'errors, warnings, stats = [], [], defaultdict(int)\n'
+                     '_FAKE_RULE = "F99"     # 假规则：声明了却没有任何反向测试覆盖',
+                     1)
+
+
+def _drop_one_reverse_case(t):
+    """删掉某条规则的**全部**反向测试用例 —— 触发 F26 的 H2（覆盖集合 ≠ 规则集合）。
+
+    第一版删的是 F1 的一条 case，结果用例没触发：**F1 有三条反例，删一条不影响覆盖**。
+    所以要挑一条"只有单条反例"的规则，并断言确实只删到一条——
+    将来若给它加了第二条反例，这里会立刻报错提醒换规则。
+    """
+    out, n = re.subn(r'(?m)^case\("F12",.*?\n', "", t)
+    assert n == 1, "F12 的反例应恰好 1 条（现为 %d 条）：请改用一个只有单条反例的规则" % n
+    return out
+
+
+def _zero_one_scanned_stat(t):
+    """把某个扫描型规则的受检对象数强行改成 0 —— 触发 F26 的 H3（空转通过）。
+
+    P4 验收项 4：让受检数变 0 必须报错。这里用白盒方式直接改统计量，
+    因为"让真实环境恰好扫到 0 个对象"没法在一条反例里稳定复现。
+    """
+    old = 'stats["assets"] = len(have)'
+    assert old in t
+    return t.replace(old, old + '\n    stats["assets"] = 0     # 反例：制造空转', 1)
+
+
+def _hardcode_rule_range(t):
+    """在文档里硬编码一个 F 范围 —— 触发 F26 的 H4（范围漂移）。"""
+    return t + "\n<!-- 校验规则 F1—F99 -->\n"
+
+
 def _dup_heading(t):
     """在**同一章节区块内**重复一个标题（F21 的判据范围）。
 
@@ -465,6 +529,12 @@ case("F25", "解析里塞进 5 个行内公式的段落", D01H, _html_cram_para,
 case("F25", "真题示例缺 `> 解析` 引用块（防静默通过）", G01, _drop_solution_quote)
 case("F25", "解析的列表项里塞 5 个行内公式（HTML 层盲区）", D01H, _html_cram_li, mode="full")
 case("F25", "两个步骤编号挤在同一段（1. … 2. …）", G05, _merge_step_numbers)
+case("F0", "内容源缺少一个知识点文件（结构完整性）", G01, _delete_file)
+case("F12", "README 声明了一道正文并不存在的原题", READMEmd, _add_fake_orig_row, mode="full")
+case("F26", "注入一条永不为真的假规则（H2 元校验必须抓到）", VALIDATEpy, _inject_fake_rule, mode="full")
+case("F26", "删掉一条反向测试用例（H2 覆盖集合不再相等）", SELFpy, _drop_one_reverse_case, mode="full")
+case("F26", "把某个扫描型规则的受检数改成 0（H3 空转通过）", VALIDATEpy, _zero_one_scanned_stat, mode="full")
+case("F26", "在文档里硬编码 F 范围（H4 漂移）", AGENTSmd, _hardcode_rule_range, mode="full")
 case("F22", "site.js 深色类名写错（行为层必须抓到）", SITEJS, _html_break_site_js, mode="full")
 case("F23", "把外置样式内联回页面", D01H, _html_inline_style, mode="full")
 case("F23", "样式表引用不可达", D01H, _html_break_css_ref, mode="full")
@@ -522,13 +592,23 @@ def main():
             # 于是基线里已经含了本用例注入的那条报错，差集恒为空、
             # 所有用例都会显示"未报错"。顺序错了，整个判据就失效。
             base = baseline_errors(mode, mermaid)
-            broken = mutate(original)
-            if broken == original:
+            try:
+                broken = mutate(original)
+            except Exception as e:                           # noqa: BLE001
+                print("  ✗ %-5s %-42s 反例函数报错：%s" % (code, name, e))
+                failed += 1
+                continue
+            if broken is None:
+                # None = 这个反例要求"目标文件不存在"（F0 那类查存在性的规则）。
+                # finally 里会把原内容写回，文件照样还原。
+                os.remove(target)
+            elif broken == original:
                 print("  ? %-5s %-42s 跳过（反例未改变内容，用例失效）" % (code, name))
                 failed += 1
                 continue
-            with open(target, "w", encoding="utf-8") as f:
-                f.write(broken)
+            else:
+                with open(target, "w", encoding="utf-8") as f:
+                    f.write(broken)
             out = run_validate(mode, allow_mermaid=mermaid)
             fresh = {ln.strip() for ln in out.split("\n") if ERROR_LINE.search(ln)} - base
             hit = any(("[%s]" % code) in ln for ln in fresh)

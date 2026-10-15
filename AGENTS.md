@@ -26,7 +26,8 @@
 
 ```
 website/math2-kaoyan/
-├── .github/workflows/pages.yml  Pages 工作流：两道门禁（validate + verify_math）→ pack_site → 上传 math2-site
+├── .github/workflows/pages.yml  Pages 工作流：三道门禁（validate → reverse_tests → verify_math）
+│                                → pack_site → 上传 math2-site
 ├── 数学二/                      ★ 生成物 + 站点资源
 │   ├── index.html               全科单页合集（高数 9 章 + 线代 6 章，主学习界面）
 │   ├── README.md / README.html  说明（README.md 由 build_readme.py 生成）
@@ -48,7 +49,7 @@ website/math2-kaoyan/
 python3 scripts/run_all.py         # 一键全流程：绘图→复算→组装→校验→反向测试→HTML
 python3 scripts/run_all.py --quick # 跳过反向测试与绘图，只重建 + 校验
 python3 scripts/verify_math.py     # sympy 复算全部数值（含图上坐标）
-python3 scripts/validate.py        # 校验 F1—F25（含 F22 外壳/行为层、F24 渲染残留、F25 解析排版）
+python3 scripts/validate.py        # 形式校验（含 F26 元校验；范围由它自己输出，勿手写）
 python3 scripts/reverse_tests.py   # 反向测试：每条规则注入反例，确认它真会报错
 node scripts/test_site_js.mjs      # 单独跑外壳脚本行为测试（jsdom，12 条）
 python3 scripts/diff_math.py HEAD  # 改解析排版后：证明公式正文一字未改
@@ -57,13 +58,14 @@ python3 scripts/diff_math.py HEAD  # 改解析排版后：证明公式正文一�
 Python 依赖按用途分两个文件（PLAN §1.2.1）：`数学二/scripts/requirements.txt`
 = **CI 与校验**所需的全部（Markdown + sympy）；`requirements-dev.txt` = 本地生成链路
 额外所需（`-r requirements.txt` + matplotlib）。Node 侧锁在 `tools-package.json`。
-**CI 只跑校验与打包**（`validate.py` 形式 + `verify_math.py` 数值），
+**CI 只跑校验与打包**（`validate.py` 形式 + `reverse_tests.py` 反向测试 + `verify_math.py` 数值），
 不重绘、不重生成产物，所以不装 matplotlib。
 
 ## 四、发布
 
 `math2-site/` 是**构建产物，不入库**。发布走 `.github/workflows/pages.yml`：
-推 `main` → 装依赖 → 两道门禁（`validate.py` 形式校验 F1—F25 / `verify_math.py` 数值复算）
+推 `main` → 装依赖 → **三道门禁**（`validate.py` 形式 / `reverse_tests.py` 反向测试 /
+`verify_math.py` 数值复算）
 → `pack_site.py math2-site` → 上传。任一门禁不过即中止部署。
 
 本地预览：`python3 数学二/scripts/pack_site.py math2-site`，

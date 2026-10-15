@@ -187,7 +187,8 @@
     ├── meta.py            单一数据源：全部统计数字只在这里写一次
     ├── build.py           组装成品（注入考频统计行 + 模板骨架 + 空行规范化）
     ├── normalize_md.py    幂等空行规范化器
-    ├── validate.py        F1—F21 校验器（每条都做过反向测试）
+    ├── validate.py        形式校验器（范围由它自己输出；每条都有反向测试，
+    │                      F26 元校验保证两者集合相等）
     ├── verify_math.py     sympy 复算全部数值结果
     ├── extract_papers.py  从真题语料抽取题面，供逐字核对
     ├── build_readme.py    生成本文件
@@ -746,8 +747,8 @@ python3 数学二/scripts/normalize_md.py --check   # 检查内容源空行
 python3 数学二/scripts/validate.py --parts       # 校验内容源
 python3 数学二/scripts/build.py                  # 组装成品 Markdown
 python3 数学二/scripts/build_readme.py           # 生成本 README
-python3 数学二/scripts/validate.py               # 校验成品（F1—F21）
-python3 数学二/scripts/reverse_tests.py          # 反向测试：每条规则注入反例
+python3 数学二/scripts/validate.py               # 校验成品（形式）
+python3 数学二/scripts/reverse_tests.py          # 反向测试：每条规则注入反例（CI 门禁②）
 python3 数学二/scripts/build_html.py             # 生成 HTML 站点
 node 数学二/scripts/check_mermaid.mjs --strict   # 单独跑 mermaid 真实解析
 
@@ -758,8 +759,9 @@ python3 数学二/scripts/pack_site.py math2-site
 <p><strong>站点不入库、由 CI 现打包</strong>：仓库跟踪的是源码、内容源、生成物与工具链；
 <code>math2-site/</code> 是 <code>pack_site.py</code> 的产物，随 <code>.gitignore</code> 排除。
 发布走 <code>.github/workflows/pages.yml</code>：
-推 <code>main</code> → 装依赖 → <strong>门禁 ①</strong> <code>validate.py</code>（形式：F1—F21 + F3 真解析）
-→ <strong>门禁 ②</strong> <code>verify_math.py</code>（数值：108 条 sympy 断言）
+推 <code>main</code> → 装依赖 → <strong>门禁 ①</strong> <code>validate.py</code>（形式，含 F26 元校验）
+→ <strong>门禁 ②</strong> <code>reverse_tests.py</code>（反向测试：规则本身必须能被反例触发）
+→ <strong>门禁 ③</strong> <code>verify_math.py</code>（数值：sympy 断言）
 → <code>pack_site.py math2-site</code> → 上传 artifact。
 任何一道门禁不过就不部署。本地要看站点，自己跑一次打包即可
 （或直接打开 <code>数学二/index.html</code>，那同样是离线可用的站点）。</p>
@@ -843,6 +845,10 @@ python3 数学二/scripts/pack_site.py math2-site
 <tr>
 <td>F25</td>
 <td>解析排版：真题示例的解析必须一步一段、关键公式独立成行——任一段的行内公式 ≤3 个、纯文字 ≤200 字</td>
+</tr>
+<tr>
+<td>F26</td>
+<td><strong>元校验</strong>：规则集合 ≡ 反向测试覆盖集合（缺覆盖即报错）；扫描型规则的受检对象数必须 &gt; 0；文档与 CI 里不得硬编码 F 范围（范围只由校验器输出）</td>
 </tr>
 </tbody>
 </table>

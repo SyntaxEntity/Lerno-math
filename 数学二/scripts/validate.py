@@ -1409,6 +1409,102 @@ def check_solution_layout(paras, path, code):
                                "请一步一段（编号之间留空 `>` 行）" % (i, steps))
 
 
+# ---------------------------------------------------------------------------
+# F26：元校验（PLAN-对齐与改版 §4.4—§4.6）—— 让「假通过」不可能
+#
+# 为什么要有这一条：本项目已经踩过三次同一个坑——
+#   ① F3 的解析器脚本丢了，校验却仍报「通过」（失败路径写成了 warn）；
+#   ② F20 的 `$$` 判据一直是假通过（被内联脚本里的 '$$' 字面量满足）；
+#   ③ 反向测试的判据「输出里出现 [Fxx]」在规则本身有既存报错时会蒙对。
+# 三次的共同点是：**校验项看起来在跑，其实在自欺**。所以这条规则检查的不是内容，
+# 而是"校验体系自己"：规则集合与反向测试覆盖集合是否相等、扫描型规则是否真看了东西、
+# 文档与 CI 里有没有写死会漂移的规则范围。
+# ---------------------------------------------------------------------------
+
+# H3：扫描型规则 → 它报告的「受检对象数」统计键。这些数必须 > 0，否则规则在空转。
+SCANNED_BOTH_MODES = [
+    ("assets", "F18 扫到的图片资产"),
+    ("figs", "F18 扫到的绘图脚本"),
+]
+SCANNED_FULL_ONLY = [
+    ("html_math", "F20 扫到的公式区间"),
+    ("shell_pages", "F22 扫到的外壳页"),
+    ("shell_js_total", "F22 跑到的 site.js 行为断言"),
+]
+SCANNED_WITH_MERMAID = ("mermaid_blocks", "F3 扫到的 mermaid 图块")
+
+# H4：这些文件里**不许**硬编码 F 范围（真实范围由本脚本输出）。
+# 确需引用历史范围时，在那一行里写上「（历史）」即可豁免。
+RANGE_DECL_FILES = [
+    "AGENTS.md",
+    ".github/workflows/pages.yml",
+    "数学二/README.md",
+    "数学二/scripts/PARTS_FORMAT.md",
+    "数学二/scripts/REVERSE_TESTS.md",
+    "数学二/scripts/build_readme.py",
+]
+RANGE_RE = re.compile(r"F(\d+)\s*[—\-~～]\s*F?(\d+)")
+
+
+def check_meta(parts_mode, mermaid_skipped=False):
+    """F26：H2 规则集合 ≡ 覆盖集合；H3 扫描型受检数 > 0；H4 不硬编码规则范围。"""
+    # ---- H2：规则集合 vs 反向测试覆盖集合（用集合比较，不假设编号连续）----
+    self_src = open(os.path.join(HERE, "validate.py"), encoding="utf-8").read()
+    rules = set(re.findall(r'"F(\d+)"', self_src))
+    rt = os.path.join(HERE, "reverse_tests.py")
+    cover = set()
+    if not os.path.exists(rt):
+        err("数学二/scripts", 0, "F26",
+            "找不到反向测试脚本 reverse_tests.py：门禁少了「规则本身有效」这一层")
+    else:
+        cover = set(re.findall(r'case\(\s*"F(\d+)"', open(rt, encoding="utf-8").read()))
+    missing = sorted(rules - cover, key=int)
+    if missing:
+        err("数学二/scripts", 0, "F26",
+            "有 %d 条校验规则没有被反向测试覆盖：%s"
+            % (len(missing), "、".join("F" + x for x in missing)))
+    extra = sorted(cover - rules, key=int)
+    if extra:
+        err("数学二/scripts", 0, "F26",
+            "反向测试引用了不存在的规则：%s" % "、".join("F" + x for x in extra))
+    stats["rules"] = len(rules)
+    stats["rules_covered"] = len(rules & cover)
+    if rules:
+        stats["rule_min"] = min(rules, key=int)
+        stats["rule_max"] = max(rules, key=int)
+
+    # ---- H3：扫描型规则的受检对象数必须 > 0 ----
+    keys = list(SCANNED_BOTH_MODES)
+    if not parts_mode:
+        keys += SCANNED_FULL_ONLY
+    if not mermaid_skipped:
+        keys.append(SCANNED_WITH_MERMAID)
+    zero = ["%s（stat=%s）" % (label, k) for k, label in keys if stats.get(k, 0) <= 0]
+    if zero:
+        err("数学二/scripts", 0, "F26",
+            "扫描型规则在空转（受检对象数为 0，等于什么都没查）：%s" % "；".join(zero))
+    stats["scanned_checked"] = len(keys)
+
+    # ---- H4：文档/CI 里不得硬编码 F 范围 ----
+    lo, hi = stats.get("rule_min", "?"), stats.get("rule_max", "?")
+    n_decl = 0
+    for rel_p in RANGE_DECL_FILES:
+        fp = os.path.join(ROOT, rel_p)
+        if not os.path.exists(fp):
+            err(rel_p, 0, "F26", "H4 清单里的文件不存在（清单本身过期了）")
+            continue
+        for i, ln in enumerate(open(fp, encoding="utf-8").read().split("\n"), 1):
+            if "（历史）" in ln:          # 显式标注的历史引用，豁免
+                continue
+            m = RANGE_RE.search(ln)
+            if m:
+                n_decl += 1
+                err(rel_p, i, "F26",
+                    "文档/CI 里不得硬编码 F 范围（%s）：真实范围由 validate.py 输出为 "
+                    "F%s—F%s；确需引用历史范围请在该行标注「（历史）」" % (m.group(0), lo, hi))
+    stats["declared_ranges"] = n_decl
+
+
 def check_completeness():
     """F16：交付物完整性——不得静默缺失。"""
     need = [os.path.join(CONTENT, "README.md"), os.path.join(CONTENT, "index.html")]
@@ -1444,6 +1540,12 @@ def report(title):
     print("  外壳页 %d 个 | site.js 行为测试通过 %d/%d 条"
           % (stats.get("shell_pages", 0), stats.get("shell_js_ok", 0),
              stats.get("shell_js_total", 0)))
+    # F26 的体检结果：规则范围、覆盖情况、扫描型受检数、文档里的范围声明数。
+    # 「范围」只在这里输出——文档与 CI 一律不要手写（手写的必然漂移，已漂过一次）。
+    print("  ★ 规则 F%s—F%s（%d 条）｜反向测试覆盖 %d/%d｜扫描型受检数 %d 项｜文档/CI 范围声明 %d 处"
+          % (stats.get("rule_min", "?"), stats.get("rule_max", "?"), stats.get("rules", 0),
+             stats.get("rules_covered", 0), stats.get("rules", 0),
+             stats.get("scanned_checked", 0), stats.get("declared_ranges", 0)))
     print("-" * 78)
     if errors:
         print("  ✗ 错误 %d 条：" % len(errors))
@@ -1524,8 +1626,12 @@ def main():
 
     check_figs()                           # F18：两种模式都要跑
 
-    if "--no-mermaid" not in argv:
+    mermaid_skipped = "--no-mermaid" in argv
+    if not mermaid_skipped:
         run_mermaid_parser(PARTS if parts_mode else CONTENT)
+
+    # F26 元校验放在最后：它要读前面各条规则报告的受检对象数
+    check_meta(parts_mode, mermaid_skipped=mermaid_skipped)
 
     if "--stats" in argv:
         for k, v in sorted(per_file.items()):
