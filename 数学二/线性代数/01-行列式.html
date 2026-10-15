@@ -187,12 +187,13 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <p><strong>2020 年真题改编（填空题，4 分）</strong></p>
 <p>计算行列式 $\begin{vmatrix} a & 0 & -1 & 1 \\ 0 & a & 1 & -1 \\ -1 & 1 & a & 0 \\ 1 & -1 & 0 & a \end{vmatrix}=$ ______。</p>
 <blockquote>
-<p>解析：第 1 行只有三个非零元，直接按第 1 行展开，$D=aA_{11}+(-1)A_{13}+1\cdot A_{14}$。三个三阶余子式都用「造零 + 展开」各降一阶，sympy 复算得 $M_{11}=a^{3}-2a$、$M_{13}=M_{14}=a^{2}$。代回并注意符号 $A_{13}=(-1)^{1+3}M_{13}=a^{2}$、$A_{14}=(-1)^{1+4}M_{14}=-a^{2}$：</p>
+<p>解析：第 1 行只有三个非零元，直接按第 1 行展开，$D=aA_{11}+(-1)A_{13}+1\cdot A_{14}$。</p>
+<p>三个三阶余子式都用「造零 + 展开」各降一阶，sympy 复算得 $M_{11}=a^{3}-2a$、$M_{13}=M_{14}=a^{2}$。</p>
+<p>代回并注意符号 $A_{13}=(-1)^{1+3}M_{13}=a^{2}$、$A_{14}=(-1)^{1+4}M_{14}=-a^{2}$：</p>
+<p>$$D=a(a^{3}-2a)+(-1)\cdot a^{2}+1\cdot(-a^{2})=a^{4}-4a^{2}.$$</p>
+<p>sympy 复算：$\det = a^4-4a^2=a^2(a-2)(a+2)$，取 $a=3$ 数值为 $45=9\times 5$。</p>
+<p>与 $a^{2}(a^{2}-4)$ 一致。结论 $a^{4}-4a^{2}$。</p>
 </blockquote>
-<p>$$
-D=a(a^{3}-2a)+(-1)\cdot a^{2}+1\cdot(-a^{2})=a^{4}-4a^{2}.
-$$</p>
-<p>sympy 复算：$\det = a^4-4a^2=a^2(a-2)(a+2)$，取 $a=3$ 数值为 $45=9\times 5$，与 $a^{2}(a^{2}-4)$ 一致。结论 $a^{4}-4a^{2}$。</p>
 <hr /></div></section><nav class="chapter-nav"><a class="cn-prev" href="../高等数学/09-多元函数微积分学.html" title="键盘 ← 或 k">← 多元函数微积分学</a><a class="cn-next" href="02-矩阵.html" title="键盘 → 或 j">矩阵 →</a></nav></div></main></div>
 <footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong> · 文字与插图 CC BY-NC-SA 4.0（禁止商业使用）· 代码 MIT · 第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。 · <a href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
 <button class="theme-toggle" type="button" title="切换深色/浅色">◐ 主题</button>

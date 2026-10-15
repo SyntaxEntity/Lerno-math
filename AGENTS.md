@@ -48,9 +48,10 @@ website/math2-kaoyan/
 python3 scripts/run_all.py         # 一键全流程：绘图→复算→组装→校验→反向测试→HTML
 python3 scripts/run_all.py --quick # 跳过反向测试与绘图，只重建 + 校验
 python3 scripts/verify_math.py     # sympy 复算全部数值（含图上坐标）
-python3 scripts/validate.py        # 校验 F1—F23（含 F22 外壳 + site.js 行为层）
+python3 scripts/validate.py        # 校验 F1—F25（含 F22 外壳/行为层、F24 渲染残留、F25 解析排版）
 python3 scripts/reverse_tests.py   # 反向测试：每条规则注入反例，确认它真会报错
 node scripts/test_site_js.mjs      # 单独跑外壳脚本行为测试（jsdom，12 条）
+python3 scripts/diff_math.py HEAD  # 改解析排版后：证明公式正文一字未改
 ```
 
 Python 依赖按用途分两个文件（PLAN §1.2.1）：`数学二/scripts/requirements.txt`
@@ -62,7 +63,7 @@ Python 依赖按用途分两个文件（PLAN §1.2.1）：`数学二/scripts/req
 ## 四、发布
 
 `math2-site/` 是**构建产物，不入库**。发布走 `.github/workflows/pages.yml`：
-推 `main` → 装依赖 → 两道门禁（`validate.py` 形式校验 F1—F23 / `verify_math.py` 数值复算）
+推 `main` → 装依赖 → 两道门禁（`validate.py` 形式校验 F1—F25 / `verify_math.py` 数值复算）
 → `pack_site.py math2-site` → 上传。任一门禁不过即中止部署。
 
 本地预览：`python3 数学二/scripts/pack_site.py math2-site`，
@@ -79,4 +80,7 @@ Python 依赖按用途分两个文件（PLAN §1.2.1）：`数学二/scripts/req
 - 考频/真题数据凡不能核实的，标注「考频待补充」或「真题改编」，**不许编造**。
   数据口径与可信度分级见 `数学二/README.md` 第三节。
 - 站点是完全离线的纯静态页，改完直接用浏览器打开 `index.html` 验证，无需起服务器。
+- **真题示例的解析一律「一步一段 + 关键公式独立成行」**（F25 强制）；
+  引用块内相邻 `>` 行会并成同一段，所以每个段落之间**必须写空 `>` 行**。
+- **加粗的闭合记号后面不能紧跟汉字**（`**…。**汉字` 不闭合，页面会露出 `**`，F24 会报）。
 - 临时依赖放 `.tools/`（已 gitignore，约 478 MB），不要提交 `__pycache__/`。

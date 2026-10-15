@@ -244,6 +244,10 @@ def main():
 （如反常积分两类、微分方程特征根三种情形），关键条件加粗显示。
 在 HTML 里这些模块会渲染成 `h3/h4` 层级，可直接用浏览器的文档大纲跳转。
 
+**真题示例的解析**：一律「一步一段 + 关键公式独立成行」——大公式单独占一行的
+`$$…$$`，短符号留在句子里。这样在手机上也能一眼看清每一步在算什么；
+格式由校验项 F25 强制（任一段行内公式 ≤3 个、纯文字 ≤200 字）。
+
 **Markdown 的定位**：`数学二/**/*.md` 是**由 `parts/` 生成的中间产物**，
 用途是版本管理与二次加工，阅读体验不如 HTML。二者都由脚本生成，
 改内容请改 `parts/` 后重跑 `run_all.py`。
@@ -285,6 +289,7 @@ def main():
     ├── reverse_tests.py   反向测试：每条校验规则注入反例，确认它真会报错
     ├── check_mermaid.mjs  F3 的真实解析器层：node + 官方 mermaid parse()
     ├── test_site_js.mjs   F22 的行为层：jsdom 真跑 assets/site.js（12 条断言）
+    ├── diff_math.py       公式不变量审阅：改排版前后，公式正文必须逐字一致
     ├── requirements.txt   Python 依赖：CI 与校验所需的全部（锁定版本）
     ├── requirements-dev.txt  本地生成链路额外所需（含 matplotlib）
     ├── tools-package.json Node 侧依赖清单（与站点运行时同版本）
@@ -514,6 +519,8 @@ python3 数学二/scripts/pack_site.py math2-site
 | F21 | HTML：每页正文仅 1 个 `h1`；同一章节内不得有重复标题 |
 | F22 | 外壳骨架：每页顶栏/面包屑/页脚/侧栏齐全，章节页有正文底部翻页与六段锚点，首页科目卡片数 = 科目数；**并用 jsdom 真跑 assets/site.js**（缺 node/jsdom 即报错） |
 | F23 | 外置资源：assets/site.css / site.js 真的外置且处处可达；出现内联 `<style>`/`<script>` 即报错 |
+| F24 | 渲染残留：正文里不得出现字面 `**`（加粗定界符没能闭合时页面会直接显示星号）；成品与内容源两种模式都查 |
+| F25 | 解析排版：真题示例的解析必须一步一段、关键公式独立成行——任一段的行内公式 ≤3 个、纯文字 ≤200 字 |
 
 > 反向测试记录见 `数学二/scripts/REVERSE_TESTS.md`。
 

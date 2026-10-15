@@ -241,9 +241,30 @@
 <p>设 $A$ 为四阶矩阵，$A^{*}$ 为 $A$ 的伴随矩阵，若 $A(A-A^{*})=O$，且 $A\neq A^{*}$，则 $r(A)$ 的可能取值为（　）</p>
 <p>A. 0 或 1　　B. 1 或 3　　C. 2 或 3　　D. 1 或 2</p>
 <blockquote>
-<p>解析：第一步，化简条件。由 $AA^{*}=|A|E$：若 $|A|\neq0$，则 $A$ 可逆，在 $A(A-A^{*})=O$ 两边左乘 $A^{-1}$ 得 $A=A^{*}$，与 $A\neq A^{*}$ 矛盾，故 $|A|=0$，于是 $AA^{*}=O$，题设条件化为 $A^{2}=O$。</p>
-<p>第二步，定出 $r(A)$ 的上界。设 $A^{2}=O$，把 $A$ 按列分块为 $A=(\alpha_1,\alpha_2,\alpha_3,\alpha_4)$，则每个 $\alpha_j$ 都满足 $A\alpha_j=0$，即 $\operatorname{Col}(A)\subseteq\operatorname{Null}(A)$，取维数得 $r(A)\le 4-r(A)$，故 $r(A)\le 2$。这一步同时排除了 $r(A)=4$（此时 $A$ 可逆，与 $|A|=0$ 矛盾）与 $r(A)=3$：秩 3 时 $\operatorname{Null}(A)$ 只有一维，而 $\operatorname{Col}(A)$ 有三维，包含关系要求 $3\le 1$，不可能。</p>
-<p>第三步，验证 $r(A)=1$ 与 $r(A)=2$ 都能取到。取 $A=\operatorname{diag}(1,0,0,0)$，sympy 复算 $A^{*}=O$、$A^{2}=O$、$A\neq A^{*}$，此时 $r(A)=1$；取 $A=\begin{pmatrix}0&1&0&0\\0&0&0&0\\0&0&0&1\\0&0&0&0\end{pmatrix}$，sympy 复算同样有 $|A|=0$、$A^{*}=O$、$A^{2}=O$、$A\neq A^{*}$，而 $r(A)=2$。综上 $r(A)$ 的可能取值为 $1$ 或 $2$，选 D。</p>
+<p>解析：第一步，化简条件。由 $AA^{*}=|A|E$：若 $|A|\neq0$，则 $A$ 可逆。</p>
+<p>在 $A(A-A^{*})=O$ 两边左乘 $A^{-1}$ 得 $A=A^{*}$。</p>
+<p>这与 $A\neq A^{*}$ 矛盾，故 $|A|=0$。</p>
+<p>于是 $AA^{*}=O$，题设条件化为 $A^{2}=O$。</p>
+<p>第二步，定出 $r(A)$ 的上界。</p>
+<p>设 $A^{2}=O$，把 $A$ 按列分块为 $A=(\alpha_1,\alpha_2,\alpha_3,\alpha_4)$。</p>
+<p>则每个 $\alpha_j$ 都满足 $A\alpha_j=0$，即</p>
+<p>$$\operatorname{Col}(A)\subseteq\operatorname{Null}(A)$$</p>
+<p>取维数得</p>
+<p>$$r(A)\le 4-r(A)$$</p>
+<p>故 $r(A)\le 2$。</p>
+<p>这一步同时排除了 $r(A)=4$（此时 $A$ 可逆，与 $|A|=0$ 矛盾）。</p>
+<p>也排除了 $r(A)=3$：秩 3 时 $\operatorname{Null}(A)$ 只有一维。</p>
+<p>而 $\operatorname{Col}(A)$ 有三维，包含关系要求 $3\le 1$，不可能。</p>
+<p>第三步，验证 $r(A)=1$ 与 $r(A)=2$ 都能取到。</p>
+<p>取</p>
+<p>$$A=\operatorname{diag}(1,0,0,0)$$</p>
+<p>sympy 复算 $A^{*}=O$、$A^{2}=O$、$A\neq A^{*}$。</p>
+<p>此时 $r(A)=1$。</p>
+<p>再取</p>
+<p>$$A=\begin{pmatrix}0&1&0&0\\0&0&0&0\\0&0&0&1\\0&0&0&0\end{pmatrix}$$</p>
+<p>sympy 复算同样有 $|A|=0$、$A^{*}=O$、$A^{2}=O$。</p>
+<p>此时 $A\neq A^{*}$，而 $r(A)=2$。</p>
+<p>综上 $r(A)$ 的可能取值为 $1$ 或 $2$，选 D。</p>
 </blockquote>
 <hr /></div></section><nav class="chapter-nav"><a class="cn-prev" href="01-行列式.html" title="键盘 ← 或 k">← 行列式</a><a class="cn-next" href="03-向量与向量组.html" title="键盘 → 或 j">向量与向量组 →</a></nav></div></main></div>
 <footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong> · 文字与插图 CC BY-NC-SA 4.0（禁止商业使用）· 代码 MIT · 第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。 · <a href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>

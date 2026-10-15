@@ -183,11 +183,31 @@
 <p>其中正确的个数为（　）</p>
 <p>A. 0　　B. 1　　C. 2　　D. 3</p>
 <blockquote>
-<p>解析：
-1. 命题（1）错：取 $f(x)=\frac{1}{x+1}$（在 $[0,+\infty)$ 上非负连续），则 $\int_0^{+\infty}f^2(x)\,\mathrm{d}x=\int_0^{+\infty}\frac{\mathrm{d}x}{(x+1)^2}=1$ 收敛，但 $\int_0^{+\infty}\frac{\mathrm{d}x}{x+1}$ 发散，可见 $f^2$ 收敛推不出 $f$ 收敛。
-2. 命题（2）对：设 $\lim_{x\to+\infty}x^pf(x)=\lambda$ 存在且 $p>1$。若 $\lambda>0$，则 $f(x)\sim\frac{\lambda}{x^p}$，由极限形式比较判别法（$p>1$）知积分收敛；若 $\lambda=0$，则存在 $X>0$，当 $x>X$ 时 $x^pf(x)<1$，即 $0\leqslant f(x)<\frac1{x^p}$，由比较判别法知积分收敛。
-3. 命题（3）错：收敛推不出 $x^pf(x)$ 存在极限。反例：令 $f$ 在每个区间 $[n,n+n^{-3}]$（$n=1,2,\cdots$）上取值为 $1$（端点光滑过渡），其余点取 $e^{-x}$，则 $\int_0^{+\infty}f(x)\,\mathrm{d}x\leqslant1+\sum_{n=1}^{\infty}\frac1{n^3}=1+\zeta(3)\approx2.202$ 收敛，而 $x^pf(x)$ 沿 $x=n$ 趋于 $+\infty$、沿 $x=n+\frac12$ 趋于 $0$，极限不存在。
-结论：三个命题中只有（2）正确，正确的个数为 $1$，选 B。</p>
+<p>解析：</p>
+<ol>
+<li>命题（1）错：取 $f(x)=\frac{1}{x+1}$（在 $[0,+\infty)$ 上非负连续），则</li>
+</ol>
+<p>$$\int_0^{+\infty}f^2(x)\,\mathrm{d}x=\int_0^{+\infty}\frac{\mathrm{d}x}{(x+1)^2}=1$$</p>
+<p>收敛，但</p>
+<p>$$\int_0^{+\infty}\frac{\mathrm{d}x}{x+1}$$</p>
+<p>发散，可见 $f^2$ 收敛推不出 $f$ 收敛。</p>
+<ol start="2">
+<li>命题（2）对：设 $\lim_{x\to+\infty}x^pf(x)=\lambda$ 存在且 $p>1$。</li>
+</ol>
+<p>若 $\lambda>0$，则 $f(x)\sim\frac{\lambda}{x^p}$，由极限形式比较判别法（$p>1$）知积分收敛；</p>
+<p>若 $\lambda=0$，则存在 $X>0$，</p>
+<p>当 $x>X$ 时 $x^pf(x)<1$，即</p>
+<p>$$0\leqslant f(x)<\frac1{x^p}$$</p>
+<p>由比较判别法知积分收敛。</p>
+<ol start="3">
+<li>命题（3）错：收敛推不出 $x^pf(x)$ 存在极限。</li>
+</ol>
+<p>反例：令 $f$ 在每个区间 $[n,n+n^{-3}]$（$n=1,2,\cdots$）</p>
+<p>上取值为 $1$（端点光滑过渡），其余点取 $e^{-x}$，则</p>
+<p>$$\int_0^{+\infty}f(x)\,\mathrm{d}x\leqslant1+\sum_{n=1}^{\infty}\frac1{n^3}=1+\zeta(3)\approx2.202$$</p>
+<p>收敛，而 $x^pf(x)$ 沿 $x=n$ 趋于 $+\infty$、</p>
+<p>沿 $x=n+\frac12$ 趋于 $0$，极限不存在。</p>
+<p>结论：三个命题中只有（2）正确，正确的个数为 $1$，选 B。</p>
 </blockquote>
 <hr /></div></section><nav class="chapter-nav"><a class="cn-prev" href="04-不定积分.html" title="键盘 ← 或 k">← 不定积分</a><a class="cn-next" href="06-定积分的几何与物理应用.html" title="键盘 → 或 j">定积分的几何与物理应用 →</a></nav></div></main></div>
 <footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong> · 文字与插图 CC BY-NC-SA 4.0（禁止商业使用）· 代码 MIT · 第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。 · <a href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>

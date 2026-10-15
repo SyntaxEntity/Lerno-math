@@ -239,10 +239,10 @@
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
 <ul>
-<li>**错在不验证条件就套用中值定理，例如对 $f(x)=|x|$ 在 $[-1,1]$ 上使用拉格朗日中值定理。**正确做法是先核对闭区间上连续与开区间内可导，此处 $x=0$ 处不可导，定理失效（事实上 $\frac{f(1)-f(-1)}{2}=0$ 却不存在使 $f'(\xi)=0$ 的点）。</li>
-<li>**错在由 $f'(x_0)=0$ 直接断言 $x_0$ 是极值点，例如 $y=x^3$ 在 $x=0$ 处 $f'(0)=0$ 但不是极值点。**正确做法是看 $f'$ 在 $x_0$ 两侧是否变号，或验证 $f''(x_0)\neq 0$。</li>
-<li>**错在由 $f''(x_0)=0$ 直接断言 $x_0$ 是拐点，例如 $y=x^4$ 在 $x=0$ 处 $f''(0)=0$ 而 $f''=12x^2$ 在两侧同号。**正确做法是验证 $f''$ 在 $x_0$ 两侧变号，或者验证 $f'''$ 存在且 $f'''(x_0)\neq 0$。</li>
-<li>**错在证明题中两个不同的中值点共用一个字母。**正确做法是分区间使用时分别记为 $\xi$ 与 $\eta$，并写清各自所在的开区间，例如先得 $\xi_1\in(0,a)$、$\xi_2\in(-a,0)$，再在 $(\xi_2,\xi_1)$ 内用介值定理。</li>
+<li><strong>错在不验证条件就套用中值定理，例如对 $f(x)=|x|$ 在 $[-1,1]$ 上使用拉格朗日中值定理</strong>。正确做法是先核对闭区间上连续与开区间内可导，此处 $x=0$ 处不可导，定理失效（事实上 $\frac{f(1)-f(-1)}{2}=0$ 却不存在使 $f'(\xi)=0$ 的点）。</li>
+<li><strong>错在由 $f'(x_0)=0$ 直接断言 $x_0$ 是极值点，例如 $y=x^3$ 在 $x=0$ 处 $f'(0)=0$ 但不是极值点</strong>。正确做法是看 $f'$ 在 $x_0$ 两侧是否变号，或验证 $f''(x_0)\neq 0$。</li>
+<li><strong>错在由 $f''(x_0)=0$ 直接断言 $x_0$ 是拐点，例如 $y=x^4$ 在 $x=0$ 处 $f''(0)=0$ 而 $f''=12x^2$ 在两侧同号</strong>。正确做法是验证 $f''$ 在 $x_0$ 两侧变号，或者验证 $f'''$ 存在且 $f'''(x_0)\neq 0$。</li>
+<li><strong>错在证明题中两个不同的中值点共用一个字母</strong>。正确做法是分区间使用时分别记为 $\xi$ 与 $\eta$，并写清各自所在的开区间，例如先得 $\xi_1\in(0,a)$、$\xi_2\in(-a,0)$，再在 $(\xi_2,\xi_1)$ 内用介值定理。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
 <p><strong>2023 年数二第 21 题（解答题，12 分）</strong></p>
@@ -250,7 +250,22 @@
 <p>（I）若 $f(0)=0$，则存在 $\xi\in(-a,a)$，使得 $f''(\xi)=\frac{1}{a^2}[f(a)+f(-a)]$；</p>
 <p>（II）若 $f(x)$ 在 $(-a,a)$ 内取得极值，则存在 $\eta\in(-a,a)$，使得 $|f''(\eta)|\ge\frac{1}{2a^2}|f(a)-f(-a)|$。</p>
 <blockquote>
-<p>解析：（I）由 $f''$ 连续，对 $f$ 在 $x=0$ 处用带拉格朗日余项的泰勒公式，分别取 $x=a$ 与 $x=-a$ 得 $f(a)=f(0)+f'(0)a+\frac{f''(\xi_1)}{2}a^2$ 与 $f(-a)=f(0)-f'(0)a+\frac{f''(\xi_2)}{2}a^2$，其中 $\xi_1\in(0,a)$、$\xi_2\in(-a,0)$。两式相加并用 $f(0)=0$ 得 $f(a)+f(-a)=\frac{a^2}{2}[f''(\xi_1)+f''(\xi_2)]$，再由 $f''$ 的连续性用介值定理，存在 $\xi\in(\xi_2,\xi_1)\subset(-a,a)$ 使 $f''(\xi)=\frac{f''(\xi_1)+f''(\xi_2)}{2}=\frac{f(a)+f(-a)}{a^2}$。（II）设 $f$ 在 $c\in(-a,a)$ 处取得极值，由费马引理 $f'(c)=0$，在 $x=c$ 处展开得 $f(a)=f(c)+\frac{f''(\eta_1)}{2}(a-c)^2$ 与 $f(-a)=f(c)+\frac{f''(\eta_2)}{2}(a+c)^2$；两式相减并取绝对值，记 $M=\max\{|f''(\eta_1)|,|f''(\eta_2)|\}$，则 $|f(a)-f(-a)|\le\frac{M}{2}[(a-c)^2+(a+c)^2]=M(a^2+c^2)\le 2a^2M$，于是 $M\ge\frac{|f(a)-f(-a)|}{2a^2}$，取使 $|f''(\eta)|=M$ 的那个点即得结论。</p>
+<p>解析：</p>
+<p><strong>（I）</strong> 由 $f''$ 连续，对 $f$ 用带拉格朗日余项的泰勒公式：</p>
+<p>在 $x=0$ 处展开，分别取 $x=a$ 与 $x=-a$，得</p>
+<p>$$f(a)=f(0)+f'(0)a+\frac{f''(\xi_1)}{2}a^2$$</p>
+<p>$$f(-a)=f(0)-f'(0)a+\frac{f''(\xi_2)}{2}a^2$$</p>
+<p>其中 $\xi_1\in(0,a)$、$\xi_2\in(-a,0)$。两式相加并用 $f(0)=0$ 得</p>
+<p>$$f(a)+f(-a)=\frac{a^2}{2}[f''(\xi_1)+f''(\xi_2)]$$</p>
+<p>再由 $f''$ 的连续性用介值定理：存在 $\xi\in(\xi_2,\xi_1)\subset(-a,a)$ 使</p>
+<p>$$f''(\xi)=\frac{f''(\xi_1)+f''(\xi_2)}{2}=\frac{f(a)+f(-a)}{a^2}$$</p>
+<p><strong>（II）</strong> 设 $f$ 在 $c\in(-a,a)$ 处取得极值，由费马引理知 $f'(c)=0$。</p>
+<p>在 $x=c$ 处展开得</p>
+<p>$$f(a)=f(c)+\frac{f''(\eta_1)}{2}(a-c)^2$$</p>
+<p>$$f(-a)=f(c)+\frac{f''(\eta_2)}{2}(a+c)^2$$</p>
+<p>两式相减并取绝对值，记 $M=\max\{|f''(\eta_1)|,|f''(\eta_2)|\}$，则</p>
+<p>$$|f(a)-f(-a)|\le\frac{M}{2}[(a-c)^2+(a+c)^2]=M(a^2+c^2)\le 2a^2M$$</p>
+<p>于是 $M\ge\frac{|f(a)-f(-a)|}{2a^2}$，取使 $|f''(\eta)|=M$ 的那个点即得结论。</p>
 </blockquote>
 <hr /></div></section><nav class="chapter-nav"><a class="cn-prev" href="02-导数与微分.html" title="键盘 ← 或 k">← 导数与微分</a><a class="cn-next" href="04-不定积分.html" title="键盘 → 或 j">不定积分 →</a></nav></div></main></div>
 <footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong> · 文字与插图 CC BY-NC-SA 4.0（禁止商业使用）· 代码 MIT · 第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。 · <a href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>

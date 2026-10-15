@@ -277,6 +277,58 @@ def _home_drop_card(t):
     return re.sub(r'<a class="hs-card".*?</a>', "", t, count=1, flags=re.S)
 
 
+
+def _bold_unclosable(t):
+    """往内容源塞一条「**…。**汉字」的加粗：按 CommonMark 侧翼规则无法闭合，
+    渲染后会露出字面 `**`（F24；用户实拍截图发现的那类缺陷）。"""
+    return t.replace("# 易错点\n\n",
+                     "# 易错点\n\n- **错在条件不足就下结论。**正确做法是先核对条件。\n", 1)
+
+
+def _merge_solution_paras(t):
+    """删掉「真题示例」解析里的空 `>` 行：渲染时所有步骤会并成**一个**段落（F25）。"""
+    head, sep, tail = t.partition("# 真题示例")
+    if not sep:
+        return t
+    return head + sep + re.sub(r"(?m)^>\s*$\n", "", tail)
+
+
+def _html_leftover_stars(t):
+    """成品 HTML 正文里出现字面 `**`（F24）。"""
+    return t.replace("<main>", "<main><p>**字面星号**汉字</p>", 1)
+
+
+def _html_cram_para(t):
+    """往「真题示例」的解析里塞一个含 5 个行内公式的段落（F25）。"""
+    return re.sub(r'(<section class="sec sec-real".*?<blockquote>)',
+                  lambda m: m.group(1) + "<p>$a$ $b$ $c$ $d$ $e$</p>",
+                  t, count=1, flags=re.S)
+
+
+
+def _drop_solution_quote(t):
+    """删掉真题示例里的整个 `> 解析` 引用块（F25 必须报"没有解析引用块"）。
+
+    这条反例防的是**静默通过**：排版判据是逐段检查的，段落列表为空时它什么都不会报。
+    """
+    head, sep, tail = t.partition("# 真题示例")
+    if not sep:
+        return t
+    return head + sep + re.sub(r"(?m)^>.*\n?", "", tail)
+
+
+
+def _html_cram_li(t):
+    """把 5 个行内公式塞进一个 `<ol><li>` 段落（F25 的 HTML 层必须也看列表）。
+
+    这条反例针对的是"只查 `<p>`"的盲区：步骤被渲染成列表项时，
+    段落内容不在 `<p>` 里，规则会看不到它。
+    """
+    return re.sub(r'(<section class="sec sec-real".*?<blockquote>)',
+                  lambda m: m.group(1) + "<ol><li>$a$ $b$ $c$ $d$ $e$</li></ol>",
+                  t, count=1, flags=re.S)
+
+
 def _dup_heading(t):
     """在**同一章节区块内**重复一个标题（F21 的判据范围）。
 
@@ -393,6 +445,12 @@ case("F20", "公式块 $$ 定界符丢失（与内容源不等量）", D01H, _ht
 case("F22", "删掉顶栏（外壳形式层）", D01H, _html_drop_topbar, mode="full")
 case("F22", "删掉页脚（外壳形式层）", D01H, _html_drop_footer, mode="full")
 case("F22", "首页少一张科目卡片", HOMEH, _home_drop_card, mode="full")
+case("F24", "内容源出现无法闭合的加粗（**…。**汉字）", G01, _bold_unclosable)
+case("F24", "成品 HTML 正文残留字面 **", D01H, _html_leftover_stars, mode="full")
+case("F25", "解析里的空 > 行被删（整段并成一段）", G05, _merge_solution_paras)
+case("F25", "解析里塞进 5 个行内公式的段落", D01H, _html_cram_para, mode="full")
+case("F25", "真题示例缺 `> 解析` 引用块（防静默通过）", G01, _drop_solution_quote)
+case("F25", "解析的列表项里塞 5 个行内公式（HTML 层盲区）", D01H, _html_cram_li, mode="full")
 case("F22", "site.js 深色类名写错（行为层必须抓到）", SITEJS, _html_break_site_js, mode="full")
 case("F23", "把外置样式内联回页面", D01H, _html_inline_style, mode="full")
 case("F23", "样式表引用不可达", D01H, _html_break_css_ref, mode="full")
@@ -400,6 +458,28 @@ case("F3", "mermaid 标签含圆括号未加引号（真实解析器层·成品�
      mode="full", mermaid=True)
 case("F3", "mermaid 标签含圆括号未加引号（真实解析器层·内容源）", G05, _bad_mermaid_syntax,
      mode="parts", mermaid=True)
+
+
+_BASELINE = {}
+ERROR_LINE = re.compile(r"\[F\d+\]")
+
+
+def baseline_errors(mode, allow_mermaid):
+    """未注入反例时，该模式下已有的报错行集合。
+
+    **为什么必须做基线差分**：早期判据是"跑完校验后输出里出现 `[Fxx]`"。
+    一旦这条规则本来就有既存报错（比如正在返工的文件），反例即使完全没生效，
+    用例也会"通过"——这正是"校验器是摆设"的另一种形态。
+    现在只认**注入之后新出现**的报错行，用例就不可能蒙对。
+    """
+    key = (mode, allow_mermaid)
+    if key not in _BASELINE:
+        out = run_validate(mode, allow_mermaid=allow_mermaid)
+        _BASELINE[key] = {ln.strip() for ln in out.split("\n") if ERROR_LINE.search(ln)}
+        print("  · 基线（%s%s）：已有 %d 条报错"
+              % (mode, "，含真实解析器" if allow_mermaid else "",
+                 len(_BASELINE[key])))
+    return _BASELINE[key]
 
 
 def run_validate(mode, allow_mermaid=False):
@@ -424,6 +504,10 @@ def main():
             continue
         original = open(target, encoding="utf-8").read()
         try:
+            # ⚠️ 基线必须在**注入之前**取：早期版本写在注入之后，
+            # 于是基线里已经含了本用例注入的那条报错，差集恒为空、
+            # 所有用例都会显示"未报错"。顺序错了，整个判据就失效。
+            base = baseline_errors(mode, mermaid)
             broken = mutate(original)
             if broken == original:
                 print("  ? %-5s %-42s 跳过（反例未改变内容，用例失效）" % (code, name))
@@ -432,12 +516,13 @@ def main():
             with open(target, "w", encoding="utf-8") as f:
                 f.write(broken)
             out = run_validate(mode, allow_mermaid=mermaid)
-            hit = ("[%s]" % code) in out
+            fresh = {ln.strip() for ln in out.split("\n") if ERROR_LINE.search(ln)} - base
+            hit = any(("[%s]" % code) in ln for ln in fresh)
             if hit:
                 passed += 1
                 print("  ✓ %-5s %-42s 已报错" % (code, name))
                 if verbose:
-                    for ln in out.split("\n"):
+                    for ln in sorted(fresh):
                         if "[%s]" % code in ln:
                             print("        " + ln.strip()[:140])
                             break

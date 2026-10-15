@@ -1049,6 +1049,19 @@ def check_html_math_and_nav():
         for attr in re.findall(r'data-(?:prev|next)="([^"]+)"', body):
             if not os.path.exists(os.path.normpath(os.path.join(d, attr))):
                 err(rp, 0, "F20", "键盘翻章目标不可达：%s" % attr)
+        # F24：渲染后不得残留字面 `**`
+        check_render_leftovers(body, rp, "F24", "html")
+        # F25：真题示例的解析必须一步一段、关键公式独立成行
+        sec = re.search(r'<section class="sec sec-real".*?</section>', body, re.S)
+        if sec:
+            bq = re.search(r"<blockquote>(.*?)</blockquote>", sec.group(0), re.S)
+            if bq:
+                # 段落既可能是 <p>，也可能是 <ol><li>（"1. …" 这类有序步骤会被
+                # Markdown 渲染成列表）。**只查 <p> 会漏掉列表里的整段**——
+                # 而列表恰恰是最容易塞进一堆行内公式的地方。
+                paras = [a or b for a, b in
+                         re.findall(r"<p>(.*?)</p>|<li>(.*?)</li>", bq.group(1), re.S)]
+                check_solution_layout(paras, rp, "F25")
     stats["html_math"] = n_math
 
 
@@ -1285,6 +1298,109 @@ def check_external_assets():
                 % len(inline_js))
 
 
+
+# ---------------------------------------------------------------------------
+# F24 / F25：渲染可读性（用户实拍反馈暴露的两类缺陷）
+# ---------------------------------------------------------------------------
+INLINE_MATH = re.compile(r"(?<!\$)\$([^$\n]+?)\$(?!\$)")
+DISPLAY_MATH = re.compile(r"\$\$.+?\$\$", re.S)
+# 解析里单个段落的上限：行内公式 ≤3 个、纯文字 ≤200 字。超过就说明该把公式
+# 提成独立成行的 `$$…$$`、或者该把一大段拆成几步（这正是用户截图里的问题）。
+MAX_INLINE_PER_PARA = 3
+MAX_PARA_TEXT = 200
+
+
+def _strip_math(text):
+    """去掉 `$$…$$` 与 `$…$`，用于统计"纯文字"长度。"""
+    return INLINE_MATH.sub("", DISPLAY_MATH.sub("", text))
+
+
+def _blockquote_paras(lines):
+    """按 Markdown 规则把 `>` 行合并成段落：**相邻的非空 `>` 行属于同一段**。
+
+    这正是 P2 之后暴露的那个缺陷的成因：`> 1. …` / `> 2. …` 不写空 `>` 行时，
+    渲染出来是**一个** `<p>`，几十个公式连成一坨。所以在内容源阶段就按同一规则
+    合并，才能让写手在 build 之前看到真实的分段结果。
+    """
+    paras, cur = [], []
+    for ln in lines:
+        if not ln.startswith(">"):
+            if cur:
+                paras.append(" ".join(cur)); cur = []
+            continue
+        body = ln[1:].strip()
+        if body:
+            cur.append(body)
+        elif cur:
+            paras.append(" ".join(cur)); cur = []
+    if cur:
+        paras.append(" ".join(cur))
+    return paras
+
+
+def check_render_leftovers(text, path, code, mode):
+    """F24：渲染后不得残留字面 Markdown 记号（`**`）。
+
+    为什么要有：`**错在…。**正确做法` 这种写法里，闭合定界符前面是句号、
+    后面紧跟汉字，按 CommonMark 的侧翼规则**无法闭合**，于是页面上直接露出
+    `**`（用户实拍截图发现，全库 14 处）。这类错误在源文件里看起来完全正常，
+    只有渲染出来才看得见——所以既要在成品 HTML 上查，也要在内容源上查。
+    """
+    if mode == "html":
+        body = re.sub(r"<pre.*?</pre>|<code.*?</code>|<script.*?</script>|<style.*?</style>",
+                      "", text, flags=re.S)
+        body = body[body.find("<main>"):] if "<main>" in body else body
+    else:
+        # 内容源：按真实流水线渲染一遍（先保护公式，再交给 Markdown）
+        try:
+            import markdown as _md
+        except ImportError:
+            return
+        prot, _unprotect = protect_math_for_check(text)
+        body = _md.markdown(prot, extensions=["tables", "fenced_code", "sane_lists"])
+    body = DISPLAY_MATH.sub("", body)          # 公式区间里的 `*` 是合法的（如 A^{*}）
+    body = INLINE_MATH.sub("", body)
+    n = body.count("**")
+    if n:
+        err(path, 0, code, "渲染后残留字面 `**` %d 处（加粗定界符没能闭合，"
+                           "页面上会直接显示星号）" % n)
+
+
+def protect_math_for_check(text):
+    """给 F24 的内容源检查用：把公式换成占位符（与 build_html 的做法一致）。"""
+    store = []
+
+    def stash(m):
+        store.append(m.group(0))
+        return "@@M%d@" % (len(store) - 1)
+
+    text = re.sub(r"\$\$.*?\$\$", stash, text, flags=re.S)
+    text = re.sub(r"\$[^$\n]+?\$", stash, text)
+    return text, lambda h: h
+
+
+def check_solution_layout(paras, path, code):
+    """F25：真题示例的解析必须"一步一段 + 关键公式独立成行"。
+
+    判据（对解析块里的每个段落）：
+      (a) 行内公式 ≤ MAX_INLINE_PER_PARA 个——超了就该把大公式提出来；
+      (b) 纯文字 ≤ MAX_PARA_TEXT 字——超了就该拆成几步。
+    用户实拍的正是最坏情况：一整段 715 字、24 个行内公式，手机上没法读。
+    """
+    for i, para in enumerate(paras, 1):
+        body = DISPLAY_MATH.sub("", para)
+        n = len(INLINE_MATH.findall(body))
+        txt = len(re.sub(r"\s+", "", _strip_math(body)))
+        if n > MAX_INLINE_PER_PARA:
+            err(path, 0, code, "解析第 %d 段有 %d 个行内公式（上限 %d）："
+                               "请把大公式提成独立成行的 `$$…$$`"
+                % (i, n, MAX_INLINE_PER_PARA))
+        if txt > MAX_PARA_TEXT:
+            err(path, 0, code, "解析第 %d 段纯文字 %d 字（上限 %d）："
+                               "请拆成几步，每步一个 `>` 段落"
+                % (i, txt, MAX_PARA_TEXT))
+
+
 def check_completeness():
     """F16：交付物完整性——不得静默缺失。"""
     need = [os.path.join(CONTENT, "README.md"), os.path.join(CONTENT, "index.html")]
@@ -1375,6 +1491,27 @@ def main():
                     err("parts/%s" % k, 0, "F0", "缺少内容源 %s.md" % t[6])
                     continue
                 validate_partial(k, t, p, mermaid_blocks)
+                # F24 / F25 在内容源阶段就跑一遍：写手改完 parts 立刻能看到，
+                # 不必等 build 之后才发现（与 F3 扫描根随模式走是同一个道理）。
+                raw = open(p, encoding="utf-8").read()
+                check_render_leftovers(raw, os.path.relpath(p, ROOT), "F24", "parts")
+                m = re.search(r"(?m)^# 真题示例\s*$", raw)
+                if m:
+                    tail = raw[m.end():].split("\n")
+                    # 真题示例必须给出 `> 解析：…` 引用块；没有的话下面的排版检查
+                    # 会"无段落可查"而静默通过——静默通过比报错更危险。
+                    if not any(ln.startswith(">") for ln in tail):
+                        err(os.path.relpath(p, ROOT), 0, "F25",
+                            "真题示例里没有 `> 解析：…` 引用块（模板要求逐条给解析）")
+                    bq = []
+                    started = False
+                    for ln in tail:
+                        if ln.startswith(">"):
+                            started = True; bq.append(ln)
+                        elif started and ln.strip():
+                            break
+                    check_solution_layout(_blockquote_paras(bq),
+                                          os.path.relpath(p, ROOT), "F25")
         stats["hot"] = sum(1 for _, t in T.all_topics() if t[5])
 
     check_figs()                           # F18：两种模式都要跑

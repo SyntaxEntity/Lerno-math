@@ -283,10 +283,24 @@
 <p>设矩阵 $A=\begin{pmatrix} 0 & 1 & a \\ 1 & 0 & 1 \end{pmatrix}$，$B=\begin{pmatrix} 1 & 1 \\ 1 & 1 \\ b & 2 \end{pmatrix}$，二次型 $f(x_1,x_2,x_3)=x^{T}BAx$，已知方程组 $Ax=0$ 的解是 $B^{T}x=0$ 的解，但两个方程组不同解。</p>
 <p>（1）求 $a,b$ 的值；（2）求正交矩阵 $Q$，使变换 $x=Qy$ 将 $f(x_1,x_2,x_3)$ 化为标准形。</p>
 <blockquote>
-<p>解析（本例只解第（2）问，$a=1,b=2$ 由第（1）问得到，见「线性方程组」一章）：第一步，代入 $a=1,b=2$ 算出二次型矩阵。$BA=\begin{pmatrix}1&1&2\\1&1&2\\2&2&4\end{pmatrix}$，它本身已经是对称矩阵，故 $f=x^{T}(BA)x$ 的矩阵就是 $S=\begin{pmatrix}1&1&2\\1&1&2\\2&2&4\end{pmatrix}$。</p>
-<p>第二步，求 $S$ 的特征值：$|S-\lambda E|=\lambda^{2}(\lambda-6)$，sympy 复算特征值为 $6,0,0$，于是二次型的标准形只含一个平方项，系数为 $6$。</p>
-<p>第三步，求正交矩阵。$\lambda=6$ 对应特征向量 $(1,1,2)^{T}$，单位化得 $q_1=\frac{1}{\sqrt6}(1,1,2)^{T}$；$\lambda=0$ 的特征子空间由 $(-1,1,0)^{T}$、$(-2,0,1)^{T}$ 张成，对其做施密特正交化并单位化得 $q_2=\frac{1}{\sqrt2}(1,-1,0)^{T}$、$q_3=\frac{1}{\sqrt3}(-1,-1,1)^{T}$。sympy 复算 $Q^{T}Q=E$ 且 $Q^{T}SQ=\operatorname{diag}(6,0,0)$。</p>
-<p>第四步，写出结论：取 $Q=\begin{pmatrix}\frac{1}{\sqrt6}&\frac{1}{\sqrt2}&-\frac{1}{\sqrt3}\\ \frac{1}{\sqrt6}&-\frac{1}{\sqrt2}&-\frac{1}{\sqrt3}\\ \frac{2}{\sqrt6}&0&\frac{1}{\sqrt3}\end{pmatrix}$，则正交变换 $x=Qy$ 把 $f$ 化为标准形 $f=6y_1^{2}$。</p>
+<p>解析（本例只解第（2）问，$a=1,b=2$ 由第（1）问得到，见「线性方程组」一章）：</p>
+<p><strong>第一步</strong>，代入 $a=1,b=2$ 算出二次型矩阵。</p>
+<p>$$BA=\begin{pmatrix}1&1&2\\1&1&2\\2&2&4\end{pmatrix}$$</p>
+<p>它本身已经是对称矩阵，故 $f=x^{T}(BA)x$ 的矩阵就是</p>
+<p>$$S=\begin{pmatrix}1&1&2\\1&1&2\\2&2&4\end{pmatrix}$$</p>
+<p><strong>第二步</strong>，求 $S$ 的特征值：</p>
+<p>$$|S-\lambda E|=\lambda^{2}(\lambda-6)$$</p>
+<p>sympy 复算特征值为 $6,0,0$，于是二次型的标准形只含一个平方项，系数为 $6$。</p>
+<p><strong>第三步</strong>，求正交矩阵。</p>
+<p>$\lambda=6$ 对应特征向量 $(1,1,2)^{T}$，单位化得</p>
+<p>$$q_1=\frac{1}{\sqrt6}(1,1,2)^{T}$$</p>
+<p>$\lambda=0$ 的特征子空间由 $(-1,1,0)^{T}$、$(-2,0,1)^{T}$ 张成，对其做施密特正交化并单位化得</p>
+<p>$$q_2=\frac{1}{\sqrt2}(1,-1,0)^{T}$$</p>
+<p>$$q_3=\frac{1}{\sqrt3}(-1,-1,1)^{T}$$</p>
+<p>sympy 复算 $Q^{T}Q=E$ 且 $Q^{T}SQ=\operatorname{diag}(6,0,0)$。</p>
+<p><strong>第四步</strong>，写出结论：取</p>
+<p>$$Q=\begin{pmatrix}\frac{1}{\sqrt6}&\frac{1}{\sqrt2}&-\frac{1}{\sqrt3}\\ \frac{1}{\sqrt6}&-\frac{1}{\sqrt2}&-\frac{1}{\sqrt3}\\ \frac{2}{\sqrt6}&0&\frac{1}{\sqrt3}\end{pmatrix}$$</p>
+<p>则正交变换 $x=Qy$ 把 $f$ 化为标准形 $f=6y_1^{2}$。</p>
 </blockquote>
 <hr /></div></section><nav class="chapter-nav"><a class="cn-prev" href="05-特征值与特征向量.html" title="键盘 ← 或 k">← 特征值与特征向量</a><a class="cn-next off" href="#" title="键盘 → 或 j">已是最后一章 →</a></nav></div></main></div>
 <footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong> · 文字与插图 CC BY-NC-SA 4.0（禁止商业使用）· 代码 MIT · 第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。 · <a href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>

@@ -231,10 +231,10 @@
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
 <ul>
-<li>**错在见到 $\frac00$ 型就直接洛必达，忘记核对前提。**正确做法是先验证去心邻域内 $f$ 与 $g$ 可导、$g'(x)\neq 0$、导数之比的极限存在；若 $\lim\frac{f'}{g'}$ 振荡不存在，只能换方法，不能断言原极限不存在，例如 $\lim_{x\to\infty}\frac{x+\sin x}{x}=1$。</li>
-<li>**错在加减法中随手用等价无穷小替换，把 $\frac{\tan x-\sin x}{x^3}$ 里的两项都换成 $x$ 而算出极限 0。**正确结果是 $\frac12$，因为替换后发生了同阶相消，此时必须升到三阶用 $\tan x-\sin x\sim\frac{x^3}{2}$。</li>
-<li>**错在认为极限存在必须要求函数在该点有定义。**正确结论是极限只与去心邻域有关，$f(x_0)$ 是否存在、等于多少都不影响 $\lim_{x\to x_0}f(x)$，这正是可去间断点的来源。</li>
-<li>**错在只算一侧极限就把间断点归入第一类。**正确做法是两侧都要算：只要有一侧极限为无穷大或振荡不存在，该点就是第二类间断点。</li>
+<li><strong>错在见到 $\frac00$ 型就直接洛必达，忘记核对前提</strong>。正确做法是先验证去心邻域内 $f$ 与 $g$ 可导、$g'(x)\neq 0$、导数之比的极限存在；若 $\lim\frac{f'}{g'}$ 振荡不存在，只能换方法，不能断言原极限不存在，例如 $\lim_{x\to\infty}\frac{x+\sin x}{x}=1$。</li>
+<li><strong>错在加减法中随手用等价无穷小替换，把 $\frac{\tan x-\sin x}{x^3}$ 里的两项都换成 $x$ 而算出极限 0</strong>。正确结果是 $\frac12$，因为替换后发生了同阶相消，此时必须升到三阶用 $\tan x-\sin x\sim\frac{x^3}{2}$。</li>
+<li><strong>错在认为极限存在必须要求函数在该点有定义</strong>。正确结论是极限只与去心邻域有关，$f(x_0)$ 是否存在、等于多少都不影响 $\lim_{x\to x_0}f(x)$，这正是可去间断点的来源。</li>
+<li><strong>错在只算一侧极限就把间断点归入第一类</strong>。正确做法是两侧都要算：只要有一侧极限为无穷大或振荡不存在，该点就是第二类间断点。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
 <p><strong>2024 年数二第 1 题（选择题，5 分）</strong></p>
@@ -244,7 +244,16 @@
 <p>C. 1</p>
 <p>D. 0</p>
 <blockquote>
-<p>解析：间断点只可能出现在 $x=0,1,2$ 三处（$x=0$ 使幂函数失去意义，$x=1,2$ 使指数没有定义）。$x\to 0$ 时 $\frac{\ln|x|}{(1-x)(x-2)}\to+\infty$，故 $f(x)\to+\infty$，两侧极限都不存在，$x=0$ 是第二类间断点。$x\to 1$ 时记 $x=1+\varepsilon$，则 $(1-x)(x-2)\approx\varepsilon$、$\ln|x|\approx\varepsilon$，指数与 $\ln|x|$ 之积趋于 1，故 $f(x)\to e$，左右极限都存在且相等，$x=1$ 是可去间断点。$x\to 2^-$ 时 $f(x)\to+\infty$，$x\to 2^+$ 时 $f(x)\to 0$，$x=2$ 也是第二类间断点。所以第一类间断点只有 $x=1$ 一个，选 <strong>C</strong>。</p>
+<p>解析：间断点只可能出现在 $x=0,1,2$ 三处（$x=0$ 使幂函数失去意义，$x=1,2$ 使指数没有定义）。</p>
+<p>$x\to 0$ 时</p>
+<p>$$\frac{\ln|x|}{(1-x)(x-2)}\to+\infty$$</p>
+<p>故 $f(x)\to+\infty$，两侧极限都不存在，$x=0$ 是第二类间断点。</p>
+<p>$x\to 1$ 时记 $x=1+\varepsilon$。</p>
+<p>此时 $(1-x)(x-2)\approx\varepsilon$、$\ln|x|\approx\varepsilon$，指数与 $\ln|x|$ 之积趋于 1。</p>
+<p>故 $f(x)\to e$，左右极限都存在且相等，$x=1$ 是可去间断点。</p>
+<p>$x\to 2^-$ 时 $f(x)\to+\infty$。</p>
+<p>$x\to 2^+$ 时 $f(x)\to 0$，$x=2$ 也是第二类间断点。</p>
+<p>所以第一类间断点只有 $x=1$ 一个，选 <strong>C</strong>。</p>
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p>
@@ -425,16 +434,21 @@
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
 <ul>
-<li>**错在把连续当成可导的充分条件。**正确结论是可导必连续、连续不一定可导，例如 $|x|$ 在 $x=0$ 处连续但左右导数分别为 $-1$ 与 $1$，不可导。</li>
-<li>**错在分段函数在分界点处先分段求导再代入。**正确做法是分界点必须用定义算左右导数（或验证 $f'$ 在该点的左右极限与定义值是否一致），因为分段的求导公式只在各自的开区间内成立。</li>
-<li>**错在参数方程的二阶导写成 $\frac{y''(t)}{x''(t)}$。**正确公式是 $\frac{d^2y}{dx^2}=\frac{x'y''-y'x''}{(x')^3}$，例如 $x=t^2$、$y=t^3$ 在 $t=1$ 处 $\frac{dy}{dx}=\frac32$、$\frac{d^2y}{dx^2}=\frac34$。</li>
-<li>**错在曲率与曲率半径混用，或忘记分母是 $(1+y'^2)^{3/2}$。**正确关系是 $R=\frac1K$，如 $y^2=x$ 在原点 $K=2$、$R=\frac12$，圆心在凹向一侧的法线上，即 $\left(\frac12,0\right)$。</li>
+<li><strong>错在把连续当成可导的充分条件</strong>。正确结论是可导必连续、连续不一定可导，例如 $|x|$ 在 $x=0$ 处连续但左右导数分别为 $-1$ 与 $1$，不可导。</li>
+<li><strong>错在分段函数在分界点处先分段求导再代入</strong>。正确做法是分界点必须用定义算左右导数（或验证 $f'$ 在该点的左右极限与定义值是否一致），因为分段的求导公式只在各自的开区间内成立。</li>
+<li><strong>错在参数方程的二阶导写成 $\frac{y''(t)}{x''(t)}$</strong>。正确公式是 $\frac{d^2y}{dx^2}=\frac{x'y''-y'x''}{(x')^3}$，例如 $x=t^2$、$y=t^3$ 在 $t=1$ 处 $\frac{dy}{dx}=\frac32$、$\frac{d^2y}{dx^2}=\frac34$。</li>
+<li><strong>错在曲率与曲率半径混用，或忘记分母是 $(1+y'^2)^{3/2}$</strong>。正确关系是 $R=\frac1K$，如 $y^2=x$ 在原点 $K=2$、$R=\frac12$，圆心在凹向一侧的法线上，即 $\left(\frac12,0\right)$。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
 <p><strong>2024 年数二第 14 题（填空题，5 分）</strong></p>
 <p>已知函数 $f(x)=(e^x+1)x^2$，则 $f^{(5)}(1)=$ ______。</p>
 <blockquote>
-<p>解析：$x^2$ 的三阶及以上导数恒为零，故 $f^{(5)}(x)=(x^2e^x)^{(5)}+0$。对 $u=x^2$、$v=e^x$ 用莱布尼茨公式，利用 $v^{(k)}=e^x$ 得 $(x^2e^x)^{(5)}=C_5^0x^2e^x+C_5^1\cdot 2x\cdot e^x+C_5^2\cdot 2\cdot e^x=e^x(x^2+10x+20)$，$x^2$ 的三阶导为零使 $k\ge 3$ 的项全部消失。代入 $x=1$ 得 $f^{(5)}(1)=31e$。</p>
+<p>解析：</p>
+<p>$x^2$ 的三阶及以上导数恒为零，故 $f^{(5)}(x)=(x^2e^x)^{(5)}+0$。</p>
+<p>对 $u=x^2$、$v=e^x$ 用莱布尼茨公式，利用 $v^{(k)}=e^x$ 得</p>
+<p>$$(x^2e^x)^{(5)}=C_5^0x^2e^x+C_5^1\cdot 2x\cdot e^x+C_5^2\cdot 2\cdot e^x=e^x(x^2+10x+20)$$</p>
+<p>$x^2$ 的三阶导为零使 $k\ge 3$ 的项全部消失。</p>
+<p>代入 $x=1$ 得 $f^{(5)}(1)=31e$。</p>
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p>
@@ -664,10 +678,10 @@
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
 <ul>
-<li>**错在不验证条件就套用中值定理，例如对 $f(x)=|x|$ 在 $[-1,1]$ 上使用拉格朗日中值定理。**正确做法是先核对闭区间上连续与开区间内可导，此处 $x=0$ 处不可导，定理失效（事实上 $\frac{f(1)-f(-1)}{2}=0$ 却不存在使 $f'(\xi)=0$ 的点）。</li>
-<li>**错在由 $f'(x_0)=0$ 直接断言 $x_0$ 是极值点，例如 $y=x^3$ 在 $x=0$ 处 $f'(0)=0$ 但不是极值点。**正确做法是看 $f'$ 在 $x_0$ 两侧是否变号，或验证 $f''(x_0)\neq 0$。</li>
-<li>**错在由 $f''(x_0)=0$ 直接断言 $x_0$ 是拐点，例如 $y=x^4$ 在 $x=0$ 处 $f''(0)=0$ 而 $f''=12x^2$ 在两侧同号。**正确做法是验证 $f''$ 在 $x_0$ 两侧变号，或者验证 $f'''$ 存在且 $f'''(x_0)\neq 0$。</li>
-<li>**错在证明题中两个不同的中值点共用一个字母。**正确做法是分区间使用时分别记为 $\xi$ 与 $\eta$，并写清各自所在的开区间，例如先得 $\xi_1\in(0,a)$、$\xi_2\in(-a,0)$，再在 $(\xi_2,\xi_1)$ 内用介值定理。</li>
+<li><strong>错在不验证条件就套用中值定理，例如对 $f(x)=|x|$ 在 $[-1,1]$ 上使用拉格朗日中值定理</strong>。正确做法是先核对闭区间上连续与开区间内可导，此处 $x=0$ 处不可导，定理失效（事实上 $\frac{f(1)-f(-1)}{2}=0$ 却不存在使 $f'(\xi)=0$ 的点）。</li>
+<li><strong>错在由 $f'(x_0)=0$ 直接断言 $x_0$ 是极值点，例如 $y=x^3$ 在 $x=0$ 处 $f'(0)=0$ 但不是极值点</strong>。正确做法是看 $f'$ 在 $x_0$ 两侧是否变号，或验证 $f''(x_0)\neq 0$。</li>
+<li><strong>错在由 $f''(x_0)=0$ 直接断言 $x_0$ 是拐点，例如 $y=x^4$ 在 $x=0$ 处 $f''(0)=0$ 而 $f''=12x^2$ 在两侧同号</strong>。正确做法是验证 $f''$ 在 $x_0$ 两侧变号，或者验证 $f'''$ 存在且 $f'''(x_0)\neq 0$。</li>
+<li><strong>错在证明题中两个不同的中值点共用一个字母</strong>。正确做法是分区间使用时分别记为 $\xi$ 与 $\eta$，并写清各自所在的开区间，例如先得 $\xi_1\in(0,a)$、$\xi_2\in(-a,0)$，再在 $(\xi_2,\xi_1)$ 内用介值定理。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
 <p><strong>2023 年数二第 21 题（解答题，12 分）</strong></p>
@@ -675,7 +689,22 @@
 <p>（I）若 $f(0)=0$，则存在 $\xi\in(-a,a)$，使得 $f''(\xi)=\frac{1}{a^2}[f(a)+f(-a)]$；</p>
 <p>（II）若 $f(x)$ 在 $(-a,a)$ 内取得极值，则存在 $\eta\in(-a,a)$，使得 $|f''(\eta)|\ge\frac{1}{2a^2}|f(a)-f(-a)|$。</p>
 <blockquote>
-<p>解析：（I）由 $f''$ 连续，对 $f$ 在 $x=0$ 处用带拉格朗日余项的泰勒公式，分别取 $x=a$ 与 $x=-a$ 得 $f(a)=f(0)+f'(0)a+\frac{f''(\xi_1)}{2}a^2$ 与 $f(-a)=f(0)-f'(0)a+\frac{f''(\xi_2)}{2}a^2$，其中 $\xi_1\in(0,a)$、$\xi_2\in(-a,0)$。两式相加并用 $f(0)=0$ 得 $f(a)+f(-a)=\frac{a^2}{2}[f''(\xi_1)+f''(\xi_2)]$，再由 $f''$ 的连续性用介值定理，存在 $\xi\in(\xi_2,\xi_1)\subset(-a,a)$ 使 $f''(\xi)=\frac{f''(\xi_1)+f''(\xi_2)}{2}=\frac{f(a)+f(-a)}{a^2}$。（II）设 $f$ 在 $c\in(-a,a)$ 处取得极值，由费马引理 $f'(c)=0$，在 $x=c$ 处展开得 $f(a)=f(c)+\frac{f''(\eta_1)}{2}(a-c)^2$ 与 $f(-a)=f(c)+\frac{f''(\eta_2)}{2}(a+c)^2$；两式相减并取绝对值，记 $M=\max\{|f''(\eta_1)|,|f''(\eta_2)|\}$，则 $|f(a)-f(-a)|\le\frac{M}{2}[(a-c)^2+(a+c)^2]=M(a^2+c^2)\le 2a^2M$，于是 $M\ge\frac{|f(a)-f(-a)|}{2a^2}$，取使 $|f''(\eta)|=M$ 的那个点即得结论。</p>
+<p>解析：</p>
+<p><strong>（I）</strong> 由 $f''$ 连续，对 $f$ 用带拉格朗日余项的泰勒公式：</p>
+<p>在 $x=0$ 处展开，分别取 $x=a$ 与 $x=-a$，得</p>
+<p>$$f(a)=f(0)+f'(0)a+\frac{f''(\xi_1)}{2}a^2$$</p>
+<p>$$f(-a)=f(0)-f'(0)a+\frac{f''(\xi_2)}{2}a^2$$</p>
+<p>其中 $\xi_1\in(0,a)$、$\xi_2\in(-a,0)$。两式相加并用 $f(0)=0$ 得</p>
+<p>$$f(a)+f(-a)=\frac{a^2}{2}[f''(\xi_1)+f''(\xi_2)]$$</p>
+<p>再由 $f''$ 的连续性用介值定理：存在 $\xi\in(\xi_2,\xi_1)\subset(-a,a)$ 使</p>
+<p>$$f''(\xi)=\frac{f''(\xi_1)+f''(\xi_2)}{2}=\frac{f(a)+f(-a)}{a^2}$$</p>
+<p><strong>（II）</strong> 设 $f$ 在 $c\in(-a,a)$ 处取得极值，由费马引理知 $f'(c)=0$。</p>
+<p>在 $x=c$ 处展开得</p>
+<p>$$f(a)=f(c)+\frac{f''(\eta_1)}{2}(a-c)^2$$</p>
+<p>$$f(-a)=f(c)+\frac{f''(\eta_2)}{2}(a+c)^2$$</p>
+<p>两式相减并取绝对值，记 $M=\max\{|f''(\eta_1)|,|f''(\eta_2)|\}$，则</p>
+<p>$$|f(a)-f(-a)|\le\frac{M}{2}[(a-c)^2+(a+c)^2]=M(a^2+c^2)\le 2a^2M$$</p>
+<p>于是 $M\ge\frac{|f(a)-f(-a)|}{2a^2}$，取使 $|f''(\eta)|=M$ 的那个点即得结论。</p>
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p>
@@ -743,7 +772,7 @@
 </blockquote>
 <h5>【换元积分法】</h5>
 <ul>
-<li>**第一类换元法（凑微分）**的依据是复合函数求导公式的逆用。</li>
+<li><strong>第一类换元法</strong>（凑微分）的依据是复合函数求导公式的逆用。</li>
 <li>操作上就是把被积表达式整体凑成<strong>复合函数与微分的乘积</strong>。</li>
 <li><strong>线性代换</strong>是最常用的一条，结果中<strong>不要漏掉系数</strong>。</li>
 <li><strong>第二类换元法</strong>用来<strong>消去根式</strong>，算完必须把 $t$ <strong>回代</strong>为 $x$。</li>
@@ -872,13 +901,29 @@
 <p><strong>2023 年数二第 2 题（选择题，5 分）</strong></p>
 <p>函数 $f(x)=\begin{cases}\dfrac{1}{\sqrt{1+x^2}},& x\leqslant 0,\\ (x+1)\cos x,& x>0\end{cases}$ 的一个原函数是（　）</p>
 <blockquote>
-<p>解析：
-1. 原函数 $F(x)$ 必须在 $(-\infty,+\infty)$ 上可导且 $F'(x)=f(x)$，可导必连续，所以先分段积分再在 $x=0$ 处拼接。
-2. $x\leqslant0$ 时 $\int\frac{\mathrm{d}x}{\sqrt{1+x^2}}=\ln\left(x+\sqrt{1+x^2}\right)+C_1$；$x>0$ 时 $\int(x+1)\cos x\,\mathrm{d}x=(x+1)\sin x+\cos x+C_2$。
-3. 由 $x=0$ 处连续得 $\ln 1+C_1=1+C_2$，即 $C_1=1+C_2$；取 $C_2=-1$，则 $F(0)=0$，此时
-$$F(x)=\begin{cases}\ln\left(x+\sqrt{1+x^2}\right),& x\leqslant 0,\\ (x+1)\sin x+\cos x-1,& x>0.\end{cases}$$
-4. 检验可导：$F'_{-}(0)=\left.\frac{1}{\sqrt{1+x^2}}\right|_{x=0}=1$，$F'_{+}(0)=(0+1)\cos 0=1$，两段在 $x=0$ 处光滑拼接，故 $F(x)$ 确为 $f(x)$ 的一个原函数（$F(1)=2\sin1+\cos1-1\approx1.2232$）。
-结论：原函数在分段点必须连续，正确选项就是上面这段 $F(x)$。</p>
+<p>解析：</p>
+<ol>
+<li>原函数 $F(x)$ 必须在 $(-\infty,+\infty)$ 上可导且 $F'(x)=f(x)$。</li>
+</ol>
+<p>可导必连续，所以先分段积分，再在 $x=0$ 处拼接。</p>
+<ol start="2">
+<li>分段求原函数：$x\leqslant0$ 时</li>
+</ol>
+<p>$$\int\frac{\mathrm{d}x}{\sqrt{1+x^2}}=\ln\left(x+\sqrt{1+x^2}\right)+C_1$$</p>
+<p>$x>0$ 时</p>
+<p>$$\int(x+1)\cos x\,\mathrm{d}x=(x+1)\sin x+\cos x+C_2$$</p>
+<ol start="3">
+<li>由 $x=0$ 处连续得 $\ln 1+C_1=1+C_2$，即 $C_1=1+C_2$。</li>
+</ol>
+<p>取 $C_2=-1$，则 $F(0)=0$，此时</p>
+<p>$$F(x)=\begin{cases}\ln\left(x+\sqrt{1+x^2}\right),& x\leqslant 0,\\ (x+1)\sin x+\cos x-1,& x>0.\end{cases}$$</p>
+<ol start="4">
+<li>检验可导。左右导数分别为</li>
+</ol>
+<p>$$F'_{-}(0)=\left.\frac{1}{\sqrt{1+x^2}}\right|_{x=0}=1\qquad F'_{+}(0)=(0+1)\cos 0=1$$</p>
+<p>两段在 $x=0$ 处光滑拼接，故 $F(x)$ 确为 $f(x)$ 的一个原函数。代入可验：</p>
+<p>$$F(1)=2\sin1+\cos1-1\approx1.2232$$</p>
+<p>结论：原函数在分段点必须连续，正确选项就是上面这段 $F(x)$。</p>
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p>
@@ -1052,11 +1097,31 @@ $$F(x)=\begin{cases}\ln\left(x+\sqrt{1+x^2}\right),& x\leqslant 0,\\ (x+1)\sin x
 <p>其中正确的个数为（　）</p>
 <p>A. 0　　B. 1　　C. 2　　D. 3</p>
 <blockquote>
-<p>解析：
-1. 命题（1）错：取 $f(x)=\frac{1}{x+1}$（在 $[0,+\infty)$ 上非负连续），则 $\int_0^{+\infty}f^2(x)\,\mathrm{d}x=\int_0^{+\infty}\frac{\mathrm{d}x}{(x+1)^2}=1$ 收敛，但 $\int_0^{+\infty}\frac{\mathrm{d}x}{x+1}$ 发散，可见 $f^2$ 收敛推不出 $f$ 收敛。
-2. 命题（2）对：设 $\lim_{x\to+\infty}x^pf(x)=\lambda$ 存在且 $p>1$。若 $\lambda>0$，则 $f(x)\sim\frac{\lambda}{x^p}$，由极限形式比较判别法（$p>1$）知积分收敛；若 $\lambda=0$，则存在 $X>0$，当 $x>X$ 时 $x^pf(x)<1$，即 $0\leqslant f(x)<\frac1{x^p}$，由比较判别法知积分收敛。
-3. 命题（3）错：收敛推不出 $x^pf(x)$ 存在极限。反例：令 $f$ 在每个区间 $[n,n+n^{-3}]$（$n=1,2,\cdots$）上取值为 $1$（端点光滑过渡），其余点取 $e^{-x}$，则 $\int_0^{+\infty}f(x)\,\mathrm{d}x\leqslant1+\sum_{n=1}^{\infty}\frac1{n^3}=1+\zeta(3)\approx2.202$ 收敛，而 $x^pf(x)$ 沿 $x=n$ 趋于 $+\infty$、沿 $x=n+\frac12$ 趋于 $0$，极限不存在。
-结论：三个命题中只有（2）正确，正确的个数为 $1$，选 B。</p>
+<p>解析：</p>
+<ol>
+<li>命题（1）错：取 $f(x)=\frac{1}{x+1}$（在 $[0,+\infty)$ 上非负连续），则</li>
+</ol>
+<p>$$\int_0^{+\infty}f^2(x)\,\mathrm{d}x=\int_0^{+\infty}\frac{\mathrm{d}x}{(x+1)^2}=1$$</p>
+<p>收敛，但</p>
+<p>$$\int_0^{+\infty}\frac{\mathrm{d}x}{x+1}$$</p>
+<p>发散，可见 $f^2$ 收敛推不出 $f$ 收敛。</p>
+<ol start="2">
+<li>命题（2）对：设 $\lim_{x\to+\infty}x^pf(x)=\lambda$ 存在且 $p>1$。</li>
+</ol>
+<p>若 $\lambda>0$，则 $f(x)\sim\frac{\lambda}{x^p}$，由极限形式比较判别法（$p>1$）知积分收敛；</p>
+<p>若 $\lambda=0$，则存在 $X>0$，</p>
+<p>当 $x>X$ 时 $x^pf(x)<1$，即</p>
+<p>$$0\leqslant f(x)<\frac1{x^p}$$</p>
+<p>由比较判别法知积分收敛。</p>
+<ol start="3">
+<li>命题（3）错：收敛推不出 $x^pf(x)$ 存在极限。</li>
+</ol>
+<p>反例：令 $f$ 在每个区间 $[n,n+n^{-3}]$（$n=1,2,\cdots$）</p>
+<p>上取值为 $1$（端点光滑过渡），其余点取 $e^{-x}$，则</p>
+<p>$$\int_0^{+\infty}f(x)\,\mathrm{d}x\leqslant1+\sum_{n=1}^{\infty}\frac1{n^3}=1+\zeta(3)\approx2.202$$</p>
+<p>收敛，而 $x^pf(x)$ 沿 $x=n$ 趋于 $+\infty$、</p>
+<p>沿 $x=n+\frac12$ 趋于 $0$，极限不存在。</p>
+<p>结论：三个命题中只有（2）正确，正确的个数为 $1$，选 B。</p>
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p>
@@ -1279,11 +1344,19 @@ $$F(x)=\begin{cases}\ln\left(x+\sqrt{1+x^2}\right),& x\leqslant 0,\\ (x+1)\sin x
 <p><strong>2024 年数二第 15 题（填空题，5 分）</strong></p>
 <p>某物体以速度 $v(t)=t+k\sin\pi t$ 做直线运动，若它从 $t=0$ 到 $t=3$ 的时间段内平均速度是 $\frac52$，则 $k=$ ________。</p>
 <blockquote>
-<p>解析：
-1. 平均速度是速度函数在时间区间上的平均值：$\bar v=\frac1{3-0}\int_0^3v(t)\,\mathrm{d}t$。
-2. 计算积分：$\int_0^3\left(t+k\sin\pi t\right)\mathrm{d}t=\left[\frac{t^2}{2}-\frac{k}{\pi}\cos\pi t\right]_0^3=\frac92+\frac{2k}{\pi}$。
-3. 由 $\frac13\left(\frac92+\frac{2k}{\pi}\right)=\frac52$ 得 $\frac{2k}{3\pi}=1$，故 $k=\frac{3\pi}{2}\approx4.712$。
-结论：$k=\frac{3\pi}{2}$；此时总位移为 $\int_0^3v(t)\,\mathrm{d}t=\frac{15}{2}$，平均速度恰为 $\frac52$。</p>
+<p>解析：</p>
+<ol>
+<li>
+<p>平均速度是速度函数在时间区间上的平均值：$\bar v=\frac1{3-0}\int_0^3v(t)\,\mathrm{d}t$。</p>
+</li>
+<li>
+<p>计算积分：$\int_0^3\left(t+k\sin\pi t\right)\mathrm{d}t=\left[\frac{t^2}{2}-\frac{k}{\pi}\cos\pi t\right]_0^3=\frac92+\frac{2k}{\pi}$。</p>
+</li>
+<li>
+<p>由 $\frac13\left(\frac92+\frac{2k}{\pi}\right)=\frac52$ 得 $\frac{2k}{3\pi}=1$，故 $k=\frac{3\pi}{2}\approx4.712$。</p>
+</li>
+</ol>
+<p>结论：$k=\frac{3\pi}{2}$；此时总位移为 $\int_0^3v(t)\,\mathrm{d}t=\frac{15}{2}$，平均速度恰为 $\frac52$。</p>
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p>
@@ -1498,12 +1571,31 @@ $$F(x)=\begin{cases}\ln\left(x+\sqrt{1+x^2}\right),& x\leqslant 0,\\ (x+1)\sin x
 <blockquote>
 <p>解析：</p>
 <ol>
-<li>方程右端只依赖 $x+y$，属 $y'=f(ax+by+c)$ 型，令 $u=x+y$，则 $y=u-x$、$y'=u'-1$，方程化为 $u'-1=\frac{1}{u^2}$，即 $\frac{du}{dx}=\frac{u^2+1}{u^2}$。</li>
-<li>分离变量得 $\frac{u^2}{u^2+1}\,du=dx$，两边积分（左边拆项为 $1-\frac{1}{u^2+1}$）得 $u-\arctan u=x+C$。</li>
-<li>回代 $u=x+y$，得隐式通解 $y=\arctan(x+y)+C$；代入 $x=1,y=0$（此时 $u=1$）得 $1-\frac{\pi}{4}=1+C$，故 $C=-\frac{\pi}{4}$。</li>
+<li>方程右端只依赖 $x+y$，属 $y'=f(ax+by+c)$ 型。</li>
+</ol>
+<p>令 $u=x+y$，则 $y=u-x$、$y'=u'-1$，方程化为</p>
+<p>$$u'-1=\frac{1}{u^2}$$</p>
+<p>即</p>
+<p>$$\frac{du}{dx}=\frac{u^2+1}{u^2}$$</p>
+<ol start="2">
+<li>分离变量得</li>
+</ol>
+<p>$$\frac{u^2}{u^2+1}\,du=dx$$</p>
+<p>两边积分（左边拆项为 $1-\frac{1}{u^2+1}$）得 $u-\arctan u=x+C$。</p>
+<ol start="3">
+<li>回代 $u=x+y$，得隐式通解 $y=\arctan(x+y)+C$。</li>
+</ol>
+<p>代入 $x=1,y=0$（此时 $u=1$）得</p>
+<p>$$1-\frac{\pi}{4}=1+C$$</p>
+<p>故 $C=-\frac{\pi}{4}$。</p>
+<ol start="4">
 <li>结论：所求特解为 $\displaystyle y=\arctan(x+y)-\frac{\pi}{4}$（隐式解），也可写成等价形式 $\tan\left(y+\frac{\pi}{4}\right)=x+y$。</li>
 </ol>
-<p>验证：对 $y=\arctan(x+y)-\frac{\pi}{4}$ 两边求导得 $y'=\frac{1+y'}{1+(x+y)^2}$，整理即 $y'=\frac{1}{(x+y)^2}$；且 $x=1,y=0$ 时 $\arctan(1)-\frac{\pi}{4}=0$，初始条件成立。</p>
+<p>验证：对 $y=\arctan(x+y)-\frac{\pi}{4}$ 两边求导得</p>
+<p>$$y'=\frac{1+y'}{1+(x+y)^2}$$</p>
+<p>整理即</p>
+<p>$$y'=\frac{1}{(x+y)^2}$$</p>
+<p>且 $x=1,y=0$ 时 $\arctan(1)-\frac{\pi}{4}=0$，初始条件成立。</p>
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p>
@@ -1737,11 +1829,30 @@ $$F(x)=\begin{cases}\ln\left(x+\sqrt{1+x^2}\right),& x\leqslant 0,\\ (x+1)\sin x
 <blockquote>
 <p>解析：</p>
 <ol>
-<li>在左端点写带拉格朗日余项的泰勒公式：$f(x)=f(0)+f'(0)x+\frac{f''(\xi_1)}{2}x^2$，其中 $\xi_1$ 介于 $0$ 与 $x$ 之间；在右端点再写一次：$f(x)=f(1)+f'(1)(x-1)+\frac{f''(\xi_2)}{2}(x-1)^2$。</li>
-<li>把第一式乘 $(1-x)$、第二式乘 $x$ 后相加，左端得 $(1-x)f(x)+xf(x)=f(x)$；一阶项之和为 $f'(0)(1-x)x+f'(1)x(x-1)$，由 $f'(0)=f'(1)$ 知它等于 $f'(0)\left[x(1-x)+x(x-1)\right]=0$，于是 $\displaystyle f(x)=f(0)(1-x)+f(1)x+\frac{(1-x)x^2}{2}f''(\xi_1)+\frac{x(1-x)^2}{2}f''(\xi_2)$。</li>
-<li>取绝对值并用 $|f''(x)|\le1$ 放大：$\left|f(x)-f(0)(1-x)-f(1)x\right|\le\frac{(1-x)x^2+x(1-x)^2}{2}=\frac{x(1-x)\left[(1-x)+x\right]}{2}=\frac{x(1-x)}{2}$，第（1）问得证。</li>
-<li>对第（1）问的结论在 $[0,1]$ 上积分，注意 $\int_0^1\left[f(0)(1-x)+f(1)x\right]dx=\frac{f(0)+f(1)}{2}$，于是 $\left|\int_0^1f(x)\,dx-\frac{f(0)+f(1)}{2}\right|=\left|\int_0^1\left[f(x)-f(0)(1-x)-f(1)x\right]dx\right|\le\int_0^1\frac{x(1-x)}{2}\,dx=\frac{1}{12}$，第（2）问得证。</li>
+<li>在左端点写带拉格朗日余项的泰勒公式：</li>
 </ol>
+<p>$$f(x)=f(0)+f'(0)x+\frac{f''(\xi_1)}{2}x^2$$</p>
+<p>其中 $\xi_1$ 介于 $0$ 与 $x$ 之间；在右端点再写一次：</p>
+<p>$$f(x)=f(1)+f'(1)(x-1)+\frac{f''(\xi_2)}{2}(x-1)^2$$</p>
+<ol start="2">
+<li>把第一式乘 $(1-x)$、第二式乘 $x$ 后相加，左端得 $(1-x)f(x)+xf(x)=f(x)$。</li>
+</ol>
+<p>一阶项之和为 $f'(0)(1-x)x+f'(1)x(x-1)$，由 $f'(0)=f'(1)$ 知它等于</p>
+<p>$$f'(0)\left[x(1-x)+x(x-1)\right]=0$$</p>
+<p>于是</p>
+<p>$$\displaystyle f(x)=f(0)(1-x)+f(1)x+\frac{(1-x)x^2}{2}f''(\xi_1)+\frac{x(1-x)^2}{2}f''(\xi_2)$$</p>
+<ol start="3">
+<li>取绝对值并用 $|f''(x)|\le1$ 放大：</li>
+</ol>
+<p>$$\left|f(x)-f(0)(1-x)-f(1)x\right|\le\frac{(1-x)x^2+x(1-x)^2}{2}=\frac{x(1-x)\left[(1-x)+x\right]}{2}=\frac{x(1-x)}{2}$$</p>
+<p>第（1）问得证。</p>
+<ol start="4">
+<li>对第（1）问的结论在 $[0,1]$ 上积分，注意</li>
+</ol>
+<p>$$\int_0^1\left[f(0)(1-x)+f(1)x\right]dx=\frac{f(0)+f(1)}{2}$$</p>
+<p>于是</p>
+<p>$$\left|\int_0^1f(x)\,dx-\frac{f(0)+f(1)}{2}\right|=\left|\int_0^1\left[f(x)-f(0)(1-x)-f(1)x\right]dx\right|\le\int_0^1\frac{x(1-x)}{2}\,dx=\frac{1}{12}$$</p>
+<p>第（2）问得证。</p>
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p>
@@ -1966,9 +2077,33 @@ $$F(x)=\begin{cases}\ln\left(x+\sqrt{1+x^2}\right),& x\leqslant 0,\\ (x+1)\sin x
 <blockquote>
 <p>解析：</p>
 <ol>
-<li>区域由两族双曲线 $xy=$ 常数与两族射线 $\frac{y}{x}=$ 常数围成，作变换 $u=xy$、$v=\frac{y}{x}$，则 $D$ 的边界恰是 $u=\frac{1}{3},u=3,v=\frac{1}{3},v=3$，即 $D$ 被映成 $uv$ 平面上的矩形 $D'=\left[\frac{1}{3},3\right]\times\left[\frac{1}{3},3\right]$。</li>
-<li>反解 $x=\sqrt{\frac{u}{v}}$、$y=\sqrt{uv}$，由链式法则算得 $\frac{\partial x}{\partial u}=\frac{1}{2\sqrt{uv}}$、$\frac{\partial x}{\partial v}=-\frac{1}{2}\sqrt{\frac{u}{v^3}}$、$\frac{\partial y}{\partial u}=\frac{1}{2}\sqrt{\frac{v}{u}}$、$\frac{\partial y}{\partial v}=\frac{1}{2}\sqrt{\frac{u}{v}}$，于是雅可比行列式 $\frac{\partial(x,y)}{\partial(u,v)}=\frac{1}{2\sqrt{uv}}\cdot\frac{1}{2}\sqrt{\frac{u}{v}}-\left(-\frac{1}{2}\sqrt{\frac{u}{v^3}}\right)\cdot\frac{1}{2}\sqrt{\frac{v}{u}}=\frac{1}{2v}>0$，即 $dxdy=\frac{1}{2v}\,dudv$。</li>
-<li>代入得 $\iint_D(1+x-y)\,dxdy=\int_{1/3}^{3}\!\!\int_{1/3}^{3}\left(1+\sqrt{\frac{u}{v}}-\sqrt{uv}\right)\frac{1}{2v}\,du\,dv$，其中常数项积分为 $\frac{1}{2}\cdot\frac{8}{3}\cdot\ln 9=\frac{8}{3}\ln 3$，而含 $\sqrt{\frac{u}{v}}$ 与含 $\sqrt{uv}$ 的两项分别为 $\frac{1}{2}\int_{1/3}^{3}\sqrt{u}\,du\int_{1/3}^{3}v^{-3/2}dv$ 与 $\frac{1}{2}\int_{1/3}^{3}\sqrt{u}\,du\int_{1/3}^{3}v^{-1/2}dv$，两个 $v$ 积分都等于 $\frac{4\sqrt{3}}{3}$，故两项都等于 $\frac{104}{27}$ 而正负相消。</li>
+<li>区域由两族双曲线 $xy=$ 常数与两族射线 $\frac{y}{x}=$ 常数围成。</li>
+</ol>
+<p>作变换 $u=xy$、$v=\frac{y}{x}$，则 $D$ 的边界恰是</p>
+<p>$$u=\frac{1}{3},u=3,v=\frac{1}{3},v=3$$</p>
+<p>即 $D$ 被映成 $uv$ 平面上的矩形</p>
+<p>$$D'=\left[\frac{1}{3},3\right]\times\left[\frac{1}{3},3\right]$$</p>
+<ol start="2">
+<li>反解 $x=\sqrt{\frac{u}{v}}$、$y=\sqrt{uv}$，由链式法则算得</li>
+</ol>
+<p>$$\frac{\partial x}{\partial u}=\frac{1}{2\sqrt{uv}}$$</p>
+<p>$$\frac{\partial x}{\partial v}=-\frac{1}{2}\sqrt{\frac{u}{v^3}}$$</p>
+<p>$$\frac{\partial y}{\partial u}=\frac{1}{2}\sqrt{\frac{v}{u}}$$</p>
+<p>$$\frac{\partial y}{\partial v}=\frac{1}{2}\sqrt{\frac{u}{v}}$$</p>
+<p>于是雅可比行列式</p>
+<p>$$\frac{\partial(x,y)}{\partial(u,v)}=\frac{1}{2\sqrt{uv}}\cdot\frac{1}{2}\sqrt{\frac{u}{v}}-\left(-\frac{1}{2}\sqrt{\frac{u}{v^3}}\right)\cdot\frac{1}{2}\sqrt{\frac{v}{u}}=\frac{1}{2v}>0$$</p>
+<p>即 $dxdy=\frac{1}{2v}\,dudv$。</p>
+<ol start="3">
+<li>代入得</li>
+</ol>
+<p>$$\iint_D(1+x-y)\,dxdy=\int_{1/3}^{3}\!\!\int_{1/3}^{3}\left(1+\sqrt{\frac{u}{v}}-\sqrt{uv}\right)\frac{1}{2v}\,du\,dv$$</p>
+<p>其中常数项积分为</p>
+<p>$$\frac{1}{2}\cdot\frac{8}{3}\cdot\ln 9=\frac{8}{3}\ln 3$$</p>
+<p>而含 $\sqrt{\frac{u}{v}}$ 与含 $\sqrt{uv}$ 的两项分别为</p>
+<p>$$\frac{1}{2}\int_{1/3}^{3}\sqrt{u}\,du\int_{1/3}^{3}v^{-3/2}dv$$</p>
+<p>$$\frac{1}{2}\int_{1/3}^{3}\sqrt{u}\,du\int_{1/3}^{3}v^{-1/2}dv$$</p>
+<p>两个 $v$ 积分都等于 $\frac{4\sqrt{3}}{3}$，故两项都等于 $\frac{104}{27}$ 而正负相消。</p>
+<ol start="4">
 <li>结论：$\displaystyle\iint_D(1+x-y)\,dxdy=\frac{8}{3}\ln 3\approx2.9296$。</li>
 </ol>
 </blockquote>
@@ -2152,12 +2287,13 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <p><strong>2020 年真题改编（填空题，4 分）</strong></p>
 <p>计算行列式 $\begin{vmatrix} a & 0 & -1 & 1 \\ 0 & a & 1 & -1 \\ -1 & 1 & a & 0 \\ 1 & -1 & 0 & a \end{vmatrix}=$ ______。</p>
 <blockquote>
-<p>解析：第 1 行只有三个非零元，直接按第 1 行展开，$D=aA_{11}+(-1)A_{13}+1\cdot A_{14}$。三个三阶余子式都用「造零 + 展开」各降一阶，sympy 复算得 $M_{11}=a^{3}-2a$、$M_{13}=M_{14}=a^{2}$。代回并注意符号 $A_{13}=(-1)^{1+3}M_{13}=a^{2}$、$A_{14}=(-1)^{1+4}M_{14}=-a^{2}$：</p>
+<p>解析：第 1 行只有三个非零元，直接按第 1 行展开，$D=aA_{11}+(-1)A_{13}+1\cdot A_{14}$。</p>
+<p>三个三阶余子式都用「造零 + 展开」各降一阶，sympy 复算得 $M_{11}=a^{3}-2a$、$M_{13}=M_{14}=a^{2}$。</p>
+<p>代回并注意符号 $A_{13}=(-1)^{1+3}M_{13}=a^{2}$、$A_{14}=(-1)^{1+4}M_{14}=-a^{2}$：</p>
+<p>$$D=a(a^{3}-2a)+(-1)\cdot a^{2}+1\cdot(-a^{2})=a^{4}-4a^{2}.$$</p>
+<p>sympy 复算：$\det = a^4-4a^2=a^2(a-2)(a+2)$，取 $a=3$ 数值为 $45=9\times 5$。</p>
+<p>与 $a^{2}(a^{2}-4)$ 一致。结论 $a^{4}-4a^{2}$。</p>
 </blockquote>
-<p>$$
-D=a(a^{3}-2a)+(-1)\cdot a^{2}+1\cdot(-a^{2})=a^{4}-4a^{2}.
-$$</p>
-<p>sympy 复算：$\det = a^4-4a^2=a^2(a-2)(a+2)$，取 $a=3$ 数值为 $45=9\times 5$，与 $a^{2}(a^{2}-4)$ 一致。结论 $a^{4}-4a^{2}$。</p>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p>
 <div id="xiandai-02-矩阵" class="anchor"></div>
@@ -2388,9 +2524,30 @@ $$</p>
 <p>设 $A$ 为四阶矩阵，$A^{*}$ 为 $A$ 的伴随矩阵，若 $A(A-A^{*})=O$，且 $A\neq A^{*}$，则 $r(A)$ 的可能取值为（　）</p>
 <p>A. 0 或 1　　B. 1 或 3　　C. 2 或 3　　D. 1 或 2</p>
 <blockquote>
-<p>解析：第一步，化简条件。由 $AA^{*}=|A|E$：若 $|A|\neq0$，则 $A$ 可逆，在 $A(A-A^{*})=O$ 两边左乘 $A^{-1}$ 得 $A=A^{*}$，与 $A\neq A^{*}$ 矛盾，故 $|A|=0$，于是 $AA^{*}=O$，题设条件化为 $A^{2}=O$。</p>
-<p>第二步，定出 $r(A)$ 的上界。设 $A^{2}=O$，把 $A$ 按列分块为 $A=(\alpha_1,\alpha_2,\alpha_3,\alpha_4)$，则每个 $\alpha_j$ 都满足 $A\alpha_j=0$，即 $\operatorname{Col}(A)\subseteq\operatorname{Null}(A)$，取维数得 $r(A)\le 4-r(A)$，故 $r(A)\le 2$。这一步同时排除了 $r(A)=4$（此时 $A$ 可逆，与 $|A|=0$ 矛盾）与 $r(A)=3$：秩 3 时 $\operatorname{Null}(A)$ 只有一维，而 $\operatorname{Col}(A)$ 有三维，包含关系要求 $3\le 1$，不可能。</p>
-<p>第三步，验证 $r(A)=1$ 与 $r(A)=2$ 都能取到。取 $A=\operatorname{diag}(1,0,0,0)$，sympy 复算 $A^{*}=O$、$A^{2}=O$、$A\neq A^{*}$，此时 $r(A)=1$；取 $A=\begin{pmatrix}0&1&0&0\\0&0&0&0\\0&0&0&1\\0&0&0&0\end{pmatrix}$，sympy 复算同样有 $|A|=0$、$A^{*}=O$、$A^{2}=O$、$A\neq A^{*}$，而 $r(A)=2$。综上 $r(A)$ 的可能取值为 $1$ 或 $2$，选 D。</p>
+<p>解析：第一步，化简条件。由 $AA^{*}=|A|E$：若 $|A|\neq0$，则 $A$ 可逆。</p>
+<p>在 $A(A-A^{*})=O$ 两边左乘 $A^{-1}$ 得 $A=A^{*}$。</p>
+<p>这与 $A\neq A^{*}$ 矛盾，故 $|A|=0$。</p>
+<p>于是 $AA^{*}=O$，题设条件化为 $A^{2}=O$。</p>
+<p>第二步，定出 $r(A)$ 的上界。</p>
+<p>设 $A^{2}=O$，把 $A$ 按列分块为 $A=(\alpha_1,\alpha_2,\alpha_3,\alpha_4)$。</p>
+<p>则每个 $\alpha_j$ 都满足 $A\alpha_j=0$，即</p>
+<p>$$\operatorname{Col}(A)\subseteq\operatorname{Null}(A)$$</p>
+<p>取维数得</p>
+<p>$$r(A)\le 4-r(A)$$</p>
+<p>故 $r(A)\le 2$。</p>
+<p>这一步同时排除了 $r(A)=4$（此时 $A$ 可逆，与 $|A|=0$ 矛盾）。</p>
+<p>也排除了 $r(A)=3$：秩 3 时 $\operatorname{Null}(A)$ 只有一维。</p>
+<p>而 $\operatorname{Col}(A)$ 有三维，包含关系要求 $3\le 1$，不可能。</p>
+<p>第三步，验证 $r(A)=1$ 与 $r(A)=2$ 都能取到。</p>
+<p>取</p>
+<p>$$A=\operatorname{diag}(1,0,0,0)$$</p>
+<p>sympy 复算 $A^{*}=O$、$A^{2}=O$、$A\neq A^{*}$。</p>
+<p>此时 $r(A)=1$。</p>
+<p>再取</p>
+<p>$$A=\begin{pmatrix}0&1&0&0\\0&0&0&0\\0&0&0&1\\0&0&0&0\end{pmatrix}$$</p>
+<p>sympy 复算同样有 $|A|=0$、$A^{*}=O$、$A^{2}=O$。</p>
+<p>此时 $A\neq A^{*}$，而 $r(A)=2$。</p>
+<p>综上 $r(A)$ 的可能取值为 $1$ 或 $2$，选 D。</p>
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p>
@@ -2573,10 +2730,21 @@ $$</p>
 <p><strong>2024 年数二第 16 题（填空题，5 分）</strong></p>
 <p>设向量 $\alpha_1=\begin{pmatrix}a\\1\\-1\\1\end{pmatrix}$，$\alpha_2=\begin{pmatrix}1\\1\\b\\a\end{pmatrix}$，$\alpha_3=\begin{pmatrix}1\\a\\-1\\1\end{pmatrix}$，若 $\alpha_1,\alpha_2,\alpha_3$ 线性相关，且其中任意两个向量均线性无关，则 $ab=$ ______。</p>
 <blockquote>
-<p>解析：三个 4 维向量线性相关 $\iff$ 以它们为列的矩阵 $A$ 的全部三阶子式为零，其中四个三阶子式为 $-(a-1)(a+2)$、$-(a-1)(ab+b+2)$、$(a-1)(a+b)$（后两个各出现两次，仅在哪些行被取到上不同）。</p>
-<p>第一步，用其中两个最简单的子式定位参数：由 $-(a-1)^{2}(a+2)=0$ 得 $a=1$ 或 $a=-2$。若 $a=1$，则 $\alpha_1=\alpha_3$，两个向量线性相关，与「任意两个向量均线性无关」矛盾，故 $a=-2$。</p>
-<p>第二步，把 $a=-2$ 代入其余子式：$(a-1)(ab+b+2)=(-3)(-2b+b+2)=-3(2-b)=0$ 得 $b=2$；同法 $(a-1)(a+b)=(-3)(-2+b)=0$ 也得 $b=2$。两条方程一致，$a=-2,\ b=2$。</p>
-<p>第三步，回代检验。sympy 复算：$a=-2,b=2$ 时三个向量为 $\alpha_1=(-2,1,-1,1)^{T}$、$\alpha_2=(1,1,2,-2)^{T}$、$\alpha_3=(1,-2,-1,1)^{T}$，全部四个三阶子式为零、$r=2$，三向量线性相关；且任意两列构成的矩阵秩均为 $2$，两两线性无关，完全符合题设。结论 $ab=(-2)\times 2=-4$。</p>
+<p>解析：三个 4 维向量线性相关 $\iff$ 以它们为列的矩阵 $A$ 的全部三阶子式为零。</p>
+<p>其中四个三阶子式为 $-(a-1)(a+2)$、$-(a-1)(ab+b+2)$、$(a-1)(a+b)$（后两个各出现两次，仅在哪些行被取到上不同）。</p>
+<p>第一步，用其中两个最简单的子式定位参数：由 $-(a-1)^{2}(a+2)=0$ 得 $a=1$ 或 $a=-2$。</p>
+<p>若 $a=1$，则 $\alpha_1=\alpha_3$，两个向量线性相关，与「任意两个向量均线性无关」矛盾，故 $a=-2$。</p>
+<p>第二步，把 $a=-2$ 代入其余子式：</p>
+<p>$$(a-1)(ab+b+2)=(-3)(-2b+b+2)=-3(2-b)=0$$</p>
+<p>得 $b=2$；同法</p>
+<p>$$(a-1)(a+b)=(-3)(-2+b)=0$$</p>
+<p>也得 $b=2$。两条方程一致，$a=-2,\ b=2$。</p>
+<p>第三步，回代检验。sympy 复算：$a=-2,b=2$ 时三个向量为</p>
+<p>$$\alpha_1=(-2,1,-1,1)^{T}$$</p>
+<p>$$\alpha_2=(1,1,2,-2)^{T}$$</p>
+<p>$$\alpha_3=(1,-2,-1,1)^{T}$$</p>
+<p>全部四个三阶子式为零、$r=2$，三向量线性相关；且任意两列构成的矩阵秩均为 $2$，两两线性无关，完全符合题设。</p>
+<p>结论 $ab=(-2)\times 2=-4$。</p>
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p>
@@ -2765,9 +2933,30 @@ $$</p>
 <p>设矩阵 $A=\begin{pmatrix} 0 & 1 & a \\ 1 & 0 & 1 \end{pmatrix}$，$B=\begin{pmatrix} 1 & 1 \\ 1 & 1 \\ b & 2 \end{pmatrix}$，二次型 $f(x_1,x_2,x_3)=x^{T}BAx$，已知方程组 $Ax=0$ 的解是 $B^{T}x=0$ 的解，但两个方程组不同解。</p>
 <p>（1）求 $a,b$ 的值；（2）求正交矩阵 $Q$，使变换 $x=Qy$ 将 $f(x_1,x_2,x_3)$ 化为标准形。</p>
 <blockquote>
-<p>解析（本示例只解第（1）问；第（2）问见「二次型」一章）：第一步，解 $Ax=0$，它的系数矩阵是 $2\times3$ 的，$r(A)=2$，故解空间维数为 $3-2=1$。由 $A$ 的两行解得 $x_1=-x_3$、$x_2=-ax_3$，取自由未知量 $x_3=1$ 得基础解系 $\xi=(-1,-a,1)^{T}$。</p>
-<p>第二步，条件「$Ax=0$ 的解是 $B^{T}x=0$ 的解」即 $\xi$ 必须满足 $B^{T}\xi=0$。计算 $B^{T}=\begin{pmatrix}1&1&b\\1&1&2\end{pmatrix}$，得 $B^{T}\xi=\begin{pmatrix}b-a-1\\ 1-a\end{pmatrix}$，令其为零向量，由第二式得 $a=1$，代回第一式得 $b=2$。</p>
-<p>第三步，验证「两个方程组不同解」。$a=1$ 时 $B^{T}=\begin{pmatrix}1&1&2\\1&1&2\end{pmatrix}$，两行相同，故 $r(B^{T})=1$；而 $r(A)=2$。于是 $Ax=0$ 的解空间维数为 $3-2=1$，$B^{T}x=0$ 的解空间维数为 $3-1=2$，维数不同，两个方程组确实不同解。sympy 复算：$a=1,b=2$ 时 $A$ 的解空间为 $\{t(-1,-1,1)^{T}\}$，$B^{T}$ 的解空间为 $\{s(-1,1,0)^{T}+t(-2,0,1)^{T}\}$，前者是一维后者是二维，且 $\xi=(-1,-1,1)^{T}$ 同时满足两个方程。结论 $a=1,\ b=2$。</p>
+<p>解析（本示例只解第（1）问；第（2）问见「二次型」一章）：</p>
+<p><strong>第一步</strong>，解 $Ax=0$，它的系数矩阵是 $2\times3$ 的，$r(A)=2$，</p>
+<p>故解空间维数为 $3-2=1$。</p>
+<p>由 $A$ 的两行解得 $x_1=-x_3$、$x_2=-ax_3$，</p>
+<p>取自由未知量 $x_3=1$ 得基础解系</p>
+<p>$$\xi=(-1,-a,1)^{T}$$</p>
+<p><strong>第二步</strong>，条件「$Ax=0$ 的解是 $B^{T}x=0$ 的解」即</p>
+<p>$\xi$ 必须满足 $B^{T}\xi=0$。</p>
+<p>计算</p>
+<p>$$B^{T}=\begin{pmatrix}1&1&b\\1&1&2\end{pmatrix}$$</p>
+<p>得</p>
+<p>$$B^{T}\xi=\begin{pmatrix}b-a-1\\ 1-a\end{pmatrix}$$</p>
+<p>令其为零向量，由第二式得 $a=1$，代回第一式得 $b=2$。</p>
+<p><strong>第三步</strong>，验证「两个方程组不同解」。</p>
+<p>$a=1$ 时</p>
+<p>$$B^{T}=\begin{pmatrix}1&1&2\\1&1&2\end{pmatrix}$$</p>
+<p>两行相同，故 $r(B^{T})=1$；而 $r(A)=2$。</p>
+<p>于是 $Ax=0$ 的解空间维数为 $3-2=1$，</p>
+<p>$B^{T}x=0$ 的解空间维数为 $3-1=2$，维数不同，两个方程组确实不同解。</p>
+<p>sympy 复算：$a=1,b=2$ 时 $A$ 的解空间为</p>
+<p>$$\{t(-1,-1,1)^{T}\}$$</p>
+<p>$B^{T}$ 的解空间为</p>
+<p>$$\{s(-1,1,0)^{T}+t(-2,0,1)^{T}\}$$</p>
+<p>前者是一维后者是二维，且 $\xi=(-1,-1,1)^{T}$ 同时满足两个方程。结论 $a=1,\ b=2$。</p>
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p>
@@ -2950,8 +3139,24 @@ $$</p>
 <p>设 $A,B$ 均为 2 阶矩阵，且 $AB=BA$，则「$A$ 有两个不相等的特征值」是「$B$ 可对角化」的（　）</p>
 <p>A. 充要条件　　B. 充分非必要条件　　C. 必要非充分条件　　D. 既非充分又非必要条件</p>
 <blockquote>
-<p>解析：先证充分性。设 $A$ 的两个特征值 $\lambda_1\neq\lambda_2$，对应特征向量 $\alpha_1,\alpha_2$ 线性无关，构成 $\mathbb{R}^2$ 的一组基。由 $AB=BA$ 得 $A(B\alpha_i)=B(A\alpha_i)=\lambda_i(B\alpha_i)$，即 $B\alpha_i$ 仍是属于 $\lambda_i$ 的特征向量，而属于不同特征值的特征向量空间都是一维的，故 $B\alpha_i=\mu_i\alpha_i$（$i=1,2$），说明 $\alpha_1,\alpha_2$ 也是 $B$ 的特征向量，$B$ 有 2 个线性无关的特征向量，可对角化。充分性成立。</p>
-<p>再看必要性。取 $A=B=E$，sympy 复算：$AE-EA=O$ 且 $A$ 的特征值为 $\{1,1\}$（不互异），而 $B=E$ 本身是对角阵、可对角化，说明「$B$ 可对角化」推不出「$A$ 有两个不相等的特征值」；再用 sympy 验证一遍正面情形：取 $A=\operatorname{diag}(1,2)$、$B=\operatorname{diag}(1,5)$，$AB-BA=O$、$A$ 特征值为 $\{1,2\}$ 互异、$B$ 可对角化，与充分性结论一致。故该条件是充分非必要条件，选 B。</p>
+<p>解析：先证充分性。</p>
+<p>设 $A$ 的两个特征值 $\lambda_1\neq\lambda_2$。</p>
+<p>对应特征向量 $\alpha_1,\alpha_2$ 线性无关，构成 $\mathbb{R}^2$ 的一组基。</p>
+<p>由 $AB=BA$ 得</p>
+<p>$$A(B\alpha_i)=B(A\alpha_i)=\lambda_i(B\alpha_i)$$</p>
+<p>即 $B\alpha_i$ 仍是属于 $\lambda_i$ 的特征向量，而属于不同特征值的特征向量空间都是一维的。</p>
+<p>故 $B\alpha_i=\mu_i\alpha_i$（$i=1,2$）。</p>
+<p>这说明 $\alpha_1,\alpha_2$ 也是 $B$ 的特征向量，$B$ 有 2 个线性无关的特征向量，可对角化。</p>
+<p>充分性成立。</p>
+<p>再看必要性。取 $A=B=E$。</p>
+<p>sympy 复算：$AE-EA=O$，且 $A$ 的特征值为 $\{1,1\}$（不互异）。</p>
+<p>而 $B=E$ 本身是对角阵、可对角化，说明「$B$ 可对角化」推不出「$A$ 有两个不相等的特征值」。</p>
+<p>再用 sympy 验证一遍正面情形：取</p>
+<p>$$A=\operatorname{diag}(1,2)$$</p>
+<p>$$B=\operatorname{diag}(1,5)$$</p>
+<p>则 $AB-BA=O$、$A$ 特征值为 $\{1,2\}$ 互异。</p>
+<p>且 $B$ 可对角化，与充分性结论一致。</p>
+<p>故该条件是充分非必要条件，选 B。</p>
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p>
@@ -3225,10 +3430,24 @@ $$</p>
 <p>设矩阵 $A=\begin{pmatrix} 0 & 1 & a \\ 1 & 0 & 1 \end{pmatrix}$，$B=\begin{pmatrix} 1 & 1 \\ 1 & 1 \\ b & 2 \end{pmatrix}$，二次型 $f(x_1,x_2,x_3)=x^{T}BAx$，已知方程组 $Ax=0$ 的解是 $B^{T}x=0$ 的解，但两个方程组不同解。</p>
 <p>（1）求 $a,b$ 的值；（2）求正交矩阵 $Q$，使变换 $x=Qy$ 将 $f(x_1,x_2,x_3)$ 化为标准形。</p>
 <blockquote>
-<p>解析（本例只解第（2）问，$a=1,b=2$ 由第（1）问得到，见「线性方程组」一章）：第一步，代入 $a=1,b=2$ 算出二次型矩阵。$BA=\begin{pmatrix}1&1&2\\1&1&2\\2&2&4\end{pmatrix}$，它本身已经是对称矩阵，故 $f=x^{T}(BA)x$ 的矩阵就是 $S=\begin{pmatrix}1&1&2\\1&1&2\\2&2&4\end{pmatrix}$。</p>
-<p>第二步，求 $S$ 的特征值：$|S-\lambda E|=\lambda^{2}(\lambda-6)$，sympy 复算特征值为 $6,0,0$，于是二次型的标准形只含一个平方项，系数为 $6$。</p>
-<p>第三步，求正交矩阵。$\lambda=6$ 对应特征向量 $(1,1,2)^{T}$，单位化得 $q_1=\frac{1}{\sqrt6}(1,1,2)^{T}$；$\lambda=0$ 的特征子空间由 $(-1,1,0)^{T}$、$(-2,0,1)^{T}$ 张成，对其做施密特正交化并单位化得 $q_2=\frac{1}{\sqrt2}(1,-1,0)^{T}$、$q_3=\frac{1}{\sqrt3}(-1,-1,1)^{T}$。sympy 复算 $Q^{T}Q=E$ 且 $Q^{T}SQ=\operatorname{diag}(6,0,0)$。</p>
-<p>第四步，写出结论：取 $Q=\begin{pmatrix}\frac{1}{\sqrt6}&\frac{1}{\sqrt2}&-\frac{1}{\sqrt3}\\ \frac{1}{\sqrt6}&-\frac{1}{\sqrt2}&-\frac{1}{\sqrt3}\\ \frac{2}{\sqrt6}&0&\frac{1}{\sqrt3}\end{pmatrix}$，则正交变换 $x=Qy$ 把 $f$ 化为标准形 $f=6y_1^{2}$。</p>
+<p>解析（本例只解第（2）问，$a=1,b=2$ 由第（1）问得到，见「线性方程组」一章）：</p>
+<p><strong>第一步</strong>，代入 $a=1,b=2$ 算出二次型矩阵。</p>
+<p>$$BA=\begin{pmatrix}1&1&2\\1&1&2\\2&2&4\end{pmatrix}$$</p>
+<p>它本身已经是对称矩阵，故 $f=x^{T}(BA)x$ 的矩阵就是</p>
+<p>$$S=\begin{pmatrix}1&1&2\\1&1&2\\2&2&4\end{pmatrix}$$</p>
+<p><strong>第二步</strong>，求 $S$ 的特征值：</p>
+<p>$$|S-\lambda E|=\lambda^{2}(\lambda-6)$$</p>
+<p>sympy 复算特征值为 $6,0,0$，于是二次型的标准形只含一个平方项，系数为 $6$。</p>
+<p><strong>第三步</strong>，求正交矩阵。</p>
+<p>$\lambda=6$ 对应特征向量 $(1,1,2)^{T}$，单位化得</p>
+<p>$$q_1=\frac{1}{\sqrt6}(1,1,2)^{T}$$</p>
+<p>$\lambda=0$ 的特征子空间由 $(-1,1,0)^{T}$、$(-2,0,1)^{T}$ 张成，对其做施密特正交化并单位化得</p>
+<p>$$q_2=\frac{1}{\sqrt2}(1,-1,0)^{T}$$</p>
+<p>$$q_3=\frac{1}{\sqrt3}(-1,-1,1)^{T}$$</p>
+<p>sympy 复算 $Q^{T}Q=E$ 且 $Q^{T}SQ=\operatorname{diag}(6,0,0)$。</p>
+<p><strong>第四步</strong>，写出结论：取</p>
+<p>$$Q=\begin{pmatrix}\frac{1}{\sqrt6}&\frac{1}{\sqrt2}&-\frac{1}{\sqrt3}\\ \frac{1}{\sqrt6}&-\frac{1}{\sqrt2}&-\frac{1}{\sqrt3}\\ \frac{2}{\sqrt6}&0&\frac{1}{\sqrt3}\end{pmatrix}$$</p>
+<p>则正交变换 $x=Qy$ 把 $f$ 化为标准形 $f=6y_1^{2}$。</p>
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p></div></main></div>
