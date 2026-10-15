@@ -1399,6 +1399,14 @@ def check_solution_layout(paras, path, code):
             err(path, 0, code, "解析第 %d 段纯文字 %d 字（上限 %d）："
                                "请拆成几步，每步一个 `>` 段落"
                 % (i, txt, MAX_PARA_TEXT))
+        # 「1. … 2. … 3. …」挤在同一段 = 步骤没有分行（用户实拍指出的正是这个）。
+        # 判据放在这里而不是靠上面的字数上限：一段可以很短却仍塞着两个编号。
+        # 注意别写成 `(?:^|\s)\d+\.`：中文里编号前面是「。」不是空格，
+        # 那样写会漏掉「…定理。2. 下一步」这种真实写法（第一版就漏了）。
+        steps = len(re.findall(r"(?<![\d.])\d+\.\s", _strip_math(body)))
+        if steps >= 2:
+            err(path, 0, code, "解析第 %d 段把 %d 个步骤编号挤在同一段："
+                               "请一步一段（编号之间留空 `>` 行）" % (i, steps))
 
 
 def check_completeness():

@@ -329,6 +329,19 @@ def _html_cram_li(t):
                   t, count=1, flags=re.S)
 
 
+
+def _merge_step_numbers(t):
+    """在解析的首个步骤段里再塞一个编号 —— 制造「1. … 2. … 挤在同一段」。
+
+    这是用户实拍指出的写法（中文里编号前面是「。」不是空格，所以判据的正则
+    不能写成 `(?:^|\\s)\\d+\\.`——第一版就因此漏判过）。
+    """
+    head, sep, tail = t.partition("# 真题示例")
+    if not sep:
+        return t
+    return head + sep + re.sub(r"(?m)^(> \d+\.\s.*)$", r"\1 2. 另一步。", tail, count=1)
+
+
 def _dup_heading(t):
     """在**同一章节区块内**重复一个标题（F21 的判据范围）。
 
@@ -451,6 +464,7 @@ case("F25", "解析里的空 > 行被删（整段并成一段）", G05, _merge_s
 case("F25", "解析里塞进 5 个行内公式的段落", D01H, _html_cram_para, mode="full")
 case("F25", "真题示例缺 `> 解析` 引用块（防静默通过）", G01, _drop_solution_quote)
 case("F25", "解析的列表项里塞 5 个行内公式（HTML 层盲区）", D01H, _html_cram_li, mode="full")
+case("F25", "两个步骤编号挤在同一段（1. … 2. …）", G05, _merge_step_numbers)
 case("F22", "site.js 深色类名写错（行为层必须抓到）", SITEJS, _html_break_site_js, mode="full")
 case("F23", "把外置样式内联回页面", D01H, _html_inline_style, mode="full")
 case("F23", "样式表引用不可达", D01H, _html_break_css_ref, mode="full")
