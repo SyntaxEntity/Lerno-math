@@ -21,8 +21,10 @@
 
 用法
 ----
-    python3 数学二/scripts/pack_site.py ../math2-site      # 输出到工作区外
-    python3 数学二/scripts/pack_site.py dist               # 输出到 数学二/dist
+    python3 数学二/scripts/pack_site.py math2-site   # 仓库根的 math2-site/（发布用，CI 同款）
+    python3 数学二/scripts/pack_site.py dist         # 仓库根的 dist/（临时预览）
+
+    路径按**仓库根**（即本脚本往上两级）解析，所以从仓库根执行时写目录名即可。
 
 ⚠️ 输出目录会被**先清空再重建**。如果它已经是一个 git 仓库（里面有 `.git/`），
 本脚本默认**拒绝执行**——否则会连本地提交历史和 `.github/workflows/` 一起删掉。
@@ -363,12 +365,10 @@ def main():
     print("  ✓ 体检通过：无绝对路径、无密钥痕迹")
     print("-" * 66)
     print("""下一步：
-  cd %s
-  git init -b main && git add -A
-  git commit -m "考研数学二速成复习资料（网页版）"
-  git remote add origin git@github.com:<用户名>/<仓库名>.git
-  git push -u origin main
-  然后在仓库 Settings → Pages 选择 main 分支 / root 发布。""" % out)
+  本目录是**构建产物**，已由仓库根的 .gitignore 排除，不要单独提交或推送。
+  发布走仓库根的工作流：.github/workflows/pages.yml
+    push 到 main → 跑 validate.py → 跑本脚本 → 上传本目录到 GitHub Pages
+  要本地预览，直接用浏览器打开 %s/index.html 即可（完全离线）。""" % (out,))
     return 0
 
 
