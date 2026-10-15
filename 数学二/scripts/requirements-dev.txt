@@ -1,0 +1,19 @@
+# 数学二速成资料 · Python 依赖：**本地生成链路**额外所需（锁定版本）
+#
+#   python3 -m venv .tools/venv
+#   .tools/venv/bin/python -m pip install -r 数学二/scripts/requirements-dev.txt
+#
+# 内容 = CI/校验那套（`-r requirements.txt`）+ 只在本地重生成产物时才要的增量。
+# 基础依赖的版本**不在这里重抄**，一律由 requirements.txt 带入；
+# 本文件只负责"多出来的那一个"（见 website/PLAN-对齐与改版.md §1.2.1）。
+#
+# 谁需要它：
+#   `run_all.py`（绘图 → 复算 → 组装 → 校验 → 反向测试 → HTML）——需要 matplotlib
+#   CI 门禁 ——不需要，它只跑 validate.py 与 verify_math.py（见 .github/workflows/pages.yml）
+
+-r requirements.txt
+
+# 只在本机重跑 `数学二/scripts/figs/*.py` 生成 assets/*.png 时需要。
+# 图是已提交的产物，CI 不重绘，所以它不在 requirements.txt 里——
+# 那个文件是"CI 与校验所需"的准确描述，不该因为本地要绘图而变重。
+matplotlib==3.11.2

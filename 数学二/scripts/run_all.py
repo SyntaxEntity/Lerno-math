@@ -17,8 +17,8 @@
     python3 数学二/scripts/run_all.py            # 全部跑一遍
     python3 数学二/scripts/run_all.py --quick    # 跳过反向测试与绘图（只重建+校验）
 
-解释器：绘图与复算需要 matplotlib/sympy。若当前解释器缺少依赖，本脚本会自动
-改用仓库内的 `.tools/venv/bin/python`（存在时）。
+解释器：绘图与复算需要 matplotlib/sympy（= `requirements-dev.txt`）。若当前解释器
+缺少依赖，本脚本会自动改用仓库内的 `.tools/venv/bin/python`（存在时）。
 """
 import json
 import os
@@ -88,7 +88,12 @@ def check_node_deps():
 
 
 def need_deps():
-    """返回一个能 import matplotlib 与 sympy 的解释器路径。"""
+    """返回一个能 import matplotlib 与 sympy 的解释器路径。
+
+    这里要的是**生成链路**的全套（matplotlib 画图 + sympy 复算 + markdown 渲染），
+    所以对应的是 `requirements-dev.txt`，不是 CI 用的 `requirements.txt`——
+    后者按设计只含 CI 与校验所需的 Markdown + sympy（见 PLAN §1.2.1）。
+    """
     for cand in (sys.executable, VENV):
         if not os.path.exists(cand):
             continue
@@ -97,8 +102,9 @@ def need_deps():
         if r.returncode == 0:
             return cand
     print("! 找不到同时具备 matplotlib / sympy / markdown 的解释器。")
-    print("  先运行：python3 -m venv .tools/venv && "
-          ".tools/venv/bin/python -m pip install sympy matplotlib markdown")
+    print("  先运行（版本以 requirements-dev.txt 为准，它会带入 requirements.txt）：")
+    print("    python3 -m venv .tools/venv && "
+          ".tools/venv/bin/python -m pip install -r 数学二/scripts/requirements-dev.txt")
     sys.exit(1)
 
 

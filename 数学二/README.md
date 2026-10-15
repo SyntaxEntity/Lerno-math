@@ -113,7 +113,8 @@
     ├── run_all.py         一键跑通全流水线
     ├── reverse_tests.py   反向测试：每条校验规则注入反例，确认它真会报错
     ├── check_mermaid.mjs  F3 的真实解析器层：node + 官方 mermaid parse()
-    ├── requirements.txt   Python 侧依赖（锁定版本）
+    ├── requirements.txt   Python 依赖：CI 与校验所需的全部（锁定版本）
+    ├── requirements-dev.txt  本地生成链路额外所需（含 matplotlib）
     ├── tools-package.json Node 侧依赖清单（与站点运行时同版本）
     ├── REVERSE_TESTS.md   反向测试记录（含当场抓出的 7 个校验器缺陷）
     ├── PARTS_FORMAT.md    内容源写作契约
@@ -272,15 +273,22 @@ python3 数学二/scripts/extract_papers.py --search 二重积分     # 全语�
 
 ## 七、工具链用法
 
-### 7.1 依赖（两条命令即可重建出**逐字节一致**的运行时）
+### 7.1 依赖：按用途分两个文件，版本只写一次
 
-本项目自带站内运行时，生成站点时必须拿到**完全相同版本**的组件，否则校验的语法
-与线上渲染的不是同一个版本：
+**分工规则**（PLAN-对齐与改版 §1.2.1）：版本只写在声明文件里，工作流与脚本一律读它。
+
+| 文件 | 含义 | 谁用 |
+| --- | --- | --- |
+| `requirements.txt` | **CI 与校验**所需的全部 | `.github/workflows/pages.yml`、`validate.py`、`verify_math.py` |
+| `requirements-dev.txt` | 本地**生成链路**额外所需（`-r requirements.txt` + 增量） | `run_all.py`（绘图 / 复算 / 组装 / HTML） |
 
 ```bash
-# Python 侧（绘图 + 符号复算 + Markdown 渲染）—— 版本锁在 requirements.txt
+# CI 与校验（= 工作流装的那一套；不含 matplotlib）
 python3 -m venv .tools/venv
 .tools/venv/bin/python -m pip install -r 数学二/scripts/requirements.txt
+
+# 本地生成链路（要重跑绘图/组装时用这个；它会把上面那套一并带入）
+.tools/venv/bin/python -m pip install -r 数学二/scripts/requirements-dev.txt
 
 # Node 侧（mermaid 真实解析校验 + 站点内置运行时）—— 版本锁在 tools-package.json
 # 先把清单拷进 .tools/ 再让 npm 按清单装：与 CI（.github/workflows/pages.yml）
@@ -289,18 +297,24 @@ mkdir -p .tools && cp 数学二/scripts/tools-package.json .tools/package.json
 npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund
 ```
 
-> 这里**不再写版本号**：版本只在 `requirements.txt` 与 `tools-package.json` 里各写一次，
-> 工作流、校验器与本文档都从这两个文件读（PLAN-对齐与改版 §1.2 的单一数据源要求）。
-> 下面这张表**由构建时读取那两个文件生成**，因此永远不会和实际依赖跑偏。
+> **为什么 CI 不装 matplotlib**：图（`assets/*.png`）与 HTML 都已入库，CI 只做
+> 「校验 + 打包」，**不重绘、不重生成产物**。matplotlib 只在本地重跑
+> `数学二/scripts/figs/*.py` 时才需要，所以它在 `requirements-dev.txt` 里。
+> 这样 `requirements.txt` 就是「CI 与校验所需」的**准确描述**，而不是一个被本地
+> 需求撑大的清单。
 
-| 组件 | 锁定版本 | 来源文件 | 用途 |
-| --- | --- | --- | --- |
-| jsdom | `30.1.2` | `tools-package.json` | 给 mermaid 的 `parse()` 提供最小 DOM |
-| katex | `0.16.47` | `tools-package.json` | 站点内置公式运行时（含 60 个字体） |
-| mermaid | `12.1.0` | `tools-package.json` | 站点内置图运行时 + F3 真实解析校验 |
-| sympy | `1.14.0` | `requirements.txt` | 全部数值复算（含图上坐标） |
-| matplotlib | `3.11.2` | `requirements.txt` | 生成 `assets/*.png` |
-| Markdown | `3.11.1` | `requirements.txt` | Markdown → HTML |
+> 这里**不再写版本号**：版本只在上面三个声明文件里各写一次，
+> 工作流、校验器与本文档都从它们读。下面这张表**由构建时读取那些文件生成**，
+> 因此永远不会和实际装的依赖跑偏。
+
+| 组件 | 锁定版本 | 来源文件 | 谁需要 | 用途 |
+| --- | --- | --- | --- | --- |
+| Markdown | `3.11.1` | `requirements.txt` | CI 门禁 + 校验 | Markdown → HTML |
+| sympy | `1.14.0` | `requirements.txt` | CI 门禁 + 校验 | 全部数值复算（含图上坐标） |
+| matplotlib | `3.11.2` | `requirements-dev.txt` | 本地生成链路 | 生成 `assets/*.png` |
+| jsdom | `30.1.2` | `tools-package.json` | CI 门禁 + 校验 | 给 mermaid 的 `parse()` 提供最小 DOM |
+| katex | `0.16.47` | `tools-package.json` | CI 门禁 + 校验 | 站点内置公式运行时（含 60 个字体） |
+| mermaid | `12.1.0` | `tools-package.json` | CI 门禁 + 校验 | 站点内置图运行时 + F3 真实解析校验 |
 
 > **为什么要锁版本**：站点里内置的 `mermaid.min.js` / `katex/` 就是上面这两个版本，
 > 而 F3 用同一个 mermaid 做解析校验——版本漂移会造出「校验过了但页面渲染不出来」
@@ -333,14 +347,18 @@ python3 数学二/scripts/pack_site.py math2-site
 
 > **站点不入库、由 CI 现打包**：仓库跟踪的是源码、内容源、生成物与工具链；
 > `math2-site/` 是 `pack_site.py` 的产物，随 `.gitignore` 排除。
-> 发布走 `.github/workflows/pages.yml`：推 `main` → 装依赖 → `validate.py` 门禁
-> → `pack_site.py math2-site` → 上传 artifact。所以本地要看站点，自己跑一次打包即可
+> 发布走 `.github/workflows/pages.yml`：
+> 推 `main` → 装依赖 → **门禁 ①** `validate.py`（形式：F1—F21 + F3 真解析）
+> → **门禁 ②** `verify_math.py`（数值：108 条 sympy 断言）
+> → `pack_site.py math2-site` → 上传 artifact。
+> 任何一道门禁不过就不部署。本地要看站点，自己跑一次打包即可
 > （或直接打开 `数学二/index.html`，那同样是离线可用的站点）。
 
 > `run_all.py` 会自动挑一个同时具备 sympy / matplotlib / markdown 的解释器
-> （优先用 `.tools/venv/`），并把 `MPLCONFIGDIR` 指到 `.tools/mplcache`
-> ——本机 `$HOME/.config` 是只读的，不设它每次都会退到随机临时目录重建字体缓存。
-> Node 依赖缺失时它会在开跑前明确报出来，而不是等 F3 静默跳过。
+> （优先用 `.tools/venv/`，对应 `requirements-dev.txt`），并把 `MPLCONFIGDIR`
+> 指到 `.tools/mplcache`——本机 `$HOME/.config` 是只读的，不设它每次都会退到
+> 随机临时目录重建字体缓存。Node 依赖缺失时它会在开跑前明确报出来，
+> 而不是等 F3 静默跳过。
 
 ### 校验项一览（每条都做过反向测试）
 

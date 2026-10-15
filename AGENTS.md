@@ -26,7 +26,7 @@
 
 ```
 website/math2-kaoyan/
-├── .github/workflows/pages.yml  Pages 工作流：validate 门禁 → pack_site → 上传 math2-site
+├── .github/workflows/pages.yml  Pages 工作流：两道门禁（validate + verify_math）→ pack_site → 上传 math2-site
 ├── 数学二/                      ★ 生成物 + 站点资源
 │   ├── index.html               全科单页合集（高数 9 章 + 线代 6 章，主学习界面）
 │   ├── README.md / README.html  说明（README.md 由 build_readme.py 生成）
@@ -51,13 +51,17 @@ python3 scripts/validate.py        # 校验 F1—F21
 python3 scripts/reverse_tests.py   # 反向测试：每条规则注入反例，确认它真会报错
 ```
 
-依赖锁在 `数学二/scripts/requirements.txt`（Python）与 `tools-package.json`（Node）。
-绘图与复算需要 matplotlib/sympy；**CI 只跑校验与打包，不重跑生成链路。**
+Python 依赖按用途分两个文件（PLAN §1.2.1）：`数学二/scripts/requirements.txt`
+= **CI 与校验**所需的全部（Markdown + sympy）；`requirements-dev.txt` = 本地生成链路
+额外所需（`-r requirements.txt` + matplotlib）。Node 侧锁在 `tools-package.json`。
+**CI 只跑校验与打包**（`validate.py` 形式 + `verify_math.py` 数值），
+不重绘、不重生成产物，所以不装 matplotlib。
 
 ## 四、发布
 
 `math2-site/` 是**构建产物，不入库**。发布走 `.github/workflows/pages.yml`：
-推 `main` → 装依赖 → `validate.py` 门禁 → `pack_site.py math2-site` → 上传。
+推 `main` → 装依赖 → 两道门禁（`validate.py` 形式校验 / `verify_math.py` 数值复算）
+→ `pack_site.py math2-site` → 上传。任一门禁不过即中止部署。
 
 本地预览：`python3 数学二/scripts/pack_site.py math2-site`，
 或直接打开 `数学二/index.html`（同样是离线可用的站点）。

@@ -452,7 +452,8 @@ html[data-theme="dark"] .missing{background:#2c1616;border-color:#6b2b2b}
     ├── run_all.py         一键跑通全流水线
     ├── reverse_tests.py   反向测试：每条校验规则注入反例，确认它真会报错
     ├── check_mermaid.mjs  F3 的真实解析器层：node + 官方 mermaid parse()
-    ├── requirements.txt   Python 侧依赖（锁定版本）
+    ├── requirements.txt   Python 依赖：CI 与校验所需的全部（锁定版本）
+    ├── requirements-dev.txt  本地生成链路额外所需（含 matplotlib）
     ├── tools-package.json Node 侧依赖清单（与站点运行时同版本）
     ├── REVERSE_TESTS.md   反向测试记录（含当场抓出的 7 个校验器缺陷）
     ├── PARTS_FORMAT.md    内容源写作契约
@@ -881,12 +882,35 @@ python3 数学二/scripts/extract_papers.py --search 二重积分     # 全语�
 </blockquote>
 <hr />
 <h2>七、工具链用法</h2>
-<h3>7.1 依赖（两条命令即可重建出<strong>逐字节一致</strong>的运行时）</h3>
-<p>本项目自带站内运行时，生成站点时必须拿到<strong>完全相同版本</strong>的组件，否则校验的语法
-与线上渲染的不是同一个版本：</p>
-<pre><code># Python 侧（绘图 + 符号复算 + Markdown 渲染）—— 版本锁在 requirements.txt
+<h3>7.1 依赖：按用途分两个文件，版本只写一次</h3>
+<p><strong>分工规则</strong>（PLAN-对齐与改版 §1.2.1）：版本只写在声明文件里，工作流与脚本一律读它。</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>含义</th>
+<th>谁用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>requirements.txt</code></td>
+<td><strong>CI 与校验</strong>所需的全部</td>
+<td><code>.github/workflows/pages.yml</code>、<code>validate.py</code>、<code>verify_math.py</code></td>
+</tr>
+<tr>
+<td><code>requirements-dev.txt</code></td>
+<td>本地<strong>生成链路</strong>额外所需（<code>-r requirements.txt</code> + 增量）</td>
+<td><code>run_all.py</code>（绘图 / 复算 / 组装 / HTML）</td>
+</tr>
+</tbody>
+</table>
+<pre><code># CI 与校验（= 工作流装的那一套；不含 matplotlib）
 python3 -m venv .tools/venv
 .tools/venv/bin/python -m pip install -r 数学二/scripts/requirements.txt
+
+# 本地生成链路（要重跑绘图/组装时用这个；它会把上面那套一并带入）
+.tools/venv/bin/python -m pip install -r 数学二/scripts/requirements-dev.txt
 
 # Node 侧（mermaid 真实解析校验 + 站点内置运行时）—— 版本锁在 tools-package.json
 # 先把清单拷进 .tools/ 再让 npm 按清单装：与 CI（.github/workflows/pages.yml）
@@ -895,9 +919,14 @@ mkdir -p .tools &amp;&amp; cp 数学二/scripts/tools-package.json .tools/packag
 npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund
 </code></pre>
 <blockquote>
-<p>这里<strong>不再写版本号</strong>：版本只在 <code>requirements.txt</code> 与 <code>tools-package.json</code> 里各写一次，
-工作流、校验器与本文档都从这两个文件读（PLAN-对齐与改版 §1.2 的单一数据源要求）。
-下面这张表<strong>由构建时读取那两个文件生成</strong>，因此永远不会和实际依赖跑偏。</p>
+<p><strong>为什么 CI 不装 matplotlib</strong>：图（<code>assets/*.png</code>）与 HTML 都已入库，CI 只做
+「校验 + 打包」，<strong>不重绘、不重生成产物</strong>。matplotlib 只在本地重跑
+<code>数学二/scripts/figs/*.py</code> 时才需要，所以它在 <code>requirements-dev.txt</code> 里。
+这样 <code>requirements.txt</code> 就是「CI 与校验所需」的<strong>准确描述</strong>，而不是一个被本地
+需求撑大的清单。</p>
+<p>这里<strong>不再写版本号</strong>：版本只在上面三个声明文件里各写一次，
+工作流、校验器与本文档都从它们读。下面这张表<strong>由构建时读取那些文件生成</strong>，
+因此永远不会和实际装的依赖跑偏。</p>
 </blockquote>
 <table>
 <thead>
@@ -905,45 +934,52 @@ npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund
 <th>组件</th>
 <th>锁定版本</th>
 <th>来源文件</th>
+<th>谁需要</th>
 <th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>Markdown</td>
+<td><code>3.11.1</code></td>
+<td><code>requirements.txt</code></td>
+<td>CI 门禁 + 校验</td>
+<td>Markdown → HTML</td>
+</tr>
+<tr>
+<td>sympy</td>
+<td><code>1.14.0</code></td>
+<td><code>requirements.txt</code></td>
+<td>CI 门禁 + 校验</td>
+<td>全部数值复算（含图上坐标）</td>
+</tr>
+<tr>
+<td>matplotlib</td>
+<td><code>3.11.2</code></td>
+<td><code>requirements-dev.txt</code></td>
+<td>本地生成链路</td>
+<td>生成 <code>assets/*.png</code></td>
+</tr>
+<tr>
 <td>jsdom</td>
 <td><code>30.1.2</code></td>
 <td><code>tools-package.json</code></td>
+<td>CI 门禁 + 校验</td>
 <td>给 mermaid 的 <code>parse()</code> 提供最小 DOM</td>
 </tr>
 <tr>
 <td>katex</td>
 <td><code>0.16.47</code></td>
 <td><code>tools-package.json</code></td>
+<td>CI 门禁 + 校验</td>
 <td>站点内置公式运行时（含 60 个字体）</td>
 </tr>
 <tr>
 <td>mermaid</td>
 <td><code>12.1.0</code></td>
 <td><code>tools-package.json</code></td>
+<td>CI 门禁 + 校验</td>
 <td>站点内置图运行时 + F3 真实解析校验</td>
-</tr>
-<tr>
-<td>sympy</td>
-<td><code>1.14.0</code></td>
-<td><code>requirements.txt</code></td>
-<td>全部数值复算（含图上坐标）</td>
-</tr>
-<tr>
-<td>matplotlib</td>
-<td><code>3.11.2</code></td>
-<td><code>requirements.txt</code></td>
-<td>生成 <code>assets/*.png</code></td>
-</tr>
-<tr>
-<td>Markdown</td>
-<td><code>3.11.1</code></td>
-<td><code>requirements.txt</code></td>
-<td>Markdown → HTML</td>
 </tr>
 </tbody>
 </table>
@@ -976,13 +1012,17 @@ python3 数学二/scripts/pack_site.py math2-site
 <blockquote>
 <p><strong>站点不入库、由 CI 现打包</strong>：仓库跟踪的是源码、内容源、生成物与工具链；
 <code>math2-site/</code> 是 <code>pack_site.py</code> 的产物，随 <code>.gitignore</code> 排除。
-发布走 <code>.github/workflows/pages.yml</code>：推 <code>main</code> → 装依赖 → <code>validate.py</code> 门禁
-→ <code>pack_site.py math2-site</code> → 上传 artifact。所以本地要看站点，自己跑一次打包即可
+发布走 <code>.github/workflows/pages.yml</code>：
+推 <code>main</code> → 装依赖 → <strong>门禁 ①</strong> <code>validate.py</code>（形式：F1—F21 + F3 真解析）
+→ <strong>门禁 ②</strong> <code>verify_math.py</code>（数值：108 条 sympy 断言）
+→ <code>pack_site.py math2-site</code> → 上传 artifact。
+任何一道门禁不过就不部署。本地要看站点，自己跑一次打包即可
 （或直接打开 <code>数学二/index.html</code>，那同样是离线可用的站点）。</p>
 <p><code>run_all.py</code> 会自动挑一个同时具备 sympy / matplotlib / markdown 的解释器
-（优先用 <code>.tools/venv/</code>），并把 <code>MPLCONFIGDIR</code> 指到 <code>.tools/mplcache</code>
-——本机 <code>$HOME/.config</code> 是只读的，不设它每次都会退到随机临时目录重建字体缓存。
-Node 依赖缺失时它会在开跑前明确报出来，而不是等 F3 静默跳过。</p>
+（优先用 <code>.tools/venv/</code>，对应 <code>requirements-dev.txt</code>），并把 <code>MPLCONFIGDIR</code>
+指到 <code>.tools/mplcache</code>——本机 <code>$HOME/.config</code> 是只读的，不设它每次都会退到
+随机临时目录重建字体缓存。Node 依赖缺失时它会在开跑前明确报出来，
+而不是等 F3 静默跳过。</p>
 </blockquote>
 <h3>校验项一览（每条都做过反向测试）</h3>
 <table>
