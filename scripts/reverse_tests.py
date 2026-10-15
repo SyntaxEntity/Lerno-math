@@ -442,6 +442,39 @@ def _mw_magic_calc(t):
     return t.replace(old, ".inner{max-width:calc(var(--mw) + 92px);", 1)
 
 
+
+def _css_drop_close_brace(t):
+    """删掉一个 `}` —— 触发 F28 的花括号配平判据。"""
+    i = t.rstrip().rfind("}")
+    assert i > 0, "没找到可删的 `}`"
+    return t[:i] + t[i + 1:]
+
+
+def _css_408_broken_edit(t):
+    """注入 408 那份**已上线**的 site.css 里的真实坏片段（§5.2.3.1 的实测证据）。
+
+    坏编辑吃掉了两条规则的 `{`：`.chapter-` 后面直接跟声明、再跟一个孤立的 `}`；
+    另一半写成 `.chapter-flex-direction:column}`。后果是 `.chapter-nav{display:flex}`
+    整条消失，上一章/下一章竖着堆。**这条反例存在的意义就是：这个 bug 必须能被判据抓住。**
+    """
+    broken = ("\n.chapter-\n"
+              "  display:flex;justify-content:space-between;gap:12px;margin:44px 0 0;\n"
+              "  padding-top:20px;border-top:1px solid var(--line);\n"
+              "}\n"
+              "  .chapter-flex-direction:column}\n")
+    return t + broken
+
+
+def _css_bare_dash_selector(t):
+    """注入一个以裸 `-` 结尾的选择器 —— 触发 F28 的规则头判据。"""
+    return t + "\n.foo-{color:red}\n"
+
+
+def _css_media_without_block(t):
+    """注入一个没有块的 @supports —— 触发 F28 的 at-rule 判据（花括号仍然配平）。"""
+    return t + "\n@supports (display:grid);\n"
+
+
 def _dup_heading(t):
     """在**同一章节区块内**重复一个标题（F21 的判据范围）。
 
@@ -574,6 +607,10 @@ case("F26", "在文档里硬编码 F 范围（H4 漂移）", AGENTSmd, _hardcode
 case("F26", "把一条规则的 err 降级成 warn（只 warn 拦不住发布）", VALIDATEpy, _downgrade_rule_to_warn, mode="full")
 case("F27", "把 site.css 的 --bg 改成表外的色值", SITECSS, _break_style_token)
 case("F27", "正文列改回 calc(var(--mw) + 92px)（契约禁止魔法数）", SITECSS, _mw_magic_calc)
+case("F28", "site.css 少一个 `}`（花括号不配平）", SITECSS, _css_drop_close_brace)
+case("F28", "注入 408 那份已上线 CSS 的真实坏片段（吃掉 `{`）", SITECSS, _css_408_broken_edit)
+case("F28", "选择器以裸 `-` 结尾（.foo-{…}）", SITECSS, _css_bare_dash_selector)
+case("F28", "注入没有块的 @supports（花括号仍配平）", SITECSS, _css_media_without_block)
 case("F22", "site.js 深色类名写错（行为层必须抓到）", SITEJS, _html_break_site_js, mode="full")
 case("F23", "把外置样式内联回页面", D01H, _html_inline_style, mode="full")
 case("F23", "样式表引用不可达", D01H, _html_break_css_ref, mode="full")

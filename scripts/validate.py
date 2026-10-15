@@ -1426,6 +1426,7 @@ def check_solution_layout(paras, path, code):
 
 # H3：扫描型规则 → 它报告的「受检对象数」统计键。这些数必须 > 0，否则规则在空转。
 SCANNED_BOTH_MODES = [
+    ("css_files", "F28 扫到的样式文件"),
     ("assets", "F18 扫到的图片资产"),
     ("figs", "F18 扫到的绘图脚本"),
 ]
@@ -1680,6 +1681,143 @@ def check_style_tokens():
     stats["tokens_deprecated"] = sum(1 for t in WP_DEPRECATED if t in light or t in dark)
 
 
+# ---------------------------------------------------------------------------
+# F28：CSS 语法（PLAN-对齐与改版 §5.2.3.1）
+#
+# 为什么要有这一条：408 那份**已提交、已上线**的 site.css 里，一次坏编辑吃掉了
+# 两条规则的 `{`，于是 `.chapter-nav{display:flex}` 整条消失——上一章/下一章会竖着堆。
+# 而两边的校验器当时只查「HTML 里有没有这个类名」（F22/F23），**没有任何规则检查
+# CSS 本身能否解析**：产物坏了，判据却绿着。与 P4 那三条是同一类问题。
+#
+# ⚠️ 实现要点：**必须先剥注释与字符串再计数**。数学二那份完全正确的统一版 site.css
+# 原始计数是 204 `{` vs 205 `}`——差的那一个来自注释里写的 `.sec-{freq,core,…}`
+# 这类示例。朴素计数会**误报一份好文件**，所以这里用状态机跳过 /*…*/、"…"、'…'。
+# ---------------------------------------------------------------------------
+
+def _strip_css_noise(css):
+    """剥掉注释与字符串，返回 (净 CSS, 注释数, 注释/字符串里的花括号数)。
+
+    保留换行为空格以免行号漂移；跳过的字符一律用等量换行补齐。
+    缩进/空白不影响后面按字符扫的判据。
+    """
+    out, i, n = [], 0, len(css)
+    comments = braces_inside = 0
+    in_comment = False
+    quote = ""
+    while i < n:
+        c = css[i]
+        nxt = css[i + 1] if i + 1 < n else ""
+        if in_comment:
+            if c == "*" and nxt == "/":
+                in_comment = False
+                i += 2
+                continue
+            if c in "{}":
+                braces_inside += 1
+            out.append("\n" if c == "\n" else " ")
+            i += 1
+            continue
+        if quote:
+            if c == "\\":
+                out.append("  ")
+                i += 2
+                continue
+            if c == quote:
+                quote = ""
+            out.append("\n" if c == "\n" else " ")
+            i += 1
+            continue
+        if c == "/" and nxt == "*":
+            in_comment = True
+            comments += 1
+            out.append("  ")
+            i += 2
+            continue
+        if c in "\"'":
+            quote = c
+            out.append(" ")
+            i += 1
+            continue
+        out.append(c)
+        i += 1
+    return "".join(out), comments, braces_inside
+
+
+def check_css_syntax():
+    """F28：site.css 必须语法自洽（花括号配平 / 规则头完整 / @media 配平）。"""
+    css_path = os.path.join(CONTENT, "assets", "site.css")
+    rp = "数学二/assets/site.css"
+    if not os.path.exists(css_path):
+        err(rp, 0, "F28", "找不到 site.css")
+        return
+    raw = open(css_path, encoding="utf-8").read()
+    css, n_comment, n_braces_in_comment = _strip_css_noise(raw)
+
+    # ---- 判据 1：花括号配平（带行号与深度，指出第一处越界）----
+    depth, line = 0, 1
+    first_neg = None
+    for ch in css:
+        if ch == "\n":
+            line += 1
+        elif ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth < 0 and first_neg is None:
+                first_neg = line
+                depth = 0          # 越过界就先归零，继续扫后面的
+    opens = css.count("{")
+    closes = css.count("}")
+    if first_neg is not None:
+        err(rp, first_neg, "F28",
+            "多出一个 `}`（第 %d 行附近）：疑似坏编辑吃掉了前面的 `{`" % first_neg)
+    if opens != closes:
+        err(rp, 0, "F28",
+            "花括号不配平：`{` %d 个、`}` %d 个（剥掉 %d 处注释、其中含 %d 个花括号后统计）"
+            % (opens, closes, n_comment, n_braces_in_comment))
+
+    # ---- 判据 2：规则头完整性（`{` 前必须是非空选择器；不得以裸 `-` 结尾）----
+    for m in re.finditer(r"([^{};]*)\{", css):
+        head = m.group(1)
+        stripped = head.strip()
+        line = css[:m.start(1)].count("\n") + 1
+        if not stripped:
+            err(rp, line, "F28", "`{` 前面没有选择器（空规则头）")
+            continue
+        if stripped.endswith("-"):
+            err(rp, line, "F28",
+                "选择器以裸 `-` 结尾：`%s`（疑似编辑吃掉了标识符尾部）" % stripped[-40:])
+
+    # ---- 判据 3：@media / @supports 块配平 ----
+    stack, line = [], 1
+    i = 0
+    while i < len(css):
+        ch = css[i]
+        if ch == "\n":
+            line += 1
+        elif ch == "{":
+            stack.append(line)
+        elif ch == "}":
+            if stack:
+                stack.pop()
+        elif ch == "@" and re.match(r"@(media|supports)\b", css[i:i + 12]):
+            m = re.match(r"@(media|supports)\b", css[i:i + 12])
+            # 找这个 at-rule 的 `{`：它必须存在，且块要闭合
+            j = css.find("{", i)
+            k = css.find(";", i)
+            if j < 0 or (0 <= k < j):
+                err(rp, line, "F28", "`%s` 没有块（缺少 `{`）" % m.group(1))
+            i = j if j >= 0 else i
+        i += 1
+    if stack:
+        err(rp, 0, "F28", "有 %d 个块没有闭合（最后一个 `{` 在第 %d 行）"
+            % (len(stack), stack[-1]))
+
+    stats["css_files"] = 1
+    stats["css_braces"] = opens
+    stats["css_braces_in_comment"] = n_braces_in_comment
+
+
 def check_completeness():
     """F16：交付物完整性——不得静默缺失。"""
     need = [os.path.join(CONTENT, "README.md"), os.path.join(CONTENT, "index.html")]
@@ -1718,12 +1856,14 @@ def report(title):
     # F26 的体检结果：规则范围、覆盖情况、扫描型受检数、文档里的范围声明数。
     # 「范围」只在这里输出——文档与 CI 一律不要手写（手写的必然漂移，已漂过一次）。
     print("  ★ 规则 F%s—F%s（%d 条，%d 条有 err 路径）｜反向测试覆盖 %d/%d"
-          "｜扫描型受检数 %d 项｜token %d 个（废弃名 %d）｜文档/CI 范围声明 %d 处"
+          "｜扫描型受检数 %d 项｜token %d 个（废弃名 %d）｜CSS 花括号 %d（注释内 %d）"
+          "｜文档/CI 范围声明 %d 处"
           % (stats.get("rule_min", "?"), stats.get("rule_max", "?"), stats.get("rules", 0),
              stats.get("rules_with_err", 0),
              stats.get("rules_covered", 0), stats.get("rules", 0),
              stats.get("scanned_checked", 0), stats.get("tokens_checked", 0),
-             stats.get("tokens_deprecated", 0), stats.get("declared_ranges", 0)))
+             stats.get("tokens_deprecated", 0), stats.get("css_braces", 0),
+             stats.get("css_braces_in_comment", 0), stats.get("declared_ranges", 0)))
     print("-" * 78)
     if errors:
         print("  ✗ 错误 %d 条：" % len(errors))
@@ -1804,6 +1944,7 @@ def main():
 
     check_figs()                           # F18：两种模式都要跑
     check_style_tokens()                   # F27：site.css 的 A 暖纸 token 契约
+    check_css_syntax()                     # F28：site.css 的语法自洽
 
     mermaid_skipped = "--no-mermaid" in argv
     if not mermaid_skipped:
