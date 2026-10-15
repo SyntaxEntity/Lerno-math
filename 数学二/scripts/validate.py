@@ -30,6 +30,7 @@
     python3 数学二/scripts/validate.py --stats    # 只打印统计
     python3 数学二/scripts/validate.py --no-mermaid   # 跳过真实解析器（离线时用）
 """
+import ast
 import glob
 import json
 import os
@@ -1446,6 +1447,48 @@ RANGE_DECL_FILES = [
 RANGE_RE = re.compile(r"F(\d+)\s*[—\-~～]\s*F?(\d+)")
 
 
+
+
+
+def _rules_with_error_path(src):
+    """用 **AST** 判断每条规则是否存在 err(...) 路径（比文本启发式可靠）。
+
+    为什么必须用 AST：第一版是文本启发式（"字面量前面最近一次调用是不是 err("），
+    结果被**本函数自己的文档字符串**骗过——docstring 里写了示例
+    `err(…, "F24", …)`，于是任何降级都判不出来。AST 只认真正的调用节点，
+    注释与文档字符串天然被忽略。
+
+    认三种写法：
+      ① `err(…, "F24", …)`                    —— 直接形式
+      ② `check_xxx(…, "F24", …)` 且该函数体里有 err(  —— 间接形式（F24/F25 是这种）
+      ③ 辅助函数用变量 `code` 转发到 err(      —— 由 ② 覆盖
+    返回 {规则码: True}。
+    """
+    tree = ast.parse(src)
+    funcs = {n.name: n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)}
+
+    def call_name(c):
+        f = c.func
+        if isinstance(f, ast.Name):
+            return f.id
+        return f.attr if isinstance(f, ast.Attribute) else None
+
+    def codes_of(c):
+        return [a.value for a in c.args
+                if isinstance(a, ast.Constant) and isinstance(a.value, str)
+                and re.fullmatch(r"F\d+", a.value)]
+
+    func_has_err = {name: any(call_name(c) == "err"
+                              for c in ast.walk(node) if isinstance(c, ast.Call))
+                    for name, node in funcs.items()}
+    out = {}
+    for c in (n for n in ast.walk(tree) if isinstance(n, ast.Call)):
+        nm = call_name(c)
+        for code in codes_of(c):
+            if nm == "err" or (nm and nm != "warn" and func_has_err.get(nm)):
+                out[code] = True
+    return out
+
 def check_meta(parts_mode, mermaid_skipped=False):
     """F26：H2 规则集合 ≡ 覆盖集合；H3 扫描型受检数 > 0；H4 不硬编码规则范围。"""
     # ---- H2：规则集合 vs 反向测试覆盖集合（用集合比较，不假设编号连续）----
@@ -1467,6 +1510,17 @@ def check_meta(parts_mode, mermaid_skipped=False):
     if extra:
         err("数学二/scripts", 0, "F26",
             "反向测试引用了不存在的规则：%s" % "、".join("F" + x for x in extra))
+    # 每条规则在源码里至少要有一处 err(...)：只有 warn(...) 的"规则"永远拦不住发布，
+    # 而它照样能被反向测试的旧判据（找 `[Fxx]` 字样）判成"已报错"。
+    # 这是实测到的假通过：把 F24 的 err 改成 warn，61 条用例全绿、发布照走。
+    # 静态检查比动态自测更可靠：不用构造场景，改坏就报。
+    have_err = _rules_with_error_path(self_src)
+    for code in sorted(rules, key=int):
+        if ("F" + code) not in have_err:
+            err("数学二/scripts", 0, "F26",
+                "规则 F%s 在 validate.py 里没有 err(...) 调用——只 warn 拦不住发布，不算规则"
+                % code)
+    stats["rules_with_err"] = sum(1 for c in rules if ("F" + c) in have_err)
     stats["rules"] = len(rules)
     stats["rules_covered"] = len(rules & cover)
     if rules:
@@ -1542,8 +1596,10 @@ def report(title):
              stats.get("shell_js_total", 0)))
     # F26 的体检结果：规则范围、覆盖情况、扫描型受检数、文档里的范围声明数。
     # 「范围」只在这里输出——文档与 CI 一律不要手写（手写的必然漂移，已漂过一次）。
-    print("  ★ 规则 F%s—F%s（%d 条）｜反向测试覆盖 %d/%d｜扫描型受检数 %d 项｜文档/CI 范围声明 %d 处"
+    print("  ★ 规则 F%s—F%s（%d 条，%d 条有 err 路径）｜反向测试覆盖 %d/%d"
+          "｜扫描型受检数 %d 项｜文档/CI 范围声明 %d 处"
           % (stats.get("rule_min", "?"), stats.get("rule_max", "?"), stats.get("rules", 0),
+             stats.get("rules_with_err", 0),
              stats.get("rules_covered", 0), stats.get("rules", 0),
              stats.get("scanned_checked", 0), stats.get("declared_ranges", 0)))
     print("-" * 78)
@@ -1632,6 +1688,15 @@ def main():
 
     # F26 元校验放在最后：它要读前面各条规则报告的受检对象数
     check_meta(parts_mode, mermaid_skipped=mermaid_skipped)
+
+    if "--json" in argv:
+        # 机器可读输出：**errors 与 warnings 必须分开**。
+        # 反向测试原来靠正则找 `[Fxx]` 字样，分不清这两者——把一条规则从 error
+        # 降级成 warn（= 门禁不再拦它）时，用例照样"通过"。这就是 P4 要消灭的假通过。
+        print(json.dumps({"errors": errors, "warnings": warnings,
+                          "stats": dict(stats), "parts_mode": parts_mode},
+                         ensure_ascii=False))
+        return 1 if errors else 0
 
     if "--stats" in argv:
         for k, v in sorted(per_file.items()):

@@ -22,6 +22,7 @@
 - 校验器以子进程运行（`--no-mermaid` 加速），只关心是否出现期望的错误码与关键字。
 - 任何一条用例没有触发预期错误，就计为**失败**——这才是「校验器不是摆设」的证据。
 """
+import json
 import os
 import re
 import subprocess
@@ -406,6 +407,24 @@ def _hardcode_rule_range(t):
     return t + "\n<!-- 校验规则 F1—F99 -->\n"
 
 
+
+def _downgrade_rule_to_warn(t):
+    """把一条规则的 err(...) 降级成 warn(...) —— 门禁从此拦不住它。
+
+    这是**实测出来的假通过**：旧判据只找 `[Fxx]` 字样，分不清 error 与 warning，
+    所以把 F24 降级后 61 条用例照样全绿、发布照走。现在两层都会拦：
+    动态层（本 harness 只认新出现的 **error**）、静态层（F26 用 AST 检查每条规则
+    是否存在 err( 路径）。
+    """
+    old = 'err("数学二/README.md", 0, "F12"'
+    assert old in t, "锚点没找到：F12 的 err( 调用变了"
+    # 必须**全部**替换：F12 有多处 err(，只改一处时 AST 仍能看到 err 路径，
+    # 判据就不会报错（第一版正是只替换了第一处，用例没触发）。
+    out = t.replace(old, 'warn("数学二/README.md", 0, "F12"')
+    assert out != t
+    return out
+
+
 def _dup_heading(t):
     """在**同一章节区块内**重复一个标题（F21 的判据范围）。
 
@@ -535,6 +554,7 @@ case("F26", "注入一条永不为真的假规则（H2 元校验必须抓到）"
 case("F26", "删掉一条反向测试用例（H2 覆盖集合不再相等）", SELFpy, _drop_one_reverse_case, mode="full")
 case("F26", "把某个扫描型规则的受检数改成 0（H3 空转通过）", VALIDATEpy, _zero_one_scanned_stat, mode="full")
 case("F26", "在文档里硬编码 F 范围（H4 漂移）", AGENTSmd, _hardcode_rule_range, mode="full")
+case("F26", "把一条规则的 err 降级成 warn（只 warn 拦不住发布）", VALIDATEpy, _downgrade_rule_to_warn, mode="full")
 case("F22", "site.js 深色类名写错（行为层必须抓到）", SITEJS, _html_break_site_js, mode="full")
 case("F23", "把外置样式内联回页面", D01H, _html_inline_style, mode="full")
 case("F23", "样式表引用不可达", D01H, _html_break_css_ref, mode="full")
@@ -558,20 +578,34 @@ def baseline_errors(mode, allow_mermaid):
     """
     key = (mode, allow_mermaid)
     if key not in _BASELINE:
-        out = run_validate(mode, allow_mermaid=allow_mermaid)
-        _BASELINE[key] = {ln.strip() for ln in out.split("\n") if ERROR_LINE.search(ln)}
-        print("  · 基线（%s%s）：已有 %d 条报错"
-              % (mode, "，含真实解析器" if allow_mermaid else "",
-                 len(_BASELINE[key])))
+        errs, _warns, _rc = run_validate(mode, allow_mermaid=allow_mermaid)
+        _BASELINE[key] = {e.strip() for e in errs}
+        print("  · 基线（%s%s）：已有 %d 条**错误**（warning 不计）"
+              % (mode, "，含真实解析器" if allow_mermaid else "", len(_BASELINE[key])))
     return _BASELINE[key]
 
 
 def run_validate(mode, allow_mermaid=False):
-    cmd = [PY, VALIDATE] + (["--parts"] if mode == "parts" else [])
+    """跑一次校验器，返回 (errors, warnings, 退出码)。
+
+    **必须拿结构化的 errors 而不是"输出里有没有 `[Fxx]` 字样"**：
+    后者分不清 error 与 warning，而把一条规则从 error 降级成 warn 就等于门禁不再拦它——
+    实测过：把 F24 的 err 改成 warn，正则判据下 61 条用例照样全绿。
+    这就是 P4 说的「假通过」，只不过这次假通过的是反向测试自己。
+    """
+    cmd = [PY, VALIDATE, "--json"] + (["--parts"] if mode == "parts" else [])
     if not allow_mermaid:
         cmd.append("--no-mermaid")
-    r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, timeout=600)
-    return r.stdout + r.stderr
+    r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, timeout=900)
+    try:
+        data = json.loads(r.stdout)
+    except Exception as e:                                   # noqa: BLE001
+        # 两种情况都可能：校验器崩了，或**本脚本自己**出错（例如漏 import json）。
+        # 把异常一并报出来，否则"harness 自身有 bug"会被伪装成"校验器没输出"。
+        return ({"读不出校验器输出（%s: %s）：%s"
+                 % (type(e).__name__, e, (r.stdout[-200:] + r.stderr[-200:]))}, set(),
+                r.returncode)
+    return set(data.get("errors", [])), set(data.get("warnings", [])), r.returncode
 
 
 def main():
@@ -600,7 +634,7 @@ def main():
                 continue
             if broken is None:
                 # None = 这个反例要求"目标文件不存在"（F0 那类查存在性的规则）。
-                # finally 里会把原内容写回，文件照样还原。
+                # finally 会把原内容写回，文件照样还原。
                 os.remove(target)
             elif broken == original:
                 print("  ? %-5s %-42s 跳过（反例未改变内容，用例失效）" % (code, name))
@@ -609,9 +643,18 @@ def main():
             else:
                 with open(target, "w", encoding="utf-8") as f:
                     f.write(broken)
-            out = run_validate(mode, allow_mermaid=mermaid)
-            fresh = {ln.strip() for ln in out.split("\n") if ERROR_LINE.search(ln)} - base
+            errs, warns, rc = run_validate(mode, allow_mermaid=mermaid)
+            fresh = {e.strip() for e in errs} - base
             hit = any(("[%s]" % code) in ln for ln in fresh)
+            only_warn = (not hit) and any(
+                ("[%s]" % code) in w for w in warns)
+            if hit and rc == 0:
+                # 报了 error 但退出码是 0 —— 报告与退出码对不上，门禁就拦不住
+                hit = False
+                print("  ✗ %-5s %-42s 报了 error 但退出码为 0（门禁不会中止！）"
+                      % (code, name))
+                failed += 1
+                continue
             if hit:
                 passed += 1
                 print("  ✓ %-5s %-42s 已报错" % (code, name))
@@ -622,7 +665,11 @@ def main():
                             break
             else:
                 failed += 1
-                print("  ✗ %-5s %-42s **未报错（校验器失效！）**" % (code, name))
+                if only_warn:
+                    print("  ✗ %-5s %-42s **只报了 warning（门禁不会失败，属假通过！）**"
+                          % (code, name))
+                else:
+                    print("  ✗ %-5s %-42s **未报错（校验器失效！）**" % (code, name))
         finally:
             with open(target, "w", encoding="utf-8") as f:
                 f.write(original)
