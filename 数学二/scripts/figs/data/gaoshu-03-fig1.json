@@ -1,0 +1,10 @@
+{
+ "lagrange_point": [
+  1.0,
+  1.0
+ ],
+ "lagrange_xi": 1.0,
+ "rolle_value": 4.0,
+ "rolle_xi": 2.0,
+ "secant_slope": 2.0
+}

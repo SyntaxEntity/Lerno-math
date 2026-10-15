@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>高等数学 · 多元函数微积分学</title><style>
+:root{
+ --bg:#f7f7f5; --paper:#ffffff; --fg:#1f2328; --fg2:#3d444d; --mut:#6b7280;
+ --line:#e3e6ea; --line2:#eef1f4; --acc:#1d4ed8; --acc2:#0b3d91;
+ --codebg:#f5f7fa; --hi:#fff6d6; --warnbg:#fff8ec; --warnbd:#f0d9a8;
+ --realbg:#f1f8f2; --realbd:#bcdcc2; --chip:#eef2f7;
+ --sh:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.05);
+ --serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",Georgia,"Times New Roman",serif;
+ --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+}
+html[data-theme="dark"]{
+ --bg:#0d1117; --paper:#161b22; --fg:#e6edf3; --fg2:#c9d1d9; --mut:#8b949e;
+ --line:#2b3138; --line2:#22272e; --acc:#6ea8fe; --acc2:#9ec5fe;
+ --codebg:#1b2129; --hi:#3a2f10; --warnbg:#2c2415; --warnbd:#5c4a1e;
+ --realbg:#14251a; --realbd:#2f5c3c; --chip:#1f2630;
+ --sh:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
+ font-size:16.5px;line-height:1.82;-webkit-font-smoothing:antialiased}
+#wrap{display:flex;min-height:100vh}
+
+/* ---------- 侧栏 ---------- */
+nav{width:302px;flex:0 0 302px;background:var(--paper);border-right:1px solid var(--line);
+ position:sticky;top:0;height:100vh;overflow:auto;padding:18px 14px 40px}
+nav .navhead{display:flex;align-items:center;justify-content:space-between;
+ gap:8px;margin:0 6px 12px}
+nav .navhead h1{font-size:14.5px;margin:0;font-weight:700;letter-spacing:.02em}
+nav .sitehome{font-size:12px;color:var(--acc);text-decoration:none;
+ border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap}
+nav .sitehome:hover{border-color:var(--acc)}
+nav input{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:9px;
+ background:var(--bg);color:var(--fg);margin-bottom:12px;font-size:13px;font-family:var(--sans)}
+nav input:focus{outline:2px solid var(--acc);outline-offset:-1px;border-color:transparent}
+nav a{display:block;padding:6px 10px;color:var(--fg2);text-decoration:none;
+ font-size:13.5px;border-radius:8px;line-height:1.5}
+nav a:hover{background:var(--codebg);color:var(--fg)}
+nav .grp{margin:16px 6px 6px;font-size:11.5px;color:var(--mut);
+ font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+nav a.cur{background:var(--chip);color:var(--acc);font-weight:700}
+nav .tocbox{margin:2px 0 10px 16px;padding-left:10px;border-left:2px solid var(--line)}
+nav .tocbox a{font-size:12.5px;color:var(--mut);padding:3px 8px}
+nav .tocbox a.cur{color:var(--acc);font-weight:600;background:none}
+
+/* ---------- 主区 ---------- */
+main{flex:1;min-width:0;padding:0 0 100px}
+.inner{max-width:880px;margin:0 auto;padding:0 46px}
+.chapterbar{position:sticky;top:0;z-index:20;background:var(--paper);
+ border-bottom:1px solid var(--line);
+ padding:12px 46px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+@supports (backdrop-filter:blur(1px)){
+ .chapterbar{background:color-mix(in srgb,var(--paper) 86%,transparent);
+  backdrop-filter:saturate(1.6) blur(10px)}
+}
+.chapterbar .cb-title{font-weight:750;font-size:15px;font-family:var(--serif)}
+.chapterbar .cb-sub{color:var(--mut);font-size:12.5px}
+.chapterbar .cb-spacer{flex:1}
+.chapterbar a.cb-btn{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;
+ padding:6px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);text-decoration:none;white-space:nowrap;transition:.15s}
+.chapterbar a.cb-btn:hover{border-color:var(--acc);color:var(--acc);transform:translateY(-1px)}
+.chapterbar a.cb-btn.off{opacity:.32;pointer-events:none}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--acc),#7c3aed);
+ width:0;z-index:50;transition:width .1s linear}
+#totop{position:fixed;right:22px;bottom:24px;z-index:30;display:none;
+ padding:9px 15px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+#totop:hover{border-color:var(--acc);color:var(--acc)}
+#themetoggle{position:fixed;right:22px;bottom:70px;z-index:30;
+ padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+
+/* ---------- 标题 ---------- */
+h1{font-family:var(--serif);font-size:30px;line-height:1.35;font-weight:700;
+ margin:34px 0 18px;letter-spacing:.01em}
+h2{font-family:var(--serif);font-size:25px;margin:42px 0 8px;font-weight:700;
+ line-height:1.4;scroll-margin-top:80px}
+h3{font-size:18px;margin:26px 0 10px;font-weight:700}
+p{margin:1em 0}
+strong{font-weight:700}
+
+/* ---------- 章节头（知识点标题 + 高频标签） ---------- */
+.chaphead{margin:10px 0 26px;padding-bottom:16px;border-bottom:2px solid var(--line)}
+h2.bookmark{margin:60px 0 0;padding:14px 18px;font-size:24px;font-weight:800;
+ color:#fff;background:linear-gradient(100deg,var(--acc2),var(--acc));
+ border-radius:12px;box-shadow:var(--sh);letter-spacing:.01em}
+h2.bookmark .badge{background:rgba(255,255,255,.22);color:#fff;border-color:transparent;
+ font-weight:700;margin-left:8px;vertical-align:3px}
+h2.bookmark + .sec, h2.bookmark ~ .sec:first-of-type{margin-top:18px}
+.bookhead{margin:34px 0 10px;padding-bottom:14px;border-bottom:2px solid var(--line)}
+.bookhead h1{margin:0 0 8px}
+.bookhead .lede{margin:0;color:var(--mut);font-size:14.5px;line-height:1.7}
+/* ===== 第 1 层：部分（高等数学 / 线性代数）===== */
+h2.parthead{margin:64px 0 10px;padding:18px 24px;font-size:29px;font-weight:800;
+ color:#fff;letter-spacing:.02em;border-radius:14px;box-shadow:var(--sh);
+ background:linear-gradient(100deg,#111827,#374151)}
+html[data-theme="dark"] h2.parthead{background:linear-gradient(100deg,#1f2937,#374151)}
+h2.parthead .tag{background:rgba(255,255,255,.18);color:#fff;border-color:transparent;
+ font-weight:700;font-size:13px;margin-left:10px;vertical-align:4px}
+h2.parthead:first-of-type{margin-top:26px}
+.partoverview{margin:0 0 8px;padding:2px 0 2px 20px;color:var(--fg2)}
+.partoverview h3{font-size:17px;margin:22px 0 8px;border:0;color:var(--mut);
+ font-family:var(--sans);font-weight:700;letter-spacing:.02em}
+.partoverview table{max-width:100%}
+.anchor{scroll-margin-top:16px}
+.backtop{margin:22px 0 0;font-size:13px}
+.backtop a{color:var(--mut);text-decoration:none}
+.backtop a:hover{color:var(--acc)}
+.chapterbar .cb-home{font-weight:700;font-size:14px;color:var(--acc);
+ text-decoration:none;font-family:var(--serif)}
+.chaphead h2{margin:0 0 10px;border:0}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{font-size:12px;padding:3px 11px;border-radius:999px;background:var(--chip);
+ color:var(--fg2);border:1px solid var(--line)}
+.badge.hot{background:linear-gradient(135deg,#fff1c9,#ffe0a3);color:#7a4b00;
+ border-color:#f0cf8a;font-weight:700}
+html[data-theme="dark"] .badge.hot{background:#3a2f10;color:#ffd479;border-color:#5c4a1e}
+
+/* ---------- 模板六段式 ---------- */
+.sec{margin:30px 0}
+/* ===== 字段层级：整块卡片 + 明显的标题条 ===== */
+.sec{margin:34px 0;background:var(--paper);border:1px solid var(--line);
+ border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.sec > .sec-h{display:flex;align-items:center;gap:11px;margin:0;
+ padding:13px 20px;background:linear-gradient(90deg,var(--codebg),transparent);
+ border-bottom:1px solid var(--line);border-left:5px solid var(--acc)}
+.sec > .sec-h .ic{width:30px;height:30px;flex:0 0 30px;border-radius:9px;
+ display:grid;place-items:center;font-size:16px;background:var(--chip)}
+.sec > .sec-h .tt{font-family:var(--serif);font-size:20px;font-weight:800;
+ margin:0;padding:0;border:0;line-height:1.35;color:var(--fg)}
+.sec > .sec-h .hint{font-size:12.5px;color:var(--mut);margin-left:auto;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sec > .box{padding:18px 22px}
+/* 每个字段给一条自己的主色，帮助扫读时快速定位 */
+.sec-freq > .sec-h{border-left-color:#0ea5e9}
+.sec-core > .sec-h{border-left-color:var(--acc)}
+.sec-key  > .sec-h{border-left-color:#7c3aed}
+.sec-fig  > .sec-h{border-left-color:#0891b2}
+.sec-err  > .sec-h{border-left-color:#d97706}
+.sec-real > .sec-h{border-left-color:#16a34a}
+
+.sec-freq .box{font-size:15.5px;font-weight:600}
+.sec-freq .box blockquote{margin:0 0 4px;background:var(--codebg);border-left:3px solid var(--acc);
+ border-radius:0 8px 8px 0;padding:9px 13px;font-size:14.6px;color:var(--fg2)}
+.sec-freq .box > p:first-child{margin-top:0}
+/* ===== 模块层级：核心讲解里的 【模块名】 ===== */
+.sec-core .box h3, .sec-core .box h4, .sec-core .box h5{
+ margin:30px 0 12px;padding:9px 0 9px 15px;font-size:18.5px;font-weight:800;
+ font-family:var(--serif);color:var(--acc2);letter-spacing:.01em;
+ border-left:6px solid var(--acc);border-radius:0 8px 8px 0;
+ background:linear-gradient(90deg,var(--codebg),transparent)}
+.sec-core .box > h3:first-child, .sec-core .box > h4:first-child,
+.sec-core .box > h5:first-child{margin-top:2px}
+.sec-core .box h4{font-size:17px;border-left-width:4px}
+/* 【核心公式】【适用条件】这类次级标记 */
+.sec-core .box p > strong:only-child{color:var(--acc);letter-spacing:.02em}
+.sec-core .box{font-size:16.8px;line-height:1.95}
+.sec-core .box p{margin:1.05em 0}
+.sec-core .box p:first-child{margin-top:0}
+.sec-core .box p:first-child::first-letter{font-size:1.02em}
+
+/* 关键结论速记：卡片网格 */
+.sec-key .box{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sec-key ul{display:contents;margin:0;padding:0;list-style:none}
+.sec-key li{margin:0;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;padding:13px 15px;font-size:14.8px;line-height:1.72;
+ position:relative;overflow:hidden}
+.sec-key li::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+ background:linear-gradient(180deg,var(--acc),#7c3aed);opacity:.85}
+.sec-key li strong:first-child,.sec-key li em:first-child{color:var(--acc2)}
+
+/* 示意图 */
+.sec-fig .box{background:var(--bg);border-radius:10px}
+.sec-fig img{display:block;width:100%;height:auto;margin:12px 0;border-radius:10px;
+ border:1px solid var(--line2);background:#fff}
+.sec-fig .mermaid{margin:14px 0;padding:14px;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;overflow:auto;text-align:center}
+.sec-fig details{margin:6px 0 0}
+.sec-fig .ascii{background:var(--bg);border:1px solid var(--line);border-radius:10px;
+ font-size:12.5px;line-height:1.5}
+
+/* 易错点：警示样式 */
+.sec-err .box{background:var(--warnbg)}
+.sec-err ul{margin:10px 0 0;padding:0;list-style:none}
+.sec-err li{margin:12px 0;padding-left:30px;position:relative;font-size:15.6px;line-height:1.85}
+.sec-err li::before{content:"⚠";position:absolute;left:0;top:0;color:#d97706;font-size:15px}
+.sec-err li strong:first-child{color:#b45309}
+html[data-theme="dark"] .sec-err li strong:first-child{color:#fbbf24}
+
+/* 真题示例 */
+.sec-real .box{background:var(--realbg)}
+.sec-real .box > p:first-child{font-weight:700;color:#166534;font-size:16px;margin-top:0}
+html[data-theme="dark"] .sec-real .box > p:first-child{color:#86efac}
+.sec-real blockquote{margin:14px 0 6px;padding:12px 16px;background:var(--paper);
+ border-left:4px solid var(--realbd);border-radius:0 10px 10px 0;font-size:15.4px}
+.sec-real blockquote p{margin:.55em 0}
+.sec-real blockquote ol,.sec-real blockquote ul{margin:.5em 0;padding-left:1.35em}
+
+/* ---------- 通用元素 ---------- */
+blockquote{margin:1.1em 0;padding:12px 16px;background:var(--codebg);
+ border-left:4px solid var(--acc);border-radius:0 10px 10px 0;color:var(--fg2)}
+code{background:var(--codebg);padding:.16em .42em;border-radius:6px;
+ font:13.6px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;
+ border:1px solid var(--line2)}
+pre{background:var(--codebg);padding:14px 16px;border-radius:12px;overflow:auto;
+ border:1px solid var(--line)}
+pre code{background:none;padding:0;border:0;font-size:12.8px;line-height:1.62}
+img{max-width:100%;height:auto}
+hr{border:0;border-top:1px solid var(--line);margin:36px 0}
+ul,ol{padding-left:1.5em}
+li{margin:.34em 0}
+table{border-collapse:separate;border-spacing:0;margin:16px 0;width:100%;
+ display:block;overflow:auto;max-width:100%;font-size:14.6px;
+ background:var(--paper);border:1px solid var(--line);border-radius:12px}
+th,td{border-bottom:1px solid var(--line2);padding:9px 14px;text-align:left}
+th{background:var(--codebg);font-weight:700;font-size:13.6px;color:var(--fg2);
+ position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--codebg)}
+td:first-child,th:first-child{padding-left:16px}
+.katex{font-size:1.04em}
+.katex-display{margin:1.1em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.warn,.missing{background:var(--warnbg);border:1px solid var(--warnbd);padding:11px 15px;
+ border-radius:10px;font-size:14px;margin:14px 0}
+.missing{background:#fdecec;border-color:#f0b4b4}
+html[data-theme="dark"] .missing{background:#2c1616;border-color:#6b2b2b}
+#navtoggle{position:fixed;left:12px;top:12px;z-index:40;display:none;
+ padding:8px 13px;border:1px solid var(--line);border-radius:9px;background:var(--paper);
+ color:var(--fg);cursor:pointer;font-size:13.5px;box-shadow:var(--sh);font-family:var(--sans)}
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;
+ background:var(--hi);border:1px solid var(--line);margin-left:6px;vertical-align:2px}
+
+@media (max-width:1080px){ .sec-key .box{grid-template-columns:1fr} }
+@media (max-width:860px){
+ #navtoggle{display:block}
+ nav{position:fixed;left:0;top:0;z-index:35;transform:translateX(-102%);
+  transition:transform .22s ease;box-shadow:2px 0 18px rgba(0,0,0,.16);width:86vw;max-width:320px;
+  flex-basis:auto}
+ body.navopen nav{transform:none}
+ .inner{padding:0 18px}
+ .chapterbar{padding:10px 18px}
+ h1{font-size:25px} h2{font-size:21px} .sec-core .box{font-size:16px}
+}
+@media print{
+ nav,#navtoggle,#totop,#themetoggle,#progress,.chapterbar{display:none!important}
+ main{padding:0} .inner{max-width:none;padding:0}
+ .sec,.sec > .box{box-shadow:none;break-inside:avoid}
+ a{color:inherit;text-decoration:none}
+}
+</style>
+<link rel="stylesheet" href="../katex/katex.min.css">
+<script src="../katex/katex.min.js"></script>
+<script src="../katex/contrib/auto-render.min.js"></script>
+<script src="../mermaid.min.js"></script>
+<script>try{var t=localStorage.getItem('dsh-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-prev="08-数二高数综合与证明专题.html" data-next="../线性代数/01-行列式.html">
+<div id="progress"></div><button id="navtoggle" type="button">☰ 目录</button>
+<div id="wrap"><nav><div class="navhead"><h1>数学二速成资料</h1><a class="sitehome" href="../index.html">全科合集</a></div>
+<input id="q" placeholder="筛选章节（输入即过滤）">
+<div class="grp">高等数学（约 117 分 · 约 78%）</div>
+<a class="" href="../高等数学/01-函数极限与连续.html">函数、极限与连续 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/02-导数与微分.html">导数与微分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/03-中值定理与导数应用.html">中值定理与导数应用 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/04-不定积分.html">不定积分</a>
+<a class="" href="../高等数学/05-定积分与反常积分.html">定积分与反常积分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/06-定积分的几何与物理应用.html">定积分的几何与物理应用 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/07-微分方程.html">微分方程 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/08-数二高数综合与证明专题.html">数二高数综合与证明专题</a>
+<a class="cur" href="../高等数学/09-多元函数微积分学.html">多元函数微积分学 <span class="tag">高频</span></a>
+<div class="tocbox"><a class="toclink" href="#sec-freq">考频统计</a><a class="toclink" href="#sec-core">核心讲解</a><a class="toclink" href="#sec-key">关键结论速记</a><a class="toclink" href="#sec-fig">示意图</a><a class="toclink" href="#sec-err">易错点</a><a class="toclink" href="#sec-real">真题示例</a></div>
+<div class="grp">线性代数（约 33 分 · 约 22%）</div>
+<a class="" href="../线性代数/01-行列式.html">行列式</a>
+<a class="" href="../线性代数/02-矩阵.html">矩阵 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/03-向量与向量组.html">向量与向量组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/04-线性方程组.html">线性方程组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/05-特征值与特征向量.html">特征值与特征向量 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/06-二次型.html">二次型 <span class="tag">高频</span></a></nav><main><div class="chapterbar"><a class="cb-home" href="../index.html">高等数学</a><span class="cb-sub">第 多元函数微积分学 章 · 16 分 · 高频</span><span class="cb-spacer"></span><a class="cb-btn" href="08-数二高数综合与证明专题.html" title="键盘 ← 或 k">← 数二高数综合与证明专题</a><a class="cb-btn" href="../线性代数/01-行列式.html" title="键盘 → 或 j">行列式 →</a></div><div class="inner">
+<header class="chaphead"><h1>多元函数微积分学</h1><div class="badges"><span class="badge hot">高频考点</span><span class="badge">高等数学</span><span class="badge">建议 16 分</span></div></header>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 7 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 14%；主要题型：选择、填空、解答（偏导数、全微分、极值、二重积分）。</p>
+</div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h2 class="tt">核心讲解</h2><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
+<h3>【二元函数的极限与连续】</h3>
+<ul>
+<li><strong>极限的定义</strong>：$\lim\limits_{(x,y)\to(x_0,y_0)}f(x,y)=A$ 要求点按<strong>任意路径</strong>趋近 $(x_0,y_0)$ 时函数值都趋于同一个 $A$。</li>
+<li><strong>否定判据</strong>：找两条不同路径得到两个不同的极限，即可断定极限不存在。</li>
+<li><strong>典型反例</strong>：$\frac{xy}{x^2+y^2}$ 沿直线 $y=kx$ 的极限是 $\frac{k}{1+k^2}$，随 $k$ 变化，故该极限不存在。</li>
+<li><strong>连续的定义</strong>：$f$ 在 $(x_0,y_0)$ 的某去心邻域内有定义，且 $\lim\limits_{(x,y)\to(x_0,y_0)}f(x,y)=f(x_0,y_0)$。</li>
+<li><strong>最值定理</strong>：<strong>有界闭区域</strong>上<strong>连续</strong>的二元函数一定取到最大值与最小值。</li>
+<li><strong>两步法依据</strong>：多元最值问题"内部驻点 + 边界"的做法正来自最值定理。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ \lim_{(x,y)\to(x_0,y_0)}f(x,y)=A,\qquad \frac{xy}{x^2+y^2}\Big|_{y=kx}=\frac{k}{1+k^2} $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>讨论极限要求 $(x_0,y_0)$ 的某去心邻域内有定义；</li>
+<li>断言极限存在必须证明<strong>任意路径</strong>都趋于同一个值，只验证一条路径不算证明；</li>
+<li>断言极限不存在只需给出两条路径的两个不同极限；</li>
+<li>连续要求极限值恰好等于该点的函数值 $f(x_0,y_0)$。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：用一条路径的极限就断言二元极限存在。一元函数只需两侧趋近，二元函数要沿任意路径；沿 $y=kx$ 算出 $\frac{xy}{x^2+y^2}\to\frac{k}{1+k^2}$ 随 $k$ 变化，就足以断定该极限不存在。</p>
+</blockquote>
+<h3>【偏导数、全微分与隐函数求导】</h3>
+<ul>
+<li><strong>偏导数</strong>：$f_x(x_0,y_0)=\lim\limits_{\Delta x\to0}\frac{f(x_0+\Delta x,y_0)-f(x_0,y_0)}{\Delta x}$，是把 $y$ 固定后的一元导数。</li>
+<li><strong>分段函数求偏导</strong>：在分界点处求偏导必须回到<strong>定义式</strong>去算。</li>
+<li><strong>全微分的定义</strong>：$\Delta z=A\Delta x+B\Delta y+o(\rho)$，其中 $\rho=\sqrt{\Delta x^2+\Delta y^2}$。</li>
+<li><strong>可微的必要结论</strong>：可微时必有 $A=f_x(x_0,y_0)$、$B=f_y(x_0,y_0)$。</li>
+<li><strong>判定链条</strong>：偏导数在点附近存在且<strong>连续</strong> $\Rightarrow$ 可微 $\Rightarrow$ 偏导数存在且函数<strong>连续</strong>，两个反向箭头都不成立。</li>
+<li><strong>混合偏导</strong>：二阶混合偏导 $f_{xy}$ 与 $f_{yx}$ 在区域内都<strong>连续</strong>时相等。</li>
+<li><strong>复合函数求导</strong>：用链式法则，先画出变量关系图，再沿每条通路相乘、把所有通路相加。</li>
+<li><strong>隐函数求导</strong>：由 $F(x,y,z)=0$ 确定的隐函数 $z=z(x,y)$ 满足 $\frac{\partial z}{\partial x}=-\frac{F_x}{F_z}$、$\frac{\partial z}{\partial y}=-\frac{F_y}{F_z}$。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ \Delta z=A\Delta x+B\Delta y+o(\rho),\qquad \rho=\sqrt{\Delta x^2+\Delta y^2},\qquad \frac{\partial z}{\partial x}=-\frac{F_x}{F_z},\qquad \frac{\partial z}{\partial y}=-\frac{F_y}{F_z} $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>偏导数存在只要求沿坐标轴方向的两条路径，<strong>不能</strong>推出可微或连续；</li>
+<li>可微的充分条件是偏导数在点附近存在且<strong>连续</strong>；</li>
+<li>$f_{xy}=f_{yx}$ 要求两个混合偏导在区域内都<strong>连续</strong>；</li>
+<li>隐函数求导要求 $F$ 有连续偏导且 $F_z$ <strong>不为 0</strong>；</li>
+<li>全微分定义中的 $A$、$B$ 与 $x$、$y$ 无关，$o(\rho)$ 是对 $\rho$ 的高阶无穷小。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：把"偏导存在"当成"可微"。典型反例是 $f(x,y)=\frac{xy}{\sqrt{x^2+y^2}}$（补 $f(0,0)=0$），原点处两个偏导都为 $0$，但沿 $y=x$ 有 $\frac{\Delta z-f_x\Delta x-f_y\Delta y}{\rho}=\frac{1}{2}\not\to0$，故不可微；判别时可算 $\Delta z-f_x\Delta x-f_y\Delta y$ 是否为 $\rho$ 的高阶无穷小。</p>
+</blockquote>
+<h3>【二元函数的极值与最值】</h3>
+<ul>
+<li><strong>必要条件</strong>：二元函数无条件极值的必要条件是 $f_x(x_0,y_0)=f_y(x_0,y_0)=0$。</li>
+<li><strong>三个记号</strong>：求出驻点后记 $A=f_{xx}$、$B=f_{xy}$、$C=f_{yy}$ 在该点的值。</li>
+<li><strong>极值判别</strong>：由 $AC-B^2$ 的符号判定，$AC-B^2=0$ 时判别法失效、须回到定义讨论。</li>
+<li><strong>判别实例</strong>：$f(x,y)=2x^3-9x^2-6y^4+12x+24y$ 只有 $(1,1)$ 与 $(2,1)$ 两个驻点，在 $(1,1)$ 处 $A=-6,B=0,C=-72$，$AC-B^2=432>0$ 且 $A<0$，是极大值点；在 $(2,1)$ 处 $A=6,B=0,C=-72$，$AC-B^2=-432<0$，不是极值点。</li>
+<li><strong>有界闭区域上的最值</strong>：把内部驻点的函数值与边界上的最大值、最小值放在一起比较，边界条件代入后化为一元函数的最值问题。</li>
+<li><strong>条件极值</strong>：带约束 $\varphi(x,y)=0$ 时用拉格朗日乘数法，作 $L=f+\lambda\varphi$，解方程组 $L_x=0,L_y=0,L_\varphi=0$，再比较全部候选点的函数值。</li>
+<li><strong>嫌疑点</strong>：拉格朗日乘数法给出的只是"嫌疑点"，结论必须靠比较（或由实际意义）得出。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ A=f_{xx},\qquad B=f_{xy},\qquad C=f_{yy},\qquad L=f+\lambda\varphi,\qquad L_x=L_y=L_\varphi=0 $$</p>
+<table>
+<thead>
+<tr>
+<th>$AC-B^2$ 的情形</th>
+<th>判定结论</th>
+<th>附加条件</th>
+<th>处理办法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$AC-B^2>0$</td>
+<td>是<strong>极值点</strong></td>
+<td>$A<0$ 为极大值点，$A>0$ 为极小值点</td>
+<td>直接写出极值与极值点坐标</td>
+</tr>
+<tr>
+<td>$AC-B^2<0$</td>
+<td><strong>不是</strong>极值点</td>
+<td>无需再看 $A$ 的符号</td>
+<td>直接排除该驻点</td>
+</tr>
+<tr>
+<td>$AC-B^2=0$</td>
+<td>判别法<strong>失效</strong></td>
+<td>二阶判别式给不出信息</td>
+<td>回到<strong>定义</strong>讨论（比较该点邻域内函数值）</td>
+</tr>
+</tbody>
+</table>
+<p>【适用条件】</p>
+<ol>
+<li>求无条件极值先解 $f_x=f_y=0$ 求出全部驻点，再逐点算 $A$、$B$、$C$；</li>
+<li>$AC-B^2$ 判别法要求 $f$ 在驻点附近有二阶<strong>连续</strong>偏导数；</li>
+<li>$AC-B^2=0$ 时<strong>不能</strong>下结论，必须回到定义或改用其它方法；</li>
+<li>求<strong>有界闭区域</strong>上的最值必须同时处理内部驻点与边界，两者都算完才能比较；</li>
+<li>拉格朗日乘数法要求约束 $\varphi$ 有连续偏导且 $\nabla\varphi$ <strong>不为 0</strong>，最后必须比较候选点函数值。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>秒杀技</strong>：先在驻点处算 $A$、$B$、$C$ 三个数，只盯 $AC-B^2$ 的符号——正号看 $A$ 定极大极小，负号直接排除，零号回去用定义。</p>
+</blockquote>
+<h3>【二重积分：直角坐标与极坐标】</h3>
+<ul>
+<li><strong>X 型区域</strong>：若 $D$ 满足 $a\le x\le b$、$\varphi_1(x)\le y\le\varphi_2(x)$，则先对 $y$ 积分。</li>
+<li><strong>Y 型区域</strong>：若 $D$ 满足 $c\le y\le d$、$\psi_1(y)\le x\le\psi_2(y)$，则先对 $x$ 积分。</li>
+<li><strong>定限口诀</strong>：外层是常数限、内层是函数限，内层上限减下限。</li>
+<li><strong>画图</strong>：画图是唯一可靠的办法，交换积分次序时必须重新用不等式描述同一区域再重新定限。</li>
+<li><strong>禁止操作</strong>：绝不能把两个积分号连同上下限直接对调。</li>
+<li><strong>极坐标变换</strong>：$x=r\cos\theta$、$y=r\sin\theta$ 下面积元素为 $dxdy=r\,drd\theta$，那个雅可比因子 $r$ 不能漏。</li>
+<li><strong>优先用极坐标</strong>：区域是圆、扇形、圆环，或被积函数含 $x^2+y^2$ 时优先用极坐标。</li>
+<li><strong>对称性</strong>：若 $D$ 关于 $x$ 轴对称且 $f(x,-y)=-f(x,y)$，则积分为 $0$；若 $D$ 关于直线 $y=x$ 对称，则 $\iint_Df(x,y)\,dxdy=\iint_Df(y,x)\,dxdy$，可把被积函数换成 $\frac{1}{2}\left[f(x,y)+f(y,x)\right]$ 后再算。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ \iint_Df(x,y)\,dxdy=\int_a^bdx\int_{\varphi_1(x)}^{\varphi_2(x)}f(x,y)\,dy=\int_\alpha^\beta d\theta\int_{r_1(\theta)}^{r_2(\theta)}f(r\cos\theta,r\sin\theta)\,r\,dr $$</p>
+<p>$$ \iint_Df(x,y)\,dxdy=\iint_Df(y,x)\,dxdy\ \ (D\ \text{关于}\ y=x\ \text{对称}) $$</p>
+<table>
+<thead>
+<tr>
+<th>坐标系 / 区域类型</th>
+<th>适用情形</th>
+<th>定限方式</th>
+<th>注意点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>直角坐标 X 型</strong></td>
+<td>$D$ 可写成 $a\le x\le b$、$\varphi_1(x)\le y\le\varphi_2(x)$</td>
+<td>外层 $x$ 取常数限，内层 $y$ 取函数限</td>
+<td>内层上限减下限，先对 $y$ 积分</td>
+</tr>
+<tr>
+<td><strong>直角坐标 Y 型</strong></td>
+<td>$D$ 可写成 $c\le y\le d$、$\psi_1(y)\le x\le\psi_2(y)$</td>
+<td>外层 $y$ 取常数限，内层 $x$ 取函数限</td>
+<td>先对 $x$ 积分；交换次序必须重新定限</td>
+</tr>
+<tr>
+<td><strong>极坐标</strong></td>
+<td>区域是圆、扇形、圆环，或被积函数含 $x^2+y^2$</td>
+<td>外层 $\theta\in[\alpha,\beta]$，内层 $r\in[r_1(\theta),r_2(\theta)]$</td>
+<td>面积元素是 $r\,drd\theta$，因子 $r$ 不能漏</td>
+</tr>
+</tbody>
+</table>
+<p>【适用条件】</p>
+<ol>
+<li>化累次积分前先画出区域图，判断是 X 型还是 Y 型（或需要分块）；</li>
+<li>X 型要求 $\varphi_1(x)\le\varphi_2(x)$ 在 $[a,b]$ 上成立，Y 型同理；</li>
+<li>极坐标要求 $r_1(\theta)\le r_2(\theta)$ 在 $[\alpha,\beta]$ 上成立，且变换是一一的；</li>
+<li>用对称性时先确认区域确实关于相应直线对称，再确认被积函数的奇偶性；</li>
+<li>交换积分次序必须重新用不等式描述同一区域，<strong>不能</strong>把两个积分号连同上下限直接对调。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：极坐标换元时漏掉雅可比因子 $r$。面积元素是 $dxdy=r\,drd\theta$ 而不是 $drd\theta$，漏掉 $r$ 会让结果整体差一个量级；另一个高频错误是交换积分次序时不重新定限。</p>
+</blockquote>
+</div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h2 class="tt">关键结论速记</h2><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
+<ul>
+<li><code>二元极限</code> —— $\lim\limits_{(x,y)\to(x_0,y_0)}f(x,y)=A$ 要求沿<strong>任意路径</strong>极限都相同；找两条路径极限不同即可断定极限不存在（常用 $y=kx$）。</li>
+<li><code>可微的定义</code> —— $\Delta z=f_x\Delta x+f_y\Delta y+o(\rho)$，$\rho=\sqrt{\Delta x^2+\Delta y^2}$；判别链条是"偏导连续 $\Rightarrow$ 可微 $\Rightarrow$ 偏导存在且函数连续"，两个反向箭头都不成立。</li>
+<li><code>隐函数求导</code> —— 由 $F(x,y,z)=0$ 确定 $z=z(x,y)$ 时 $\frac{\partial z}{\partial x}=-\frac{F_x}{F_z}$、$\frac{\partial z}{\partial y}=-\frac{F_y}{F_z}$，条件是 $F_z\neq0$；分子的负号最易漏。</li>
+<li><code>二元极值判别</code> —— 驻点处记 $A=f_{xx},B=f_{xy},C=f_{yy}$：$AC-B^2>0$ 是极值点（$A<0$ 极大、$A>0$ 极小），$AC-B^2<0$ 不是极值点，$AC-B^2=0$ 判别法失效。</li>
+<li><code>拉格朗日乘数法</code> —— 作 $L=f+\lambda\varphi$，解 $L_x=L_y=L_\varphi=0$；解出的只是候选点，必须比较函数值后才能下结论。</li>
+<li><code>二重积分化累次积分</code> —— $\iint_Df\,dxdy=\int_a^bdx\int_{\varphi_1(x)}^{\varphi_2(x)}f\,dy$（X 型，内层上下限是 $x$ 的函数）；交换次序必须重新画图定限。</li>
+<li><code>极坐标</code> —— $\iint_Df\,dxdy=\int_\alpha^\beta d\theta\int_{r_1(\theta)}^{r_2(\theta)}f(r\cos\theta,r\sin\theta)\,r\,dr$，雅可比因子 $r$ 不能漏。</li>
+<li><code>对称性</code> —— $D$ 关于 $x$ 轴对称且 $f(x,-y)=-f(x,y)$ 时积分为 $0$；关于 $y=x$ 对称时可把 $f(x,y)$ 换成 $\frac{1}{2}[f(x,y)+f(y,x)]$。</li>
+</ul>
+</div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h2 class="tt">示意图</h2><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
+<p>图 1 是区域 $D=\left\{(x,y):\frac{1}{3}\le xy\le3,\ \frac{1}{3}\le\frac{y}{x}\le3,\ x>0,\ y>0\right\}$ 在第一象限的图像，四条边界曲线的交点为 $\left(\frac{1}{3},1\right)$、$\left(1,\frac{1}{3}\right)$、$(3,1)$、$(1,3)$：$\left(\frac{1}{3},1\right)$ 是 $xy=\frac{1}{3}$ 与 $y=3x$ 的交点，$\left(1,\frac{1}{3}\right)$ 是 $xy=\frac{1}{3}$ 与 $y=\frac{1}{3}x$ 的交点，$(3,1)$ 是 $xy=3$ 与 $y=\frac{1}{3}x$ 的交点，$(1,3)$ 是 $xy=3$ 与 $y=3x$ 的交点。图中同时画出 $u=xy$、$v=\frac{y}{x}$ 的等值线，这族双曲线与射线把 $D$ 映成 $uv$ 平面上以 $\frac{1}{3}$ 与 $3$ 为边的正方形。</p>
+<p><img alt="函数图像：二重积分的积分区域与双曲线坐标变换" src="../assets/gaoshu-09-fig1.png" /></p>
+<p>图 2 是多元函数极值判定与二重积分计算的路线图。</p>
+<p><img alt="解题流程：多元极值判定与二重积分计算路线" src="../assets/gaoshu-09-fig2.png" /></p>
+<div class="mermaid">flowchart TD
+    A[&quot;多元函数问题&quot;] --&gt; B{&quot;是求极值还是算二重积分&quot;}
+    B --&gt;|&quot;求极值&quot;| C[&quot;解 f 对 x 与 f 对 y 同时为零 得驻点&quot;]
+    C --&gt; D[&quot;算驻点处的 A B C 三个二阶偏导&quot;]
+    D --&gt; E{&quot;AC 减 B 平方的符号&quot;}
+    E --&gt;|&quot;大于零&quot;| F[&quot;A 小于零取极大 A 大于零取极小&quot;]
+    E --&gt;|&quot;小于零&quot;| G[&quot;非极值点 直接排除&quot;]
+    E --&gt;|&quot;等于零&quot;| H[&quot;判别法失效 回到定义讨论&quot;]
+    B --&gt;|&quot;算二重积分&quot;| I{&quot;区域或被积函数含 x 平方加 y 平方吗&quot;}
+    I --&gt;|&quot;含&quot;| J[&quot;极坐标 补上雅可比因子 r&quot;]
+    I --&gt;|&quot;不含&quot;| K[&quot;直角坐标 画图定限或交换积分次序&quot;]
+    F --&gt; L[&quot;有界闭区域还要比较边界上的最值&quot;]
+    G --&gt; L
+    H --&gt; L
+    J --&gt; L
+    K --&gt; L
+</div><details><summary>查看该图源码</summary><pre><code>flowchart TD
+    A[&quot;多元函数问题&quot;] --&gt; B{&quot;是求极值还是算二重积分&quot;}
+    B --&gt;|&quot;求极值&quot;| C[&quot;解 f 对 x 与 f 对 y 同时为零 得驻点&quot;]
+    C --&gt; D[&quot;算驻点处的 A B C 三个二阶偏导&quot;]
+    D --&gt; E{&quot;AC 减 B 平方的符号&quot;}
+    E --&gt;|&quot;大于零&quot;| F[&quot;A 小于零取极大 A 大于零取极小&quot;]
+    E --&gt;|&quot;小于零&quot;| G[&quot;非极值点 直接排除&quot;]
+    E --&gt;|&quot;等于零&quot;| H[&quot;判别法失效 回到定义讨论&quot;]
+    B --&gt;|&quot;算二重积分&quot;| I{&quot;区域或被积函数含 x 平方加 y 平方吗&quot;}
+    I --&gt;|&quot;含&quot;| J[&quot;极坐标 补上雅可比因子 r&quot;]
+    I --&gt;|&quot;不含&quot;| K[&quot;直角坐标 画图定限或交换积分次序&quot;]
+    F --&gt; L[&quot;有界闭区域还要比较边界上的最值&quot;]
+    G --&gt; L
+    H --&gt; L
+    J --&gt; L
+    K --&gt; L
+</code></pre></details>
+</div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
+<ul>
+<li><strong>错在用一条路径的极限就断言二元极限存在。</strong> 一元函数只需两侧趋近，二元函数要沿任意路径；沿 $y=kx$ 算出 $\frac{xy}{x^2+y^2}\to\frac{k}{1+k^2}$ 随 $k$ 变化，就足以断定该极限不存在。</li>
+<li><strong>错在把"偏导存在"当成"可微"。</strong> 偏导存在只保证沿坐标轴方向的两条路径，可微要求所有方向；典型反例是 $f(x,y)=\frac{xy}{\sqrt{x^2+y^2}}$（补 $f(0,0)=0$），原点处两个偏导都为 $0$，但沿 $y=x$ 有 $\frac{\Delta z-f_x\Delta x-f_y\Delta y}{\rho}=\frac{1}{2}\not\to0$，故不可微。判别时可算 $\Delta z-f_x\Delta x-f_y\Delta y$ 是否为 $\rho$ 的高阶无穷小。</li>
+<li><strong>错在极坐标换元时漏掉雅可比因子 $r$。</strong> 面积元素是 $dxdy=r\,drd\theta$，不是 $drd\theta$；漏掉 $r$ 会让结果整体差一个量级。</li>
+<li><strong>错在交换积分次序时不重新定限。</strong> 必须重新用不等式描述同一区域再定新的上下限，不能把两个积分号连同上下限直接对调；画图是唯一可靠的办法，定限口诀是"外层常数限、内层函数限，内层上限减下限"。</li>
+</ul>
+</div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
+<p><strong>2024 年数二第 17 题（解答题，10 分）</strong></p>
+<p>设已知区域 $D$ 是第一象限内的有界区域，它由 $xy=\dfrac{1}{3}$、$xy=3$、$y=\dfrac{1}{3}x$、$y=3x$ 围成，计算 $\displaystyle\iint_D(1+x-y)\,dxdy$。</p>
+<blockquote>
+<p>解析：</p>
+<ol>
+<li>区域由两族双曲线 $xy=$ 常数与两族射线 $\frac{y}{x}=$ 常数围成，作变换 $u=xy$、$v=\frac{y}{x}$，则 $D$ 的边界恰是 $u=\frac{1}{3},u=3,v=\frac{1}{3},v=3$，即 $D$ 被映成 $uv$ 平面上的矩形 $D'=\left[\frac{1}{3},3\right]\times\left[\frac{1}{3},3\right]$。</li>
+<li>反解 $x=\sqrt{\frac{u}{v}}$、$y=\sqrt{uv}$，由链式法则算得 $\frac{\partial x}{\partial u}=\frac{1}{2\sqrt{uv}}$、$\frac{\partial x}{\partial v}=-\frac{1}{2}\sqrt{\frac{u}{v^3}}$、$\frac{\partial y}{\partial u}=\frac{1}{2}\sqrt{\frac{v}{u}}$、$\frac{\partial y}{\partial v}=\frac{1}{2}\sqrt{\frac{u}{v}}$，于是雅可比行列式 $\frac{\partial(x,y)}{\partial(u,v)}=\frac{1}{2\sqrt{uv}}\cdot\frac{1}{2}\sqrt{\frac{u}{v}}-\left(-\frac{1}{2}\sqrt{\frac{u}{v^3}}\right)\cdot\frac{1}{2}\sqrt{\frac{v}{u}}=\frac{1}{2v}>0$，即 $dxdy=\frac{1}{2v}\,dudv$。</li>
+<li>代入得 $\iint_D(1+x-y)\,dxdy=\int_{1/3}^{3}\!\!\int_{1/3}^{3}\left(1+\sqrt{\frac{u}{v}}-\sqrt{uv}\right)\frac{1}{2v}\,du\,dv$，其中常数项积分为 $\frac{1}{2}\cdot\frac{8}{3}\cdot\ln 9=\frac{8}{3}\ln 3$，而含 $\sqrt{\frac{u}{v}}$ 与含 $\sqrt{uv}$ 的两项分别为 $\frac{1}{2}\int_{1/3}^{3}\sqrt{u}\,du\int_{1/3}^{3}v^{-3/2}dv$ 与 $\frac{1}{2}\int_{1/3}^{3}\sqrt{u}\,du\int_{1/3}^{3}v^{-1/2}dv$，两个 $v$ 积分都等于 $\frac{4\sqrt{3}}{3}$，故两项都等于 $\frac{104}{27}$ 而正负相消。</li>
+<li>结论：$\displaystyle\iint_D(1+x-y)\,dxdy=\frac{8}{3}\ln 3\approx2.9296$。</li>
+</ol>
+</blockquote>
+<hr /></div></section></div></main></div>
+<button id="totop" type="button">↑ 回到当前小节</button>
+<button id="themetoggle" type="button" title="切换深色/浅色">◐ 主题</button>
+<script>
+document.getElementById('q')?.addEventListener('input',e=>{
+  const v=e.target.value.trim().toLowerCase();
+  document.querySelectorAll('nav a').forEach(a=>{
+    a.style.display = !v || a.textContent.toLowerCase().includes(v) ? '' : 'none';});
+});
+</script>
+<script>
+(function () {
+  var main = document.querySelector('main');
+  // 1) 侧栏高亮当前小节（滚动位置驱动）
+  var links = [].slice.call(document.querySelectorAll('nav a.toclink'));
+  var targets = links.map(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    return document.getElementById(id);
+  });
+  function sync() {
+    var y = window.scrollY + 120, best = -1;
+    targets.forEach(function (t, i) { if (t && t.offsetTop <= y) best = i; });
+    links.forEach(function (a, i) { a.classList.toggle('cur', i === best); });
+  }
+  if (links.length) {
+    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  }
+  // 2) 键盘：j/k 或 ←/→ 翻章
+  var prev = document.body.getAttribute('data-prev');
+  var next = document.body.getAttribute('data-next');
+  document.addEventListener('keydown', function (e) {
+    if (e.target.matches('input, textarea')) return;
+    if (e.key === 'ArrowLeft' || e.key === 'k') { if (prev) location.href = prev; }
+    if (e.key === 'ArrowRight' || e.key === 'j') { if (next) location.href = next; }
+  });
+  // 3) 移动端侧栏抽屉 + 回到顶部
+  var t = document.getElementById('navtoggle');
+  if (t) t.addEventListener('click', function () { document.body.classList.toggle('navopen'); });
+  // 4) 阅读进度条
+  var bar = document.getElementById('progress');
+  if (bar) {
+    var upd = function () {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd); upd();
+  }
+  // 5) 主题切换（记忆到 localStorage）
+  var tb = document.getElementById('themetoggle');
+  if (tb) tb.addEventListener('click', function () {
+    var cur = document.documentElement.dataset.theme;
+    if (cur === 'auto') cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var nx = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = nx;
+    try { localStorage.setItem('dsh-theme', nx); } catch (e) {}
+  });
+  var top = document.getElementById('totop');
+  if (top) {
+    top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    window.addEventListener('scroll', function () {
+      top.style.display = window.scrollY > 500 ? 'block' : 'none';
+    }, { passive: true });
+  }
+})();
+</script>
+<script>
+(function () {
+  if (!window.renderMathInElement) {
+    // 公式渲染器没加载到：明确提示，而不是留一堆 $...$ 让读者困惑
+    var has = /\$[^$]+\$/.test(document.body.innerText || '');
+    if (has) {
+      var p = document.createElement('p');
+      p.className = 'missing';
+      p.textContent = '未加载到公式渲染器（katex/），页面里的 LaTeX 公式以源码显示。'
+        + '请确认 数学二/katex/ 目录存在。';
+      document.querySelector('main').insertBefore(p, document.querySelector('main').firstChild);
+    }
+    return;
+  }
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '$', right: '$', display: false }
+    ],
+    throwOnError: false,
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  });
+})();
+</script>
+<script>
+(function () {
+  var nodes = document.querySelectorAll('.mermaid');
+  if (!nodes.length) return;
+  if (!window.mermaid) {
+    nodes.forEach(function (el) {
+      el.insertAdjacentHTML('beforebegin',
+        '<p class="missing">未加载到 mermaid 运行时（mermaid.min.js 不在预期位置），' +
+        '下图暂以源码显示，可复制到任意 mermaid 编辑器查看。</p>');
+      var pre = document.createElement('pre');
+      var code = document.createElement('code');
+      code.textContent = el.textContent;
+      pre.appendChild(code); el.innerHTML = ''; el.appendChild(pre);
+    });
+    return;
+  }
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: 'neutral',
+    flowchart: { useMaxWidth: true }, state: { useMaxWidth: true } });
+  nodes.forEach(function (el, i) {
+    mermaid.render('mmd-' + i, el.textContent.trim()).then(function (r) {
+      el.innerHTML = r.svg;
+    }).catch(function (e) {
+      el.innerHTML = '<p class="missing">该图渲染失败：' + e.message + '</p>';
+    });
+  });
+})();
+</script></body></html>

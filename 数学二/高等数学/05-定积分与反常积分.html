@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>高等数学 · 定积分与反常积分</title><style>
+:root{
+ --bg:#f7f7f5; --paper:#ffffff; --fg:#1f2328; --fg2:#3d444d; --mut:#6b7280;
+ --line:#e3e6ea; --line2:#eef1f4; --acc:#1d4ed8; --acc2:#0b3d91;
+ --codebg:#f5f7fa; --hi:#fff6d6; --warnbg:#fff8ec; --warnbd:#f0d9a8;
+ --realbg:#f1f8f2; --realbd:#bcdcc2; --chip:#eef2f7;
+ --sh:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.05);
+ --serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",Georgia,"Times New Roman",serif;
+ --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+}
+html[data-theme="dark"]{
+ --bg:#0d1117; --paper:#161b22; --fg:#e6edf3; --fg2:#c9d1d9; --mut:#8b949e;
+ --line:#2b3138; --line2:#22272e; --acc:#6ea8fe; --acc2:#9ec5fe;
+ --codebg:#1b2129; --hi:#3a2f10; --warnbg:#2c2415; --warnbd:#5c4a1e;
+ --realbg:#14251a; --realbd:#2f5c3c; --chip:#1f2630;
+ --sh:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
+ font-size:16.5px;line-height:1.82;-webkit-font-smoothing:antialiased}
+#wrap{display:flex;min-height:100vh}
+
+/* ---------- 侧栏 ---------- */
+nav{width:302px;flex:0 0 302px;background:var(--paper);border-right:1px solid var(--line);
+ position:sticky;top:0;height:100vh;overflow:auto;padding:18px 14px 40px}
+nav .navhead{display:flex;align-items:center;justify-content:space-between;
+ gap:8px;margin:0 6px 12px}
+nav .navhead h1{font-size:14.5px;margin:0;font-weight:700;letter-spacing:.02em}
+nav .sitehome{font-size:12px;color:var(--acc);text-decoration:none;
+ border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap}
+nav .sitehome:hover{border-color:var(--acc)}
+nav input{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:9px;
+ background:var(--bg);color:var(--fg);margin-bottom:12px;font-size:13px;font-family:var(--sans)}
+nav input:focus{outline:2px solid var(--acc);outline-offset:-1px;border-color:transparent}
+nav a{display:block;padding:6px 10px;color:var(--fg2);text-decoration:none;
+ font-size:13.5px;border-radius:8px;line-height:1.5}
+nav a:hover{background:var(--codebg);color:var(--fg)}
+nav .grp{margin:16px 6px 6px;font-size:11.5px;color:var(--mut);
+ font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+nav a.cur{background:var(--chip);color:var(--acc);font-weight:700}
+nav .tocbox{margin:2px 0 10px 16px;padding-left:10px;border-left:2px solid var(--line)}
+nav .tocbox a{font-size:12.5px;color:var(--mut);padding:3px 8px}
+nav .tocbox a.cur{color:var(--acc);font-weight:600;background:none}
+
+/* ---------- 主区 ---------- */
+main{flex:1;min-width:0;padding:0 0 100px}
+.inner{max-width:880px;margin:0 auto;padding:0 46px}
+.chapterbar{position:sticky;top:0;z-index:20;background:var(--paper);
+ border-bottom:1px solid var(--line);
+ padding:12px 46px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+@supports (backdrop-filter:blur(1px)){
+ .chapterbar{background:color-mix(in srgb,var(--paper) 86%,transparent);
+  backdrop-filter:saturate(1.6) blur(10px)}
+}
+.chapterbar .cb-title{font-weight:750;font-size:15px;font-family:var(--serif)}
+.chapterbar .cb-sub{color:var(--mut);font-size:12.5px}
+.chapterbar .cb-spacer{flex:1}
+.chapterbar a.cb-btn{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;
+ padding:6px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);text-decoration:none;white-space:nowrap;transition:.15s}
+.chapterbar a.cb-btn:hover{border-color:var(--acc);color:var(--acc);transform:translateY(-1px)}
+.chapterbar a.cb-btn.off{opacity:.32;pointer-events:none}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--acc),#7c3aed);
+ width:0;z-index:50;transition:width .1s linear}
+#totop{position:fixed;right:22px;bottom:24px;z-index:30;display:none;
+ padding:9px 15px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+#totop:hover{border-color:var(--acc);color:var(--acc)}
+#themetoggle{position:fixed;right:22px;bottom:70px;z-index:30;
+ padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+
+/* ---------- 标题 ---------- */
+h1{font-family:var(--serif);font-size:30px;line-height:1.35;font-weight:700;
+ margin:34px 0 18px;letter-spacing:.01em}
+h2{font-family:var(--serif);font-size:25px;margin:42px 0 8px;font-weight:700;
+ line-height:1.4;scroll-margin-top:80px}
+h3{font-size:18px;margin:26px 0 10px;font-weight:700}
+p{margin:1em 0}
+strong{font-weight:700}
+
+/* ---------- 章节头（知识点标题 + 高频标签） ---------- */
+.chaphead{margin:10px 0 26px;padding-bottom:16px;border-bottom:2px solid var(--line)}
+h2.bookmark{margin:60px 0 0;padding:14px 18px;font-size:24px;font-weight:800;
+ color:#fff;background:linear-gradient(100deg,var(--acc2),var(--acc));
+ border-radius:12px;box-shadow:var(--sh);letter-spacing:.01em}
+h2.bookmark .badge{background:rgba(255,255,255,.22);color:#fff;border-color:transparent;
+ font-weight:700;margin-left:8px;vertical-align:3px}
+h2.bookmark + .sec, h2.bookmark ~ .sec:first-of-type{margin-top:18px}
+.bookhead{margin:34px 0 10px;padding-bottom:14px;border-bottom:2px solid var(--line)}
+.bookhead h1{margin:0 0 8px}
+.bookhead .lede{margin:0;color:var(--mut);font-size:14.5px;line-height:1.7}
+/* ===== 第 1 层：部分（高等数学 / 线性代数）===== */
+h2.parthead{margin:64px 0 10px;padding:18px 24px;font-size:29px;font-weight:800;
+ color:#fff;letter-spacing:.02em;border-radius:14px;box-shadow:var(--sh);
+ background:linear-gradient(100deg,#111827,#374151)}
+html[data-theme="dark"] h2.parthead{background:linear-gradient(100deg,#1f2937,#374151)}
+h2.parthead .tag{background:rgba(255,255,255,.18);color:#fff;border-color:transparent;
+ font-weight:700;font-size:13px;margin-left:10px;vertical-align:4px}
+h2.parthead:first-of-type{margin-top:26px}
+.partoverview{margin:0 0 8px;padding:2px 0 2px 20px;color:var(--fg2)}
+.partoverview h3{font-size:17px;margin:22px 0 8px;border:0;color:var(--mut);
+ font-family:var(--sans);font-weight:700;letter-spacing:.02em}
+.partoverview table{max-width:100%}
+.anchor{scroll-margin-top:16px}
+.backtop{margin:22px 0 0;font-size:13px}
+.backtop a{color:var(--mut);text-decoration:none}
+.backtop a:hover{color:var(--acc)}
+.chapterbar .cb-home{font-weight:700;font-size:14px;color:var(--acc);
+ text-decoration:none;font-family:var(--serif)}
+.chaphead h2{margin:0 0 10px;border:0}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{font-size:12px;padding:3px 11px;border-radius:999px;background:var(--chip);
+ color:var(--fg2);border:1px solid var(--line)}
+.badge.hot{background:linear-gradient(135deg,#fff1c9,#ffe0a3);color:#7a4b00;
+ border-color:#f0cf8a;font-weight:700}
+html[data-theme="dark"] .badge.hot{background:#3a2f10;color:#ffd479;border-color:#5c4a1e}
+
+/* ---------- 模板六段式 ---------- */
+.sec{margin:30px 0}
+/* ===== 字段层级：整块卡片 + 明显的标题条 ===== */
+.sec{margin:34px 0;background:var(--paper);border:1px solid var(--line);
+ border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.sec > .sec-h{display:flex;align-items:center;gap:11px;margin:0;
+ padding:13px 20px;background:linear-gradient(90deg,var(--codebg),transparent);
+ border-bottom:1px solid var(--line);border-left:5px solid var(--acc)}
+.sec > .sec-h .ic{width:30px;height:30px;flex:0 0 30px;border-radius:9px;
+ display:grid;place-items:center;font-size:16px;background:var(--chip)}
+.sec > .sec-h .tt{font-family:var(--serif);font-size:20px;font-weight:800;
+ margin:0;padding:0;border:0;line-height:1.35;color:var(--fg)}
+.sec > .sec-h .hint{font-size:12.5px;color:var(--mut);margin-left:auto;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sec > .box{padding:18px 22px}
+/* 每个字段给一条自己的主色，帮助扫读时快速定位 */
+.sec-freq > .sec-h{border-left-color:#0ea5e9}
+.sec-core > .sec-h{border-left-color:var(--acc)}
+.sec-key  > .sec-h{border-left-color:#7c3aed}
+.sec-fig  > .sec-h{border-left-color:#0891b2}
+.sec-err  > .sec-h{border-left-color:#d97706}
+.sec-real > .sec-h{border-left-color:#16a34a}
+
+.sec-freq .box{font-size:15.5px;font-weight:600}
+.sec-freq .box blockquote{margin:0 0 4px;background:var(--codebg);border-left:3px solid var(--acc);
+ border-radius:0 8px 8px 0;padding:9px 13px;font-size:14.6px;color:var(--fg2)}
+.sec-freq .box > p:first-child{margin-top:0}
+/* ===== 模块层级：核心讲解里的 【模块名】 ===== */
+.sec-core .box h3, .sec-core .box h4, .sec-core .box h5{
+ margin:30px 0 12px;padding:9px 0 9px 15px;font-size:18.5px;font-weight:800;
+ font-family:var(--serif);color:var(--acc2);letter-spacing:.01em;
+ border-left:6px solid var(--acc);border-radius:0 8px 8px 0;
+ background:linear-gradient(90deg,var(--codebg),transparent)}
+.sec-core .box > h3:first-child, .sec-core .box > h4:first-child,
+.sec-core .box > h5:first-child{margin-top:2px}
+.sec-core .box h4{font-size:17px;border-left-width:4px}
+/* 【核心公式】【适用条件】这类次级标记 */
+.sec-core .box p > strong:only-child{color:var(--acc);letter-spacing:.02em}
+.sec-core .box{font-size:16.8px;line-height:1.95}
+.sec-core .box p{margin:1.05em 0}
+.sec-core .box p:first-child{margin-top:0}
+.sec-core .box p:first-child::first-letter{font-size:1.02em}
+
+/* 关键结论速记：卡片网格 */
+.sec-key .box{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sec-key ul{display:contents;margin:0;padding:0;list-style:none}
+.sec-key li{margin:0;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;padding:13px 15px;font-size:14.8px;line-height:1.72;
+ position:relative;overflow:hidden}
+.sec-key li::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+ background:linear-gradient(180deg,var(--acc),#7c3aed);opacity:.85}
+.sec-key li strong:first-child,.sec-key li em:first-child{color:var(--acc2)}
+
+/* 示意图 */
+.sec-fig .box{background:var(--bg);border-radius:10px}
+.sec-fig img{display:block;width:100%;height:auto;margin:12px 0;border-radius:10px;
+ border:1px solid var(--line2);background:#fff}
+.sec-fig .mermaid{margin:14px 0;padding:14px;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;overflow:auto;text-align:center}
+.sec-fig details{margin:6px 0 0}
+.sec-fig .ascii{background:var(--bg);border:1px solid var(--line);border-radius:10px;
+ font-size:12.5px;line-height:1.5}
+
+/* 易错点：警示样式 */
+.sec-err .box{background:var(--warnbg)}
+.sec-err ul{margin:10px 0 0;padding:0;list-style:none}
+.sec-err li{margin:12px 0;padding-left:30px;position:relative;font-size:15.6px;line-height:1.85}
+.sec-err li::before{content:"⚠";position:absolute;left:0;top:0;color:#d97706;font-size:15px}
+.sec-err li strong:first-child{color:#b45309}
+html[data-theme="dark"] .sec-err li strong:first-child{color:#fbbf24}
+
+/* 真题示例 */
+.sec-real .box{background:var(--realbg)}
+.sec-real .box > p:first-child{font-weight:700;color:#166534;font-size:16px;margin-top:0}
+html[data-theme="dark"] .sec-real .box > p:first-child{color:#86efac}
+.sec-real blockquote{margin:14px 0 6px;padding:12px 16px;background:var(--paper);
+ border-left:4px solid var(--realbd);border-radius:0 10px 10px 0;font-size:15.4px}
+.sec-real blockquote p{margin:.55em 0}
+.sec-real blockquote ol,.sec-real blockquote ul{margin:.5em 0;padding-left:1.35em}
+
+/* ---------- 通用元素 ---------- */
+blockquote{margin:1.1em 0;padding:12px 16px;background:var(--codebg);
+ border-left:4px solid var(--acc);border-radius:0 10px 10px 0;color:var(--fg2)}
+code{background:var(--codebg);padding:.16em .42em;border-radius:6px;
+ font:13.6px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;
+ border:1px solid var(--line2)}
+pre{background:var(--codebg);padding:14px 16px;border-radius:12px;overflow:auto;
+ border:1px solid var(--line)}
+pre code{background:none;padding:0;border:0;font-size:12.8px;line-height:1.62}
+img{max-width:100%;height:auto}
+hr{border:0;border-top:1px solid var(--line);margin:36px 0}
+ul,ol{padding-left:1.5em}
+li{margin:.34em 0}
+table{border-collapse:separate;border-spacing:0;margin:16px 0;width:100%;
+ display:block;overflow:auto;max-width:100%;font-size:14.6px;
+ background:var(--paper);border:1px solid var(--line);border-radius:12px}
+th,td{border-bottom:1px solid var(--line2);padding:9px 14px;text-align:left}
+th{background:var(--codebg);font-weight:700;font-size:13.6px;color:var(--fg2);
+ position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--codebg)}
+td:first-child,th:first-child{padding-left:16px}
+.katex{font-size:1.04em}
+.katex-display{margin:1.1em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.warn,.missing{background:var(--warnbg);border:1px solid var(--warnbd);padding:11px 15px;
+ border-radius:10px;font-size:14px;margin:14px 0}
+.missing{background:#fdecec;border-color:#f0b4b4}
+html[data-theme="dark"] .missing{background:#2c1616;border-color:#6b2b2b}
+#navtoggle{position:fixed;left:12px;top:12px;z-index:40;display:none;
+ padding:8px 13px;border:1px solid var(--line);border-radius:9px;background:var(--paper);
+ color:var(--fg);cursor:pointer;font-size:13.5px;box-shadow:var(--sh);font-family:var(--sans)}
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;
+ background:var(--hi);border:1px solid var(--line);margin-left:6px;vertical-align:2px}
+
+@media (max-width:1080px){ .sec-key .box{grid-template-columns:1fr} }
+@media (max-width:860px){
+ #navtoggle{display:block}
+ nav{position:fixed;left:0;top:0;z-index:35;transform:translateX(-102%);
+  transition:transform .22s ease;box-shadow:2px 0 18px rgba(0,0,0,.16);width:86vw;max-width:320px;
+  flex-basis:auto}
+ body.navopen nav{transform:none}
+ .inner{padding:0 18px}
+ .chapterbar{padding:10px 18px}
+ h1{font-size:25px} h2{font-size:21px} .sec-core .box{font-size:16px}
+}
+@media print{
+ nav,#navtoggle,#totop,#themetoggle,#progress,.chapterbar{display:none!important}
+ main{padding:0} .inner{max-width:none;padding:0}
+ .sec,.sec > .box{box-shadow:none;break-inside:avoid}
+ a{color:inherit;text-decoration:none}
+}
+</style>
+<link rel="stylesheet" href="../katex/katex.min.css">
+<script src="../katex/katex.min.js"></script>
+<script src="../katex/contrib/auto-render.min.js"></script>
+<script src="../mermaid.min.js"></script>
+<script>try{var t=localStorage.getItem('dsh-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-prev="04-不定积分.html" data-next="06-定积分的几何与物理应用.html">
+<div id="progress"></div><button id="navtoggle" type="button">☰ 目录</button>
+<div id="wrap"><nav><div class="navhead"><h1>数学二速成资料</h1><a class="sitehome" href="../index.html">全科合集</a></div>
+<input id="q" placeholder="筛选章节（输入即过滤）">
+<div class="grp">高等数学（约 117 分 · 约 78%）</div>
+<a class="" href="../高等数学/01-函数极限与连续.html">函数、极限与连续 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/02-导数与微分.html">导数与微分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/03-中值定理与导数应用.html">中值定理与导数应用 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/04-不定积分.html">不定积分</a>
+<a class="cur" href="../高等数学/05-定积分与反常积分.html">定积分与反常积分 <span class="tag">高频</span></a>
+<div class="tocbox"><a class="toclink" href="#sec-freq">考频统计</a><a class="toclink" href="#sec-core">核心讲解</a><a class="toclink" href="#sec-key">关键结论速记</a><a class="toclink" href="#sec-fig">示意图</a><a class="toclink" href="#sec-err">易错点</a><a class="toclink" href="#sec-real">真题示例</a></div>
+<a class="" href="../高等数学/06-定积分的几何与物理应用.html">定积分的几何与物理应用 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/07-微分方程.html">微分方程 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/08-数二高数综合与证明专题.html">数二高数综合与证明专题</a>
+<a class="" href="../高等数学/09-多元函数微积分学.html">多元函数微积分学 <span class="tag">高频</span></a>
+<div class="grp">线性代数（约 33 分 · 约 22%）</div>
+<a class="" href="../线性代数/01-行列式.html">行列式</a>
+<a class="" href="../线性代数/02-矩阵.html">矩阵 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/03-向量与向量组.html">向量与向量组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/04-线性方程组.html">线性方程组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/05-特征值与特征向量.html">特征值与特征向量 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/06-二次型.html">二次型 <span class="tag">高频</span></a></nav><main><div class="chapterbar"><a class="cb-home" href="../index.html">高等数学</a><span class="cb-sub">第 定积分与反常积分 章 · 24 分 · 高频</span><span class="cb-spacer"></span><a class="cb-btn" href="04-不定积分.html" title="键盘 ← 或 k">← 不定积分</a><a class="cb-btn" href="06-定积分的几何与物理应用.html" title="键盘 → 或 j">定积分的几何与物理应用 →</a></div><div class="inner">
+<header class="chaphead"><h1>定积分与反常积分</h1><div class="badges"><span class="badge hot">高频考点</span><span class="badge">高等数学</span><span class="badge">建议 24 分</span></div></header>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 5 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 21%；主要题型：选择、填空、解答（反常积分敛散性、变限积分）。</p>
+</div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h2 class="tt">核心讲解</h2><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
+<h3>【定积分的定义与可积条件】</h3>
+<ul>
+<li><strong>本质</strong>：定积分是一个<strong>确定的数</strong>，只与 $f$ 和区间 $[a,b]$ 有关，与积分变量用什么字母无关。</li>
+<li><strong>可积的必要条件</strong>：$f(x)$ 在 $[a,b]$ 上<strong>有界</strong>。</li>
+<li><strong>可积的充分条件</strong>：$f(x)$ 在 $[a,b]$ 上<strong>连续</strong>；或 $f(x)$ 在 $[a,b]$ 上<strong>有界且只有有限个间断点</strong>。</li>
+<li><strong>几何意义</strong>：$f(x)\geqslant 0$ 时等于曲边梯形面积；$f$ 变号时是面积的<strong>代数和</strong>。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ \int_a^b f(x)\,\mathrm{d}x=\lim_{\lambda\to 0}\sum_{i=1}^{n}f(\xi_i)\Delta x_i $$</p>
+<p>其中 $\lambda$ 是所有子区间的<strong>最大长度</strong>（不是个数）。</p>
+<p>$$ \left|\int_a^b f(x)\,\mathrm{d}x\right|\leqslant\int_a^b|f(x)|\,\mathrm{d}x $$</p>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：$\lambda\to 0$ 不能写成 $n\to\infty$。分割再细，只要有一个子区间长度不趋于 $0$，黎曼和就不保证收敛。</p>
+</blockquote>
+<h3>【变限积分与牛顿-莱布尼茨公式】</h3>
+<p><strong>变限积分</strong> $\Phi(x)=\int_a^xf(t)\,\mathrm{d}t$ 在 $f$ <strong>连续</strong>时可导，且 $\Phi'(x)=f(x)$。</p>
+<p>【核心公式】</p>
+<p>$$ \frac{\mathrm{d}}{\mathrm{d}x}\int_{\alpha(x)}^{\beta(x)}f(t)\,\mathrm{d}t=f\bigl(\beta(x)\bigr)\beta'(x)-f\bigl(\alpha(x)\bigr)\alpha'(x) $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>$f$ <strong>连续</strong>；</li>
+<li>$\alpha(x)$ 与 $\beta(x)$ 都<strong>可导</strong>；</li>
+<li>下限为常数时，第二项为 $0$。</li>
+</ol>
+<p><strong>牛顿-莱布尼茨公式</strong>：</p>
+<p>$$ \int_a^bf(x)\,\mathrm{d}x=F(b)-F(a) $$</p>
+<p>【适用条件】$f(x)$ 在 $[a,b]$ 上<strong>连续</strong>，且 $F'(x)=f(x)$ 在 $[a,b]$ 上<strong>处处成立</strong>。</p>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：区间含<strong>瑕点</strong>或为<strong>无穷区间</strong>时不能直接代端点，必须先按定义取极限。用牛顿-莱布尼茨硬算一个发散的反常积分，会得到一个看似正确的错误答案。</p>
+</blockquote>
+<h3>【定积分中值定理】</h3>
+<p>【适用条件】$f(x)$ 在<strong>闭区间</strong> $[a,b]$ 上<strong>连续</strong>。</p>
+<p>$$ \int_a^bf(x)\,\mathrm{d}x=f(\xi)(b-a),\qquad \xi\in[a,b] $$</p>
+<p><strong>推广形式</strong>：$f$ 在 $[a,b]$ 上连续、$g$ 在 $[a,b]$ 上可积且<strong>不变号</strong>（恒 $\geqslant 0$ 或恒 $\leqslant 0$），则</p>
+<p>$$ \int_a^bf(x)g(x)\,\mathrm{d}x=f(\xi)\int_a^bg(x)\,\mathrm{d}x $$</p>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：$g$ <strong>不变号</strong>这一条最容易漏。若 $g$ 变号，结论不成立。</p>
+</blockquote>
+<h3>【对称性与周期性】</h3>
+<ul>
+<li><strong>偶函数</strong>（$f$ 在对称区间上可积）：$\displaystyle\int_{-a}^{a}f(x)\,\mathrm{d}x=2\int_0^{a}f(x)\,\mathrm{d}x$</li>
+<li><strong>奇函数</strong>：$\displaystyle\int_{-a}^{a}f(x)\,\mathrm{d}x=0$</li>
+<li><strong>周期函数</strong>（以 $T$ 为周期且可积）：$\displaystyle\int_a^{a+T}f(x)\,\mathrm{d}x=\int_0^{T}f(x)\,\mathrm{d}x$</li>
+</ul>
+<blockquote>
+<p>⚠️ <strong>秒杀技</strong>：先看奇偶性再算积分。对称区间上的奇函数直接写 $0$，比硬算省一半时间——但<strong>必须</strong>先确认区间关于原点对称。</p>
+</blockquote>
+<h3>【反常积分：两类与敛散性】</h3>
+<p>做题时<strong>必须先把区间内的无穷限与瑕点全部找出，再逐个讨论</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>定义式</th>
+<th>收敛判据</th>
+<th>常见错误</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>无穷限积分</strong></td>
+<td>$\displaystyle\int_a^{+\infty}f\,\mathrm{d}x=\lim_{b\to+\infty}\int_a^{b}f\,\mathrm{d}x$</td>
+<td>极限存在则收敛</td>
+<td>忘记取极限，直接代 $+\infty$</td>
+</tr>
+<tr>
+<td><strong>瑕积分</strong>（$b$ 为瑕点）</td>
+<td>$\displaystyle\int_a^{b}f\,\mathrm{d}x=\lim_{\varepsilon\to0^+}\int_a^{b-\varepsilon}f\,\mathrm{d}x$</td>
+<td>极限存在则收敛</td>
+<td>没先找瑕点就用牛顿-莱布尼茨</td>
+</tr>
+<tr>
+<td><strong>$p$ 积分（无穷限）</strong></td>
+<td>$\displaystyle\int_1^{+\infty}\frac{\mathrm{d}x}{x^{p}}$</td>
+<td>$p>1$ 收敛，值为 $\dfrac{1}{p-1}$</td>
+<td>记成 $p<1$</td>
+</tr>
+<tr>
+<td><strong>$p$ 积分（瑕点）</strong></td>
+<td>$\displaystyle\int_0^{1}\frac{\mathrm{d}x}{x^{p}}$</td>
+<td>$p<1$ 收敛，值为 $\dfrac{1}{1-p}$</td>
+<td>与无穷限的方向记反</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：两个 $p$ 积分的方向<strong>正好相反</strong>——无穷限要 $p>1$，瑕点要 $p<1$。这是最容易被记反的一对结论。</p>
+</blockquote>
+<p><strong>比较判别法</strong>：设 $f,g$ 在 $[a,+\infty)$ 上连续且 $0\leqslant f(x)\leqslant g(x)$。</p>
+<ol>
+<li>$\int_a^{+\infty}g$ 收敛 $\Rightarrow$ $\int_a^{+\infty}f$ 收敛；</li>
+<li>$\int_a^{+\infty}f$ 发散 $\Rightarrow$ $\int_a^{+\infty}g$ 发散。</li>
+</ol>
+<p><strong>极限形式</strong>：$\lim_{x\to+\infty}x^{p}f(x)=\lambda$ 时</p>
+<ul>
+<li>$0<\lambda<+\infty$：与 $\int_1^{+\infty}\frac{\mathrm{d}x}{x^{p}}$ <strong>同敛散</strong>；</li>
+<li>$\lambda=0$：还需 $p>1$ 才收敛；</li>
+<li>$\lambda=+\infty$：$p\leqslant 1$ 时发散。</li>
+</ul>
+<p><strong>变号函数</strong>：用 $\int_a^{+\infty}|f(x)|\,\mathrm{d}x$ 收敛推出 $\int_a^{+\infty}f(x)\,\mathrm{d}x$ 收敛。</p>
+<p><strong>对照实例</strong>（记数值比记符号更牢）：</p>
+<p>$$ \int_1^{+\infty}\frac{\mathrm{d}x}{x^2}=1,\qquad \int_0^1\frac{\mathrm{d}x}{\sqrt{x}}=2,\qquad \int_1^{10}\frac{\mathrm{d}x}{x}=\ln 10\approx 2.303\ (\text{上限增大仍无界}) $$</p>
+<blockquote>
+<p>⚠️ <strong>秒杀技</strong>：判断敛散先找<strong>主导阶</strong>。把被积函数在瑕点或无穷远处等价成 $x^{-p}$，直接套 $p$ 积分结论，不必列比较判别法的完整不等式。</p>
+</blockquote>
+</div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h2 class="tt">关键结论速记</h2><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
+<ul>
+<li>$\int_1^{+\infty}\frac{\mathrm{d}x}{x^p}$ 收敛当且仅当 $p>1$，值为 $\frac1{p-1}$ —— 无穷限情形的比较基准。</li>
+<li>$\int_0^1\frac{\mathrm{d}x}{x^p}$ 收敛当且仅当 $p<1$，值为 $\frac1{1-p}$ —— 瑕点在端点时的比较基准，与上式条件相反。</li>
+<li>$\int_2^{+\infty}\frac{\mathrm{d}x}{x(\ln x)^p}$ 收敛当且仅当 $p>1$ —— 出现对数因子时的基准，如 $\int_2^{+\infty}\frac{\mathrm{d}x}{x(\ln x)^2}=\frac1{\ln2}\approx1.443$。</li>
+<li>$0\leqslant f\leqslant g$ 时，大收敛推小收敛、小发散推大发散 —— 比较判别法只能朝这两个方向用。</li>
+<li>$\lim_{x\to+\infty}x^pf(x)=\lambda$：$0<\lambda<+\infty$ 时与 $\int_1^{+\infty}x^{-p}\mathrm{d}x$ 同敛散 —— 极限形式；$\lambda=0$ 时还必须 $p>1$ 才收敛。</li>
+<li>$\left(\int_a^xf(t)\,\mathrm{d}t\right)'=f(x)$（$f$ 连续） —— 变限积分把积分与求导接通，是处理“积分上限函数”的钥匙。</li>
+<li>$\int_a^bf(x)\,\mathrm{d}x=f(\xi)(b-a)$（$f$ 在 $[a,b]$ 上连续） —— 中值定理把积分换成“函数值乘区间长”，证明题常用。</li>
+<li>偶函数在对称区间上积分为 $2\int_0^af$，奇函数积分为 $0$ —— 前提是 $f$ 在 $[-a,a]$ 上可积，先化简再计算。</li>
+</ul>
+</div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h2 class="tt">示意图</h2><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
+<p><img alt="函数图像：左子图为 x 从 1 到 10 的横轴区间上 y=1/x 与 y=1/x^2 的尾部区域，两曲线交于点 （1,1），阴影标出到 x=10 的积分面积，标注 1/x^2 的面积为 1 减去 1/10 等于 0.9 且随上限增大趋于 1，1/x 的面积为 ln10 约等于 2.303 且随上限增大无界；右子图为 x 从 0 到 1 的瑕积分区域，曲线为 y=1/sqrt(x)，标注积分值等于 2" src="../assets/gaoshu-05-fig1.png" /></p>
+<p><img alt="解题流程：反常积分敛散性与值的判定流程，先分无穷限与瑕积分，再用 p 积分基准和比较判别法" src="../assets/gaoshu-05-fig2.png" /></p>
+<div class="mermaid">flowchart TD
+    A[&quot;被积函数与积分区间&quot;] --&gt; B{&quot;区间是否为无穷区间&quot;}
+    B --&gt;|&quot;是&quot;| C[&quot;无穷限反常积分：先求原函数，再令积分上限趋于无穷&quot;]
+    B --&gt;|&quot;否&quot;| D{&quot;区间内是否存在瑕点&quot;}
+    D --&gt;|&quot;有&quot;| E[&quot;瑕积分：以瑕点为界拆成两个极限&quot;]
+    D --&gt;|&quot;无&quot;| F[&quot;普通定积分：直接用牛顿莱布尼茨公式&quot;]
+    C --&gt; G{&quot;被积函数是否非负&quot;}
+    E --&gt; G
+    G --&gt;|“非负”| H[&quot;与 p 积分基准作比较&quot;]
+    G --&gt;|&quot;变号&quot;| I[&quot;先判断绝对收敛&quot;]
+    H --&gt; J{&quot;极限形式中的 p 是否大于 1&quot;}
+    J --&gt;|&quot;是且极限为正的有限数&quot;| K[&quot;收敛&quot;]
+    J --&gt;|&quot;否&quot;| L[&quot;发散或改用其他方法&quot;]
+    I --&gt; M[&quot;绝对收敛则原积分收敛&quot;]
+</div><details><summary>查看该图源码</summary><pre><code>flowchart TD
+    A[&quot;被积函数与积分区间&quot;] --&gt; B{&quot;区间是否为无穷区间&quot;}
+    B --&gt;|&quot;是&quot;| C[&quot;无穷限反常积分：先求原函数，再令积分上限趋于无穷&quot;]
+    B --&gt;|&quot;否&quot;| D{&quot;区间内是否存在瑕点&quot;}
+    D --&gt;|&quot;有&quot;| E[&quot;瑕积分：以瑕点为界拆成两个极限&quot;]
+    D --&gt;|&quot;无&quot;| F[&quot;普通定积分：直接用牛顿莱布尼茨公式&quot;]
+    C --&gt; G{&quot;被积函数是否非负&quot;}
+    E --&gt; G
+    G --&gt;|“非负”| H[&quot;与 p 积分基准作比较&quot;]
+    G --&gt;|&quot;变号&quot;| I[&quot;先判断绝对收敛&quot;]
+    H --&gt; J{&quot;极限形式中的 p 是否大于 1&quot;}
+    J --&gt;|&quot;是且极限为正的有限数&quot;| K[&quot;收敛&quot;]
+    J --&gt;|&quot;否&quot;| L[&quot;发散或改用其他方法&quot;]
+    I --&gt; M[&quot;绝对收敛则原积分收敛&quot;]
+</code></pre></details>
+</div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
+<ul>
+<li>把两个 $p$ 积分的条件记混。 错在认为“$p$ 大就收敛”：无穷远处要 $p>1$ 才收敛，而瑕点处要 $p<1$ 才收敛（$x\to0^+$ 时 $\frac1{x^p}$ 增长得更慢才可积），例如 $\int_1^{+\infty}\frac{\mathrm{d}x}{x^{0.5}}$ 发散而 $\int_0^1\frac{\mathrm{d}x}{x^{0.5}}=2$ 收敛。</li>
+<li>对含瑕点的积分直接用牛顿-莱布尼茨公式。 错在把 $\int_{-1}^1\frac{\mathrm{d}x}{x^2}$ 算成 $\left[-\frac1x\right]{-1}^{1}=-2$：$x=0$ 是瑕点，必须拆成 $\int{-1}^0$ 与 $\int_0^1$ 两个极限，二者都发散，所以原积分发散，绝不能代端点相减。</li>
+<li>用比较判别法时漏掉“非负”或“区间上处处成立”的条件。 正确用法是：只对 $f(x)\geqslant0$ 的积分作比较，不等式 $f\leqslant g$ 要在 $[a,+\infty)$（或某个 $[X,+\infty)$）上成立；变号函数先看 $\int|f|$，绝对收敛才能断言原积分收敛。</li>
+<li>用定积分中值定理时不写全条件。 错在直接对含变号的 $g$ 使用 $\int fg=f(\xi)\int g$：推广形式要求 $f$ 在 $[a,b]$ 上连续、$g$ 在 $[a,b]$ 上可积且不变号，少一个条件结论就可能不成立。</li>
+</ul>
+</div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
+<p><strong>2024 年数二第 7 题（选择题，5 分）</strong></p>
+<p>设非负函数 $f(x)$ 在 $[0,+\infty)$ 上连续，给定以下三个命题：</p>
+<p>（1）若 $\int_0^{+\infty}f^2(x)\,\mathrm{d}x$ 收敛，则 $\int_0^{+\infty}f(x)\,\mathrm{d}x$ 收敛；</p>
+<p>（2）若存在 $p>1$，使极限 $\lim_{x\to+\infty}x^pf(x)$ 存在，则 $\int_0^{+\infty}f(x)\,\mathrm{d}x$ 收敛；</p>
+<p>（3）若 $\int_0^{+\infty}f(x)\,\mathrm{d}x$ 收敛，则存在 $p>1$，使极限 $\lim_{x\to+\infty}x^pf(x)$ 存在。</p>
+<p>其中正确的个数为（　）</p>
+<p>A. 0　　B. 1　　C. 2　　D. 3</p>
+<blockquote>
+<p>解析：
+1. 命题（1）错：取 $f(x)=\frac{1}{x+1}$（在 $[0,+\infty)$ 上非负连续），则 $\int_0^{+\infty}f^2(x)\,\mathrm{d}x=\int_0^{+\infty}\frac{\mathrm{d}x}{(x+1)^2}=1$ 收敛，但 $\int_0^{+\infty}\frac{\mathrm{d}x}{x+1}$ 发散，可见 $f^2$ 收敛推不出 $f$ 收敛。
+2. 命题（2）对：设 $\lim_{x\to+\infty}x^pf(x)=\lambda$ 存在且 $p>1$。若 $\lambda>0$，则 $f(x)\sim\frac{\lambda}{x^p}$，由极限形式比较判别法（$p>1$）知积分收敛；若 $\lambda=0$，则存在 $X>0$，当 $x>X$ 时 $x^pf(x)<1$，即 $0\leqslant f(x)<\frac1{x^p}$，由比较判别法知积分收敛。
+3. 命题（3）错：收敛推不出 $x^pf(x)$ 存在极限。反例：令 $f$ 在每个区间 $[n,n+n^{-3}]$（$n=1,2,\cdots$）上取值为 $1$（端点光滑过渡），其余点取 $e^{-x}$，则 $\int_0^{+\infty}f(x)\,\mathrm{d}x\leqslant1+\sum_{n=1}^{\infty}\frac1{n^3}=1+\zeta(3)\approx2.202$ 收敛，而 $x^pf(x)$ 沿 $x=n$ 趋于 $+\infty$、沿 $x=n+\frac12$ 趋于 $0$，极限不存在。
+结论：三个命题中只有（2）正确，正确的个数为 $1$，选 B。</p>
+</blockquote>
+<hr /></div></section></div></main></div>
+<button id="totop" type="button">↑ 回到当前小节</button>
+<button id="themetoggle" type="button" title="切换深色/浅色">◐ 主题</button>
+<script>
+document.getElementById('q')?.addEventListener('input',e=>{
+  const v=e.target.value.trim().toLowerCase();
+  document.querySelectorAll('nav a').forEach(a=>{
+    a.style.display = !v || a.textContent.toLowerCase().includes(v) ? '' : 'none';});
+});
+</script>
+<script>
+(function () {
+  var main = document.querySelector('main');
+  // 1) 侧栏高亮当前小节（滚动位置驱动）
+  var links = [].slice.call(document.querySelectorAll('nav a.toclink'));
+  var targets = links.map(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    return document.getElementById(id);
+  });
+  function sync() {
+    var y = window.scrollY + 120, best = -1;
+    targets.forEach(function (t, i) { if (t && t.offsetTop <= y) best = i; });
+    links.forEach(function (a, i) { a.classList.toggle('cur', i === best); });
+  }
+  if (links.length) {
+    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  }
+  // 2) 键盘：j/k 或 ←/→ 翻章
+  var prev = document.body.getAttribute('data-prev');
+  var next = document.body.getAttribute('data-next');
+  document.addEventListener('keydown', function (e) {
+    if (e.target.matches('input, textarea')) return;
+    if (e.key === 'ArrowLeft' || e.key === 'k') { if (prev) location.href = prev; }
+    if (e.key === 'ArrowRight' || e.key === 'j') { if (next) location.href = next; }
+  });
+  // 3) 移动端侧栏抽屉 + 回到顶部
+  var t = document.getElementById('navtoggle');
+  if (t) t.addEventListener('click', function () { document.body.classList.toggle('navopen'); });
+  // 4) 阅读进度条
+  var bar = document.getElementById('progress');
+  if (bar) {
+    var upd = function () {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd); upd();
+  }
+  // 5) 主题切换（记忆到 localStorage）
+  var tb = document.getElementById('themetoggle');
+  if (tb) tb.addEventListener('click', function () {
+    var cur = document.documentElement.dataset.theme;
+    if (cur === 'auto') cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var nx = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = nx;
+    try { localStorage.setItem('dsh-theme', nx); } catch (e) {}
+  });
+  var top = document.getElementById('totop');
+  if (top) {
+    top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    window.addEventListener('scroll', function () {
+      top.style.display = window.scrollY > 500 ? 'block' : 'none';
+    }, { passive: true });
+  }
+})();
+</script>
+<script>
+(function () {
+  if (!window.renderMathInElement) {
+    // 公式渲染器没加载到：明确提示，而不是留一堆 $...$ 让读者困惑
+    var has = /\$[^$]+\$/.test(document.body.innerText || '');
+    if (has) {
+      var p = document.createElement('p');
+      p.className = 'missing';
+      p.textContent = '未加载到公式渲染器（katex/），页面里的 LaTeX 公式以源码显示。'
+        + '请确认 数学二/katex/ 目录存在。';
+      document.querySelector('main').insertBefore(p, document.querySelector('main').firstChild);
+    }
+    return;
+  }
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '$', right: '$', display: false }
+    ],
+    throwOnError: false,
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  });
+})();
+</script>
+<script>
+(function () {
+  var nodes = document.querySelectorAll('.mermaid');
+  if (!nodes.length) return;
+  if (!window.mermaid) {
+    nodes.forEach(function (el) {
+      el.insertAdjacentHTML('beforebegin',
+        '<p class="missing">未加载到 mermaid 运行时（mermaid.min.js 不在预期位置），' +
+        '下图暂以源码显示，可复制到任意 mermaid 编辑器查看。</p>');
+      var pre = document.createElement('pre');
+      var code = document.createElement('code');
+      code.textContent = el.textContent;
+      pre.appendChild(code); el.innerHTML = ''; el.appendChild(pre);
+    });
+    return;
+  }
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: 'neutral',
+    flowchart: { useMaxWidth: true }, state: { useMaxWidth: true } });
+  nodes.forEach(function (el, i) {
+    mermaid.render('mmd-' + i, el.textContent.trim()).then(function (r) {
+      el.innerHTML = r.svg;
+    }).catch(function (e) {
+      el.innerHTML = '<p class="missing">该图渲染失败：' + e.message + '</p>';
+    });
+  });
+})();
+</script></body></html>

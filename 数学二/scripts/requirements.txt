@@ -1,0 +1,17 @@
+# 数学二速成资料 · Python 侧依赖（锁定版本）
+#
+# 装到仓库内的 .tools/venv（.tools/ 已 gitignore，可随时删掉重建）：
+#
+#   python3 -m venv .tools/venv
+#   .tools/venv/bin/python -m pip install -r 数学二/scripts/requirements.txt
+#
+# 为什么锁定版本：图由 matplotlib 生成、数值由 sympy 复算、Markdown 由
+# python-markdown 渲染，三者换版本都可能让产物出现差异，而差异本身要被审阅。
+# 锁定后用同一套版本重跑，产物应当逐字节一致（实测 PNG 24 张完全一致）。
+#
+# Node 侧依赖（mermaid 真实解析 + 站点内置运行时）另见 tools-package.json：
+#   npm install --prefix .tools --cache /tmp/npm-cache mermaid@12.1.0 katex@0.16.47 jsdom@30.1.2
+
+sympy==1.14.0
+matplotlib==3.11.2
+Markdown==3.11.1

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>高等数学 · 函数、极限与连续</title><style>
+:root{
+ --bg:#f7f7f5; --paper:#ffffff; --fg:#1f2328; --fg2:#3d444d; --mut:#6b7280;
+ --line:#e3e6ea; --line2:#eef1f4; --acc:#1d4ed8; --acc2:#0b3d91;
+ --codebg:#f5f7fa; --hi:#fff6d6; --warnbg:#fff8ec; --warnbd:#f0d9a8;
+ --realbg:#f1f8f2; --realbd:#bcdcc2; --chip:#eef2f7;
+ --sh:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.05);
+ --serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",Georgia,"Times New Roman",serif;
+ --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+}
+html[data-theme="dark"]{
+ --bg:#0d1117; --paper:#161b22; --fg:#e6edf3; --fg2:#c9d1d9; --mut:#8b949e;
+ --line:#2b3138; --line2:#22272e; --acc:#6ea8fe; --acc2:#9ec5fe;
+ --codebg:#1b2129; --hi:#3a2f10; --warnbg:#2c2415; --warnbd:#5c4a1e;
+ --realbg:#14251a; --realbd:#2f5c3c; --chip:#1f2630;
+ --sh:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
+ font-size:16.5px;line-height:1.82;-webkit-font-smoothing:antialiased}
+#wrap{display:flex;min-height:100vh}
+
+/* ---------- 侧栏 ---------- */
+nav{width:302px;flex:0 0 302px;background:var(--paper);border-right:1px solid var(--line);
+ position:sticky;top:0;height:100vh;overflow:auto;padding:18px 14px 40px}
+nav .navhead{display:flex;align-items:center;justify-content:space-between;
+ gap:8px;margin:0 6px 12px}
+nav .navhead h1{font-size:14.5px;margin:0;font-weight:700;letter-spacing:.02em}
+nav .sitehome{font-size:12px;color:var(--acc);text-decoration:none;
+ border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap}
+nav .sitehome:hover{border-color:var(--acc)}
+nav input{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:9px;
+ background:var(--bg);color:var(--fg);margin-bottom:12px;font-size:13px;font-family:var(--sans)}
+nav input:focus{outline:2px solid var(--acc);outline-offset:-1px;border-color:transparent}
+nav a{display:block;padding:6px 10px;color:var(--fg2);text-decoration:none;
+ font-size:13.5px;border-radius:8px;line-height:1.5}
+nav a:hover{background:var(--codebg);color:var(--fg)}
+nav .grp{margin:16px 6px 6px;font-size:11.5px;color:var(--mut);
+ font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+nav a.cur{background:var(--chip);color:var(--acc);font-weight:700}
+nav .tocbox{margin:2px 0 10px 16px;padding-left:10px;border-left:2px solid var(--line)}
+nav .tocbox a{font-size:12.5px;color:var(--mut);padding:3px 8px}
+nav .tocbox a.cur{color:var(--acc);font-weight:600;background:none}
+
+/* ---------- 主区 ---------- */
+main{flex:1;min-width:0;padding:0 0 100px}
+.inner{max-width:880px;margin:0 auto;padding:0 46px}
+.chapterbar{position:sticky;top:0;z-index:20;background:var(--paper);
+ border-bottom:1px solid var(--line);
+ padding:12px 46px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+@supports (backdrop-filter:blur(1px)){
+ .chapterbar{background:color-mix(in srgb,var(--paper) 86%,transparent);
+  backdrop-filter:saturate(1.6) blur(10px)}
+}
+.chapterbar .cb-title{font-weight:750;font-size:15px;font-family:var(--serif)}
+.chapterbar .cb-sub{color:var(--mut);font-size:12.5px}
+.chapterbar .cb-spacer{flex:1}
+.chapterbar a.cb-btn{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;
+ padding:6px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);text-decoration:none;white-space:nowrap;transition:.15s}
+.chapterbar a.cb-btn:hover{border-color:var(--acc);color:var(--acc);transform:translateY(-1px)}
+.chapterbar a.cb-btn.off{opacity:.32;pointer-events:none}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--acc),#7c3aed);
+ width:0;z-index:50;transition:width .1s linear}
+#totop{position:fixed;right:22px;bottom:24px;z-index:30;display:none;
+ padding:9px 15px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+#totop:hover{border-color:var(--acc);color:var(--acc)}
+#themetoggle{position:fixed;right:22px;bottom:70px;z-index:30;
+ padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+
+/* ---------- 标题 ---------- */
+h1{font-family:var(--serif);font-size:30px;line-height:1.35;font-weight:700;
+ margin:34px 0 18px;letter-spacing:.01em}
+h2{font-family:var(--serif);font-size:25px;margin:42px 0 8px;font-weight:700;
+ line-height:1.4;scroll-margin-top:80px}
+h3{font-size:18px;margin:26px 0 10px;font-weight:700}
+p{margin:1em 0}
+strong{font-weight:700}
+
+/* ---------- 章节头（知识点标题 + 高频标签） ---------- */
+.chaphead{margin:10px 0 26px;padding-bottom:16px;border-bottom:2px solid var(--line)}
+h2.bookmark{margin:60px 0 0;padding:14px 18px;font-size:24px;font-weight:800;
+ color:#fff;background:linear-gradient(100deg,var(--acc2),var(--acc));
+ border-radius:12px;box-shadow:var(--sh);letter-spacing:.01em}
+h2.bookmark .badge{background:rgba(255,255,255,.22);color:#fff;border-color:transparent;
+ font-weight:700;margin-left:8px;vertical-align:3px}
+h2.bookmark + .sec, h2.bookmark ~ .sec:first-of-type{margin-top:18px}
+.bookhead{margin:34px 0 10px;padding-bottom:14px;border-bottom:2px solid var(--line)}
+.bookhead h1{margin:0 0 8px}
+.bookhead .lede{margin:0;color:var(--mut);font-size:14.5px;line-height:1.7}
+/* ===== 第 1 层：部分（高等数学 / 线性代数）===== */
+h2.parthead{margin:64px 0 10px;padding:18px 24px;font-size:29px;font-weight:800;
+ color:#fff;letter-spacing:.02em;border-radius:14px;box-shadow:var(--sh);
+ background:linear-gradient(100deg,#111827,#374151)}
+html[data-theme="dark"] h2.parthead{background:linear-gradient(100deg,#1f2937,#374151)}
+h2.parthead .tag{background:rgba(255,255,255,.18);color:#fff;border-color:transparent;
+ font-weight:700;font-size:13px;margin-left:10px;vertical-align:4px}
+h2.parthead:first-of-type{margin-top:26px}
+.partoverview{margin:0 0 8px;padding:2px 0 2px 20px;color:var(--fg2)}
+.partoverview h3{font-size:17px;margin:22px 0 8px;border:0;color:var(--mut);
+ font-family:var(--sans);font-weight:700;letter-spacing:.02em}
+.partoverview table{max-width:100%}
+.anchor{scroll-margin-top:16px}
+.backtop{margin:22px 0 0;font-size:13px}
+.backtop a{color:var(--mut);text-decoration:none}
+.backtop a:hover{color:var(--acc)}
+.chapterbar .cb-home{font-weight:700;font-size:14px;color:var(--acc);
+ text-decoration:none;font-family:var(--serif)}
+.chaphead h2{margin:0 0 10px;border:0}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{font-size:12px;padding:3px 11px;border-radius:999px;background:var(--chip);
+ color:var(--fg2);border:1px solid var(--line)}
+.badge.hot{background:linear-gradient(135deg,#fff1c9,#ffe0a3);color:#7a4b00;
+ border-color:#f0cf8a;font-weight:700}
+html[data-theme="dark"] .badge.hot{background:#3a2f10;color:#ffd479;border-color:#5c4a1e}
+
+/* ---------- 模板六段式 ---------- */
+.sec{margin:30px 0}
+/* ===== 字段层级：整块卡片 + 明显的标题条 ===== */
+.sec{margin:34px 0;background:var(--paper);border:1px solid var(--line);
+ border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.sec > .sec-h{display:flex;align-items:center;gap:11px;margin:0;
+ padding:13px 20px;background:linear-gradient(90deg,var(--codebg),transparent);
+ border-bottom:1px solid var(--line);border-left:5px solid var(--acc)}
+.sec > .sec-h .ic{width:30px;height:30px;flex:0 0 30px;border-radius:9px;
+ display:grid;place-items:center;font-size:16px;background:var(--chip)}
+.sec > .sec-h .tt{font-family:var(--serif);font-size:20px;font-weight:800;
+ margin:0;padding:0;border:0;line-height:1.35;color:var(--fg)}
+.sec > .sec-h .hint{font-size:12.5px;color:var(--mut);margin-left:auto;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sec > .box{padding:18px 22px}
+/* 每个字段给一条自己的主色，帮助扫读时快速定位 */
+.sec-freq > .sec-h{border-left-color:#0ea5e9}
+.sec-core > .sec-h{border-left-color:var(--acc)}
+.sec-key  > .sec-h{border-left-color:#7c3aed}
+.sec-fig  > .sec-h{border-left-color:#0891b2}
+.sec-err  > .sec-h{border-left-color:#d97706}
+.sec-real > .sec-h{border-left-color:#16a34a}
+
+.sec-freq .box{font-size:15.5px;font-weight:600}
+.sec-freq .box blockquote{margin:0 0 4px;background:var(--codebg);border-left:3px solid var(--acc);
+ border-radius:0 8px 8px 0;padding:9px 13px;font-size:14.6px;color:var(--fg2)}
+.sec-freq .box > p:first-child{margin-top:0}
+/* ===== 模块层级：核心讲解里的 【模块名】 ===== */
+.sec-core .box h3, .sec-core .box h4, .sec-core .box h5{
+ margin:30px 0 12px;padding:9px 0 9px 15px;font-size:18.5px;font-weight:800;
+ font-family:var(--serif);color:var(--acc2);letter-spacing:.01em;
+ border-left:6px solid var(--acc);border-radius:0 8px 8px 0;
+ background:linear-gradient(90deg,var(--codebg),transparent)}
+.sec-core .box > h3:first-child, .sec-core .box > h4:first-child,
+.sec-core .box > h5:first-child{margin-top:2px}
+.sec-core .box h4{font-size:17px;border-left-width:4px}
+/* 【核心公式】【适用条件】这类次级标记 */
+.sec-core .box p > strong:only-child{color:var(--acc);letter-spacing:.02em}
+.sec-core .box{font-size:16.8px;line-height:1.95}
+.sec-core .box p{margin:1.05em 0}
+.sec-core .box p:first-child{margin-top:0}
+.sec-core .box p:first-child::first-letter{font-size:1.02em}
+
+/* 关键结论速记：卡片网格 */
+.sec-key .box{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sec-key ul{display:contents;margin:0;padding:0;list-style:none}
+.sec-key li{margin:0;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;padding:13px 15px;font-size:14.8px;line-height:1.72;
+ position:relative;overflow:hidden}
+.sec-key li::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+ background:linear-gradient(180deg,var(--acc),#7c3aed);opacity:.85}
+.sec-key li strong:first-child,.sec-key li em:first-child{color:var(--acc2)}
+
+/* 示意图 */
+.sec-fig .box{background:var(--bg);border-radius:10px}
+.sec-fig img{display:block;width:100%;height:auto;margin:12px 0;border-radius:10px;
+ border:1px solid var(--line2);background:#fff}
+.sec-fig .mermaid{margin:14px 0;padding:14px;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;overflow:auto;text-align:center}
+.sec-fig details{margin:6px 0 0}
+.sec-fig .ascii{background:var(--bg);border:1px solid var(--line);border-radius:10px;
+ font-size:12.5px;line-height:1.5}
+
+/* 易错点：警示样式 */
+.sec-err .box{background:var(--warnbg)}
+.sec-err ul{margin:10px 0 0;padding:0;list-style:none}
+.sec-err li{margin:12px 0;padding-left:30px;position:relative;font-size:15.6px;line-height:1.85}
+.sec-err li::before{content:"⚠";position:absolute;left:0;top:0;color:#d97706;font-size:15px}
+.sec-err li strong:first-child{color:#b45309}
+html[data-theme="dark"] .sec-err li strong:first-child{color:#fbbf24}
+
+/* 真题示例 */
+.sec-real .box{background:var(--realbg)}
+.sec-real .box > p:first-child{font-weight:700;color:#166534;font-size:16px;margin-top:0}
+html[data-theme="dark"] .sec-real .box > p:first-child{color:#86efac}
+.sec-real blockquote{margin:14px 0 6px;padding:12px 16px;background:var(--paper);
+ border-left:4px solid var(--realbd);border-radius:0 10px 10px 0;font-size:15.4px}
+.sec-real blockquote p{margin:.55em 0}
+.sec-real blockquote ol,.sec-real blockquote ul{margin:.5em 0;padding-left:1.35em}
+
+/* ---------- 通用元素 ---------- */
+blockquote{margin:1.1em 0;padding:12px 16px;background:var(--codebg);
+ border-left:4px solid var(--acc);border-radius:0 10px 10px 0;color:var(--fg2)}
+code{background:var(--codebg);padding:.16em .42em;border-radius:6px;
+ font:13.6px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;
+ border:1px solid var(--line2)}
+pre{background:var(--codebg);padding:14px 16px;border-radius:12px;overflow:auto;
+ border:1px solid var(--line)}
+pre code{background:none;padding:0;border:0;font-size:12.8px;line-height:1.62}
+img{max-width:100%;height:auto}
+hr{border:0;border-top:1px solid var(--line);margin:36px 0}
+ul,ol{padding-left:1.5em}
+li{margin:.34em 0}
+table{border-collapse:separate;border-spacing:0;margin:16px 0;width:100%;
+ display:block;overflow:auto;max-width:100%;font-size:14.6px;
+ background:var(--paper);border:1px solid var(--line);border-radius:12px}
+th,td{border-bottom:1px solid var(--line2);padding:9px 14px;text-align:left}
+th{background:var(--codebg);font-weight:700;font-size:13.6px;color:var(--fg2);
+ position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--codebg)}
+td:first-child,th:first-child{padding-left:16px}
+.katex{font-size:1.04em}
+.katex-display{margin:1.1em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.warn,.missing{background:var(--warnbg);border:1px solid var(--warnbd);padding:11px 15px;
+ border-radius:10px;font-size:14px;margin:14px 0}
+.missing{background:#fdecec;border-color:#f0b4b4}
+html[data-theme="dark"] .missing{background:#2c1616;border-color:#6b2b2b}
+#navtoggle{position:fixed;left:12px;top:12px;z-index:40;display:none;
+ padding:8px 13px;border:1px solid var(--line);border-radius:9px;background:var(--paper);
+ color:var(--fg);cursor:pointer;font-size:13.5px;box-shadow:var(--sh);font-family:var(--sans)}
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;
+ background:var(--hi);border:1px solid var(--line);margin-left:6px;vertical-align:2px}
+
+@media (max-width:1080px){ .sec-key .box{grid-template-columns:1fr} }
+@media (max-width:860px){
+ #navtoggle{display:block}
+ nav{position:fixed;left:0;top:0;z-index:35;transform:translateX(-102%);
+  transition:transform .22s ease;box-shadow:2px 0 18px rgba(0,0,0,.16);width:86vw;max-width:320px;
+  flex-basis:auto}
+ body.navopen nav{transform:none}
+ .inner{padding:0 18px}
+ .chapterbar{padding:10px 18px}
+ h1{font-size:25px} h2{font-size:21px} .sec-core .box{font-size:16px}
+}
+@media print{
+ nav,#navtoggle,#totop,#themetoggle,#progress,.chapterbar{display:none!important}
+ main{padding:0} .inner{max-width:none;padding:0}
+ .sec,.sec > .box{box-shadow:none;break-inside:avoid}
+ a{color:inherit;text-decoration:none}
+}
+</style>
+<link rel="stylesheet" href="../katex/katex.min.css">
+<script src="../katex/katex.min.js"></script>
+<script src="../katex/contrib/auto-render.min.js"></script>
+<script src="../mermaid.min.js"></script>
+<script>try{var t=localStorage.getItem('dsh-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-prev="" data-next="02-导数与微分.html">
+<div id="progress"></div><button id="navtoggle" type="button">☰ 目录</button>
+<div id="wrap"><nav><div class="navhead"><h1>数学二速成资料</h1><a class="sitehome" href="../index.html">全科合集</a></div>
+<input id="q" placeholder="筛选章节（输入即过滤）">
+<div class="grp">高等数学（约 117 分 · 约 78%）</div>
+<a class="cur" href="../高等数学/01-函数极限与连续.html">函数、极限与连续 <span class="tag">高频</span></a>
+<div class="tocbox"><a class="toclink" href="#sec-freq">考频统计</a><a class="toclink" href="#sec-core">核心讲解</a><a class="toclink" href="#sec-key">关键结论速记</a><a class="toclink" href="#sec-fig">示意图</a><a class="toclink" href="#sec-err">易错点</a><a class="toclink" href="#sec-real">真题示例</a></div>
+<a class="" href="../高等数学/02-导数与微分.html">导数与微分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/03-中值定理与导数应用.html">中值定理与导数应用 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/04-不定积分.html">不定积分</a>
+<a class="" href="../高等数学/05-定积分与反常积分.html">定积分与反常积分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/06-定积分的几何与物理应用.html">定积分的几何与物理应用 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/07-微分方程.html">微分方程 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/08-数二高数综合与证明专题.html">数二高数综合与证明专题</a>
+<a class="" href="../高等数学/09-多元函数微积分学.html">多元函数微积分学 <span class="tag">高频</span></a>
+<div class="grp">线性代数（约 33 分 · 约 22%）</div>
+<a class="" href="../线性代数/01-行列式.html">行列式</a>
+<a class="" href="../线性代数/02-矩阵.html">矩阵 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/03-向量与向量组.html">向量与向量组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/04-线性方程组.html">线性方程组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/05-特征值与特征向量.html">特征值与特征向量 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/06-二次型.html">二次型 <span class="tag">高频</span></a></nav><main><div class="chapterbar"><a class="cb-home" href="../index.html">高等数学</a><span class="cb-sub">第 函数、极限与连续 章 · 17 分 · 高频</span><span class="cb-spacer"></span><a class="cb-btn off" href="#" title="键盘 ← 或 k">← 已是第一章</a><a class="cb-btn" href="02-导数与微分.html" title="键盘 → 或 j">导数与微分 →</a></div><div class="inner">
+<header class="chaphead"><h1>函数、极限与连续</h1><div class="badges"><span class="badge hot">高频考点</span><span class="badge">高等数学</span><span class="badge">建议 17 分</span></div></header>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 7 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 15%；主要题型：选择、填空、解答均有，解答题常为极限计算或数列极限。</p>
+</div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h2 class="tt">核心讲解</h2><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
+<h3>【连续与间断点分类】</h3>
+<ul>
+<li><strong>连续的定义</strong>要求下列三件事<strong>同时</strong>成立：$f$ 在 $x_0$ 处<strong>有定义</strong>、极限 $\lim_{x\to x_0}f(x)$ 存在、两者相等。</li>
+<li><strong>分段函数的分界点</strong>只能算左右极限再与函数值比较，不能直接把分界点代进分段的表达式。</li>
+<li><strong>找间断点的位置</strong>只看两类地方：函数表达式失去定义的点，以及分段函数的分界点。</li>
+<li><strong>第一类间断点</strong>：两侧极限<strong>都存在</strong>。相等时叫<strong>可去间断点</strong>（该点可以没有定义），不等时叫<strong>跳跃间断点</strong>。</li>
+<li><strong>第二类间断点</strong>：至少有一侧极限<strong>不存在</strong>，包括<strong>无穷间断点</strong>与<strong>振荡间断点</strong>。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>间断点类型</th>
+<th>两侧极限</th>
+<th>判定要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>可去间断点</strong>（第一类）</td>
+<td>都存在且相等</td>
+<td>该点可以没有定义，补上定义即可连续</td>
+</tr>
+<tr>
+<td><strong>跳跃间断点</strong>（第一类）</td>
+<td>都存在但不相等</td>
+<td>极限不存在，跳跃高度等于两侧极限之差</td>
+</tr>
+<tr>
+<td><strong>无穷间断点</strong>（第二类）</td>
+<td>至少一侧为无穷大</td>
+<td>只要有一侧发散到无穷就归入此类</td>
+</tr>
+<tr>
+<td><strong>振荡间断点</strong>（第二类）</td>
+<td>至少一侧振荡不存在</td>
+<td>函数值不趋于任何数，也不趋于无穷</td>
+</tr>
+</tbody>
+</table>
+<p>【核心公式】</p>
+<p>$$ \lim_{x\to x_0^-}f(x)=\lim_{x\to x_0^+}f(x)=f(x_0) $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>$f$ 在 $x_0$ 的某邻域内<strong>有定义</strong>（含 $x_0$ 本身）；</li>
+<li>左极限与右极限<strong>都存在</strong>；</li>
+<li>两者<strong>相等</strong>，且这个公共值恰好等于 $f(x_0)$。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：极限只与<strong>去心邻域</strong>有关，$f(x_0)$ 是否存在、等于多少都不影响 $\lim_{x\to x_0}f(x)$ —— 这正是可去间断点的来源；判断间断点必须两侧都算，只要有一侧为无穷大或振荡不存在，该点就是第二类。</p>
+</blockquote>
+<h3>【两个重要极限】</h3>
+<ul>
+<li><strong>第一个重要极限</strong>是 $\frac00$ 型未定式的基准，也是等价无穷小 $\sin x\sim x$ 的来源。</li>
+<li><strong>第二个重要极限</strong>是 $1^{\infty}$ 型未定式的基准，处理办法是先取对数或凑成它的标准形式。</li>
+<li>两个极限中的变量都可以换成<strong>任何趋于零的因式</strong>，结论不变。</li>
+<li>$1^{\infty}$ 型未定式有两条化归路线：凑成第二个重要极限的标准形式，或取对数化为乘积型再用洛必达法则。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ \lim_{x\to 0}\frac{\sin x}{x}=1 $$</p>
+<p>$$ \lim_{x\to\infty}\left(1+\frac1x\right)^x=e,\qquad \lim_{u\to 0}(1+u)^{\frac1u}=e $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>第一个重要极限要求分子与分母<strong>同时趋于 0</strong>，且两者是同一个变量；</li>
+<li>第二个重要极限要求括号内是 $1$ 加上一个<strong>趋于 0</strong> 的量，而指数恰好是该量的<strong>倒数</strong>；</li>
+<li>$1^{\infty}$ 型未定式必须<strong>先化归</strong>成上述标准形式，不能直接代入。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>秒杀技</strong>：见到 $1^{\infty}$ 型就朝 $(1+u)^{1/u}$ 的结构上凑；指数与括号内的量凑不成倒数时，先取对数把幂指型化为乘积型。</p>
+</blockquote>
+<h3>【无穷小比较】</h3>
+<ul>
+<li><strong>乘除因子</strong>上的等价无穷小替换<strong>无条件成立</strong>。</li>
+<li><strong>加减项</strong>只有在替换后<strong>不发生同阶相消</strong>时才可用。</li>
+<li>一旦发生<strong>同阶相消</strong>，必须<strong>升阶</strong>：换用更高阶的等价无穷小。</li>
+<li>三阶等价无穷小都出现在两个一阶无穷小<strong>相减</strong>的场合，此时不能用一阶主部。</li>
+<li>判断办法：把各项都换成主部后相减，若最高阶项被消掉，就说明替换的阶数不够。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>阶数</th>
+<th>等价无穷小（$x\to 0$）</th>
+<th>使用场合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>一阶</strong></td>
+<td>$\sin x\sim\tan x\sim\arcsin x\sim\arctan x\sim x$</td>
+<td>乘除因子直接替换</td>
+</tr>
+<tr>
+<td><strong>一阶</strong></td>
+<td>$\ln(1+x)\sim e^x-1\sim x$</td>
+<td>乘除因子直接替换</td>
+</tr>
+<tr>
+<td><strong>二阶</strong></td>
+<td>$1-\cos x\sim\frac{x^2}{2}$</td>
+<td>与一阶项相减时使用</td>
+</tr>
+<tr>
+<td><strong>三阶</strong></td>
+<td>$x-\sin x\sim\frac{x^3}{6}$</td>
+<td>一阶相消后升阶</td>
+</tr>
+<tr>
+<td><strong>三阶</strong></td>
+<td>$\tan x-x\sim\frac{x^3}{3}$</td>
+<td>一阶相消后升阶</td>
+</tr>
+</tbody>
+</table>
+<p>【核心公式】</p>
+<p>$$ \sin x\sim\tan x\sim\arcsin x\sim\arctan x\sim x,\qquad \ln(1+x)\sim e^x-1\sim x $$</p>
+<p>$$ 1-\cos x\sim\frac{x^2}{2},\qquad x-\sin x\sim\frac{x^3}{6},\qquad \tan x-x\sim\frac{x^3}{3} $$</p>
+<p>$$ \lim_{x\to 0}\frac{\tan x-\sin x}{x^3}=\frac12 $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>替换只针对<strong>整个乘积因子或分母</strong>，不能对和式中的个别项单独替换；</li>
+<li>式中的无穷小必须趋于<strong>同一个点</strong>；</li>
+<li>替换后若最高阶项被消掉，必须<strong>升阶</strong>重新替换。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：把分子两项都换成一阶主部会算出极限 $0$，正确结果是 $\frac12$ —— 因为替换后同阶项相消，必须升到三阶。</p>
+</blockquote>
+<h3>【洛必达法则】</h3>
+<ul>
+<li>求极限有<strong>三条主线</strong>：等价无穷小替换、洛必达法则、泰勒展开，洛必达只是其中一条。</li>
+<li>洛必达法则只适用于 $\frac00$ 型与 $\frac{\infty}{\infty}$ 型两种未定式。</li>
+<li>其它未定式（$0\cdot\infty$、$\infty-\infty$、$1^{\infty}$ 等）必须先<strong>化归</strong>为上述两种。</li>
+<li>第三条前提不成立时洛必达<strong>失效</strong>，但原极限未必不存在。</li>
+<li>洛必达失效时应改用<strong>等价无穷小</strong>或<strong>泰勒展开</strong>。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ \lim_{x\to x_0}\frac{f(x)}{g(x)}=\lim_{x\to x_0}\frac{f'(x)}{g'(x)} $$</p>
+<p>$$ \text{反例：}\ \lim_{x\to\infty}\frac{x+\sin x}{x}=1,\qquad \text{而}\ \lim_{x\to\infty}(1+\cos x)\ \text{不存在} $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>所求极限为 $\frac00$ 型或 $\frac{\infty}{\infty}$ 型；</li>
+<li>在 $x_0$ 的某<strong>去心邻域</strong>内 $f$ 与 $g$ 都<strong>可导</strong>，且 $g'(x)\neq 0$；</li>
+<li>导数之比的极限 $\lim_{x\to x_0}\frac{f'(x)}{g'(x)}$ <strong>存在或为无穷大</strong>。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：见到 $\frac00$ 型就直接洛必达，忘记核对前提。若导数之比的极限振荡不存在，只能换方法，<strong>不能断言原极限不存在</strong> —— 上面的反例中导数之比不收敛，而原极限确为 $1$。</p>
+</blockquote>
+<h3>【数列极限与单调有界准则】</h3>
+<ul>
+<li><strong>单调有界准则</strong>：单调且有界的数列<strong>必收敛</strong>，它是极限存在的<strong>充分条件</strong>。</li>
+<li>递推数列的固定两步：先证<strong>极限存在</strong>，再对递推式<strong>取极限</strong>。</li>
+<li>证存在性用单调有界准则：先用数学归纳法证单调，再找出上界或下界。</li>
+<li>求值则把递推式两端同时取 $n\to\infty$，解出关于极限的方程。</li>
+<li>解出的根可能不止一个，要用<strong>单调性</strong>或<strong>有界性</strong>舍去不合理的根。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ x_{n+1}=\varphi(x_n)\ \Longrightarrow\ A=\varphi(A) $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>数列<strong>单调</strong>（单调增或单调减）；</li>
+<li>数列<strong>有界</strong>（有上界或有下界）；</li>
+<li>对递推式取极限时要求 $\varphi$ 在 $A$ 处<strong>连续</strong>，否则不能把极限号移进函数记号内。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>秒杀技</strong>：先算前几项定出单调方向与界，再用数学归纳法证明，最后令 $n\to\infty$ 解方程。<strong>不要</strong>跳过存在性直接解方程 —— 那样解出的根未必是极限。</p>
+</blockquote>
+</div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h2 class="tt">关键结论速记</h2><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
+<ul>
+<li>$\lim_{x\to 0}\frac{\sin x}{x}=1$ —— 第一个重要极限，也是 $\sin x\sim x$ 的来源，$x$ 可换成任何趋于零的因式。</li>
+<li>$\lim_{x\to\infty}\left(1+\frac1x\right)^x=e$ —— 第二个重要极限，$1^{\infty}$ 型先取对数或凑成它的形式。</li>
+<li>$1-\cos x\sim\frac{x^2}{2}$，$x-\sin x\sim\frac{x^3}{6}$，$\tan x-x\sim\frac{x^3}{3}$ —— 二阶与三阶等价无穷小，加减相消时必须升阶。</li>
+<li>$f$ 在 $x_0$ 连续 $\iff \lim_{x\to x_0^-}f(x)=\lim_{x\to x_0^+}f(x)=f(x_0)$ —— 分段函数分界点只能用这条，不能只看表达式。</li>
+<li>第一类间断点 等价于 两侧极限都存在 —— 相等为可去、不等为跳跃，只要有一侧极限不存在就是第二类。</li>
+<li>单调有界数列必收敛 —— 递推数列先证单调有界，再令 $n\to\infty$ 解 $A=\varphi(A)$。</li>
+<li>闭区间上连续 $\Rightarrow$ 有界、取到最值、介值、零点存在 —— 证明方程有根优先用零点定理。</li>
+</ul>
+</div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h2 class="tt">示意图</h2><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
+<p><img alt="函数图像：左图是 y 等于 sin x 比 x 在 x 趋于 0 时趋于 1 的补定义示意，右图是 f 等于 x 的 1 比 1 减 x 乘 x 减 2 次幂在 x 等于 1 处可去间断、在 x 等于 0 与 x 等于 2 处无穷间断" src="../assets/gaoshu-01-fig1.png" /></p>
+<p><img alt="解题流程：求极限时在等价无穷小、洛必达、泰勒展开之间选择方法的流程图，以及间断点分类判定流程" src="../assets/gaoshu-01-fig2.png" /></p>
+<div class="mermaid">flowchart TD
+    S[&quot;求极限&quot;] --&gt; T{&quot;先判断未定式类型&quot;}
+    T --&gt;|&quot;0/0 型或无穷比无穷型&quot;| L{&quot;洛必达三条前提是否都满足&quot;}
+    L --&gt;|&quot;都满足&quot;| R[&quot;洛必达 再判断新极限&quot;]
+    L --&gt;|&quot;有一条不满足&quot;| E[&quot;改用等价无穷小或泰勒展开&quot;]
+    T --&gt;|&quot;0 乘无穷、无穷减无穷、1 的无穷次幂&quot;| C[&quot;先化归为 0/0 型或无穷比无穷型&quot;]
+    C --&gt; L
+    T --&gt;|&quot;不是未定式&quot;| D[&quot;直接代入 或用连续性&quot;]
+    G[&quot;判断间断点类型&quot;] --&gt; P{&quot;该点两侧极限是否都存在&quot;}
+    P --&gt;|&quot;都存在&quot;| A[&quot;第一类 可去或跳跃&quot;]
+    P --&gt;|&quot;至少有一侧不存在&quot;| B[&quot;第二类 无穷或振荡&quot;]
+</div><details><summary>查看该图源码</summary><pre><code>flowchart TD
+    S[&quot;求极限&quot;] --&gt; T{&quot;先判断未定式类型&quot;}
+    T --&gt;|&quot;0/0 型或无穷比无穷型&quot;| L{&quot;洛必达三条前提是否都满足&quot;}
+    L --&gt;|&quot;都满足&quot;| R[&quot;洛必达 再判断新极限&quot;]
+    L --&gt;|&quot;有一条不满足&quot;| E[&quot;改用等价无穷小或泰勒展开&quot;]
+    T --&gt;|&quot;0 乘无穷、无穷减无穷、1 的无穷次幂&quot;| C[&quot;先化归为 0/0 型或无穷比无穷型&quot;]
+    C --&gt; L
+    T --&gt;|&quot;不是未定式&quot;| D[&quot;直接代入 或用连续性&quot;]
+    G[&quot;判断间断点类型&quot;] --&gt; P{&quot;该点两侧极限是否都存在&quot;}
+    P --&gt;|&quot;都存在&quot;| A[&quot;第一类 可去或跳跃&quot;]
+    P --&gt;|&quot;至少有一侧不存在&quot;| B[&quot;第二类 无穷或振荡&quot;]
+</code></pre></details>
+</div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
+<ul>
+<li>**错在见到 $\frac00$ 型就直接洛必达，忘记核对前提。**正确做法是先验证去心邻域内 $f$ 与 $g$ 可导、$g'(x)\neq 0$、导数之比的极限存在；若 $\lim\frac{f'}{g'}$ 振荡不存在，只能换方法，不能断言原极限不存在，例如 $\lim_{x\to\infty}\frac{x+\sin x}{x}=1$。</li>
+<li>**错在加减法中随手用等价无穷小替换，把 $\frac{\tan x-\sin x}{x^3}$ 里的两项都换成 $x$ 而算出极限 0。**正确结果是 $\frac12$，因为替换后发生了同阶相消，此时必须升到三阶用 $\tan x-\sin x\sim\frac{x^3}{2}$。</li>
+<li>**错在认为极限存在必须要求函数在该点有定义。**正确结论是极限只与去心邻域有关，$f(x_0)$ 是否存在、等于多少都不影响 $\lim_{x\to x_0}f(x)$，这正是可去间断点的来源。</li>
+<li>**错在只算一侧极限就把间断点归入第一类。**正确做法是两侧都要算：只要有一侧极限为无穷大或振荡不存在，该点就是第二类间断点。</li>
+</ul>
+</div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
+<p><strong>2024 年数二第 1 题（选择题，5 分）</strong></p>
+<p>函数 $f(x)=|x|^{\frac{1}{(1-x)(x-2)}}$ 的第一类间断点的个数为（ ）</p>
+<p>A. 3</p>
+<p>B. 2</p>
+<p>C. 1</p>
+<p>D. 0</p>
+<blockquote>
+<p>解析：间断点只可能出现在 $x=0,1,2$ 三处（$x=0$ 使幂函数失去意义，$x=1,2$ 使指数没有定义）。$x\to 0$ 时 $\frac{\ln|x|}{(1-x)(x-2)}\to+\infty$，故 $f(x)\to+\infty$，两侧极限都不存在，$x=0$ 是第二类间断点。$x\to 1$ 时记 $x=1+\varepsilon$，则 $(1-x)(x-2)\approx\varepsilon$、$\ln|x|\approx\varepsilon$，指数与 $\ln|x|$ 之积趋于 1，故 $f(x)\to e$，左右极限都存在且相等，$x=1$ 是可去间断点。$x\to 2^-$ 时 $f(x)\to+\infty$，$x\to 2^+$ 时 $f(x)\to 0$，$x=2$ 也是第二类间断点。所以第一类间断点只有 $x=1$ 一个，选 <strong>C</strong>。</p>
+</blockquote>
+<hr /></div></section></div></main></div>
+<button id="totop" type="button">↑ 回到当前小节</button>
+<button id="themetoggle" type="button" title="切换深色/浅色">◐ 主题</button>
+<script>
+document.getElementById('q')?.addEventListener('input',e=>{
+  const v=e.target.value.trim().toLowerCase();
+  document.querySelectorAll('nav a').forEach(a=>{
+    a.style.display = !v || a.textContent.toLowerCase().includes(v) ? '' : 'none';});
+});
+</script>
+<script>
+(function () {
+  var main = document.querySelector('main');
+  // 1) 侧栏高亮当前小节（滚动位置驱动）
+  var links = [].slice.call(document.querySelectorAll('nav a.toclink'));
+  var targets = links.map(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    return document.getElementById(id);
+  });
+  function sync() {
+    var y = window.scrollY + 120, best = -1;
+    targets.forEach(function (t, i) { if (t && t.offsetTop <= y) best = i; });
+    links.forEach(function (a, i) { a.classList.toggle('cur', i === best); });
+  }
+  if (links.length) {
+    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  }
+  // 2) 键盘：j/k 或 ←/→ 翻章
+  var prev = document.body.getAttribute('data-prev');
+  var next = document.body.getAttribute('data-next');
+  document.addEventListener('keydown', function (e) {
+    if (e.target.matches('input, textarea')) return;
+    if (e.key === 'ArrowLeft' || e.key === 'k') { if (prev) location.href = prev; }
+    if (e.key === 'ArrowRight' || e.key === 'j') { if (next) location.href = next; }
+  });
+  // 3) 移动端侧栏抽屉 + 回到顶部
+  var t = document.getElementById('navtoggle');
+  if (t) t.addEventListener('click', function () { document.body.classList.toggle('navopen'); });
+  // 4) 阅读进度条
+  var bar = document.getElementById('progress');
+  if (bar) {
+    var upd = function () {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd); upd();
+  }
+  // 5) 主题切换（记忆到 localStorage）
+  var tb = document.getElementById('themetoggle');
+  if (tb) tb.addEventListener('click', function () {
+    var cur = document.documentElement.dataset.theme;
+    if (cur === 'auto') cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var nx = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = nx;
+    try { localStorage.setItem('dsh-theme', nx); } catch (e) {}
+  });
+  var top = document.getElementById('totop');
+  if (top) {
+    top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    window.addEventListener('scroll', function () {
+      top.style.display = window.scrollY > 500 ? 'block' : 'none';
+    }, { passive: true });
+  }
+})();
+</script>
+<script>
+(function () {
+  if (!window.renderMathInElement) {
+    // 公式渲染器没加载到：明确提示，而不是留一堆 $...$ 让读者困惑
+    var has = /\$[^$]+\$/.test(document.body.innerText || '');
+    if (has) {
+      var p = document.createElement('p');
+      p.className = 'missing';
+      p.textContent = '未加载到公式渲染器（katex/），页面里的 LaTeX 公式以源码显示。'
+        + '请确认 数学二/katex/ 目录存在。';
+      document.querySelector('main').insertBefore(p, document.querySelector('main').firstChild);
+    }
+    return;
+  }
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '$', right: '$', display: false }
+    ],
+    throwOnError: false,
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  });
+})();
+</script>
+<script>
+(function () {
+  var nodes = document.querySelectorAll('.mermaid');
+  if (!nodes.length) return;
+  if (!window.mermaid) {
+    nodes.forEach(function (el) {
+      el.insertAdjacentHTML('beforebegin',
+        '<p class="missing">未加载到 mermaid 运行时（mermaid.min.js 不在预期位置），' +
+        '下图暂以源码显示，可复制到任意 mermaid 编辑器查看。</p>');
+      var pre = document.createElement('pre');
+      var code = document.createElement('code');
+      code.textContent = el.textContent;
+      pre.appendChild(code); el.innerHTML = ''; el.appendChild(pre);
+    });
+    return;
+  }
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: 'neutral',
+    flowchart: { useMaxWidth: true }, state: { useMaxWidth: true } });
+  nodes.forEach(function (el, i) {
+    mermaid.render('mmd-' + i, el.textContent.trim()).then(function (r) {
+      el.innerHTML = r.svg;
+    }).catch(function (e) {
+      el.innerHTML = '<p class="missing">该图渲染失败：' + e.message + '</p>';
+    });
+  });
+})();
+</script></body></html>

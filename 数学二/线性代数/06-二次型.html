@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>线性代数 · 二次型</title><style>
+:root{
+ --bg:#f7f7f5; --paper:#ffffff; --fg:#1f2328; --fg2:#3d444d; --mut:#6b7280;
+ --line:#e3e6ea; --line2:#eef1f4; --acc:#1d4ed8; --acc2:#0b3d91;
+ --codebg:#f5f7fa; --hi:#fff6d6; --warnbg:#fff8ec; --warnbd:#f0d9a8;
+ --realbg:#f1f8f2; --realbd:#bcdcc2; --chip:#eef2f7;
+ --sh:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.05);
+ --serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",Georgia,"Times New Roman",serif;
+ --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+}
+html[data-theme="dark"]{
+ --bg:#0d1117; --paper:#161b22; --fg:#e6edf3; --fg2:#c9d1d9; --mut:#8b949e;
+ --line:#2b3138; --line2:#22272e; --acc:#6ea8fe; --acc2:#9ec5fe;
+ --codebg:#1b2129; --hi:#3a2f10; --warnbg:#2c2415; --warnbd:#5c4a1e;
+ --realbg:#14251a; --realbd:#2f5c3c; --chip:#1f2630;
+ --sh:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
+ font-size:16.5px;line-height:1.82;-webkit-font-smoothing:antialiased}
+#wrap{display:flex;min-height:100vh}
+
+/* ---------- 侧栏 ---------- */
+nav{width:302px;flex:0 0 302px;background:var(--paper);border-right:1px solid var(--line);
+ position:sticky;top:0;height:100vh;overflow:auto;padding:18px 14px 40px}
+nav .navhead{display:flex;align-items:center;justify-content:space-between;
+ gap:8px;margin:0 6px 12px}
+nav .navhead h1{font-size:14.5px;margin:0;font-weight:700;letter-spacing:.02em}
+nav .sitehome{font-size:12px;color:var(--acc);text-decoration:none;
+ border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap}
+nav .sitehome:hover{border-color:var(--acc)}
+nav input{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:9px;
+ background:var(--bg);color:var(--fg);margin-bottom:12px;font-size:13px;font-family:var(--sans)}
+nav input:focus{outline:2px solid var(--acc);outline-offset:-1px;border-color:transparent}
+nav a{display:block;padding:6px 10px;color:var(--fg2);text-decoration:none;
+ font-size:13.5px;border-radius:8px;line-height:1.5}
+nav a:hover{background:var(--codebg);color:var(--fg)}
+nav .grp{margin:16px 6px 6px;font-size:11.5px;color:var(--mut);
+ font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+nav a.cur{background:var(--chip);color:var(--acc);font-weight:700}
+nav .tocbox{margin:2px 0 10px 16px;padding-left:10px;border-left:2px solid var(--line)}
+nav .tocbox a{font-size:12.5px;color:var(--mut);padding:3px 8px}
+nav .tocbox a.cur{color:var(--acc);font-weight:600;background:none}
+
+/* ---------- 主区 ---------- */
+main{flex:1;min-width:0;padding:0 0 100px}
+.inner{max-width:880px;margin:0 auto;padding:0 46px}
+.chapterbar{position:sticky;top:0;z-index:20;background:var(--paper);
+ border-bottom:1px solid var(--line);
+ padding:12px 46px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+@supports (backdrop-filter:blur(1px)){
+ .chapterbar{background:color-mix(in srgb,var(--paper) 86%,transparent);
+  backdrop-filter:saturate(1.6) blur(10px)}
+}
+.chapterbar .cb-title{font-weight:750;font-size:15px;font-family:var(--serif)}
+.chapterbar .cb-sub{color:var(--mut);font-size:12.5px}
+.chapterbar .cb-spacer{flex:1}
+.chapterbar a.cb-btn{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;
+ padding:6px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);text-decoration:none;white-space:nowrap;transition:.15s}
+.chapterbar a.cb-btn:hover{border-color:var(--acc);color:var(--acc);transform:translateY(-1px)}
+.chapterbar a.cb-btn.off{opacity:.32;pointer-events:none}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--acc),#7c3aed);
+ width:0;z-index:50;transition:width .1s linear}
+#totop{position:fixed;right:22px;bottom:24px;z-index:30;display:none;
+ padding:9px 15px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+#totop:hover{border-color:var(--acc);color:var(--acc)}
+#themetoggle{position:fixed;right:22px;bottom:70px;z-index:30;
+ padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+
+/* ---------- 标题 ---------- */
+h1{font-family:var(--serif);font-size:30px;line-height:1.35;font-weight:700;
+ margin:34px 0 18px;letter-spacing:.01em}
+h2{font-family:var(--serif);font-size:25px;margin:42px 0 8px;font-weight:700;
+ line-height:1.4;scroll-margin-top:80px}
+h3{font-size:18px;margin:26px 0 10px;font-weight:700}
+p{margin:1em 0}
+strong{font-weight:700}
+
+/* ---------- 章节头（知识点标题 + 高频标签） ---------- */
+.chaphead{margin:10px 0 26px;padding-bottom:16px;border-bottom:2px solid var(--line)}
+h2.bookmark{margin:60px 0 0;padding:14px 18px;font-size:24px;font-weight:800;
+ color:#fff;background:linear-gradient(100deg,var(--acc2),var(--acc));
+ border-radius:12px;box-shadow:var(--sh);letter-spacing:.01em}
+h2.bookmark .badge{background:rgba(255,255,255,.22);color:#fff;border-color:transparent;
+ font-weight:700;margin-left:8px;vertical-align:3px}
+h2.bookmark + .sec, h2.bookmark ~ .sec:first-of-type{margin-top:18px}
+.bookhead{margin:34px 0 10px;padding-bottom:14px;border-bottom:2px solid var(--line)}
+.bookhead h1{margin:0 0 8px}
+.bookhead .lede{margin:0;color:var(--mut);font-size:14.5px;line-height:1.7}
+/* ===== 第 1 层：部分（高等数学 / 线性代数）===== */
+h2.parthead{margin:64px 0 10px;padding:18px 24px;font-size:29px;font-weight:800;
+ color:#fff;letter-spacing:.02em;border-radius:14px;box-shadow:var(--sh);
+ background:linear-gradient(100deg,#111827,#374151)}
+html[data-theme="dark"] h2.parthead{background:linear-gradient(100deg,#1f2937,#374151)}
+h2.parthead .tag{background:rgba(255,255,255,.18);color:#fff;border-color:transparent;
+ font-weight:700;font-size:13px;margin-left:10px;vertical-align:4px}
+h2.parthead:first-of-type{margin-top:26px}
+.partoverview{margin:0 0 8px;padding:2px 0 2px 20px;color:var(--fg2)}
+.partoverview h3{font-size:17px;margin:22px 0 8px;border:0;color:var(--mut);
+ font-family:var(--sans);font-weight:700;letter-spacing:.02em}
+.partoverview table{max-width:100%}
+.anchor{scroll-margin-top:16px}
+.backtop{margin:22px 0 0;font-size:13px}
+.backtop a{color:var(--mut);text-decoration:none}
+.backtop a:hover{color:var(--acc)}
+.chapterbar .cb-home{font-weight:700;font-size:14px;color:var(--acc);
+ text-decoration:none;font-family:var(--serif)}
+.chaphead h2{margin:0 0 10px;border:0}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{font-size:12px;padding:3px 11px;border-radius:999px;background:var(--chip);
+ color:var(--fg2);border:1px solid var(--line)}
+.badge.hot{background:linear-gradient(135deg,#fff1c9,#ffe0a3);color:#7a4b00;
+ border-color:#f0cf8a;font-weight:700}
+html[data-theme="dark"] .badge.hot{background:#3a2f10;color:#ffd479;border-color:#5c4a1e}
+
+/* ---------- 模板六段式 ---------- */
+.sec{margin:30px 0}
+/* ===== 字段层级：整块卡片 + 明显的标题条 ===== */
+.sec{margin:34px 0;background:var(--paper);border:1px solid var(--line);
+ border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.sec > .sec-h{display:flex;align-items:center;gap:11px;margin:0;
+ padding:13px 20px;background:linear-gradient(90deg,var(--codebg),transparent);
+ border-bottom:1px solid var(--line);border-left:5px solid var(--acc)}
+.sec > .sec-h .ic{width:30px;height:30px;flex:0 0 30px;border-radius:9px;
+ display:grid;place-items:center;font-size:16px;background:var(--chip)}
+.sec > .sec-h .tt{font-family:var(--serif);font-size:20px;font-weight:800;
+ margin:0;padding:0;border:0;line-height:1.35;color:var(--fg)}
+.sec > .sec-h .hint{font-size:12.5px;color:var(--mut);margin-left:auto;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sec > .box{padding:18px 22px}
+/* 每个字段给一条自己的主色，帮助扫读时快速定位 */
+.sec-freq > .sec-h{border-left-color:#0ea5e9}
+.sec-core > .sec-h{border-left-color:var(--acc)}
+.sec-key  > .sec-h{border-left-color:#7c3aed}
+.sec-fig  > .sec-h{border-left-color:#0891b2}
+.sec-err  > .sec-h{border-left-color:#d97706}
+.sec-real > .sec-h{border-left-color:#16a34a}
+
+.sec-freq .box{font-size:15.5px;font-weight:600}
+.sec-freq .box blockquote{margin:0 0 4px;background:var(--codebg);border-left:3px solid var(--acc);
+ border-radius:0 8px 8px 0;padding:9px 13px;font-size:14.6px;color:var(--fg2)}
+.sec-freq .box > p:first-child{margin-top:0}
+/* ===== 模块层级：核心讲解里的 【模块名】 ===== */
+.sec-core .box h3, .sec-core .box h4, .sec-core .box h5{
+ margin:30px 0 12px;padding:9px 0 9px 15px;font-size:18.5px;font-weight:800;
+ font-family:var(--serif);color:var(--acc2);letter-spacing:.01em;
+ border-left:6px solid var(--acc);border-radius:0 8px 8px 0;
+ background:linear-gradient(90deg,var(--codebg),transparent)}
+.sec-core .box > h3:first-child, .sec-core .box > h4:first-child,
+.sec-core .box > h5:first-child{margin-top:2px}
+.sec-core .box h4{font-size:17px;border-left-width:4px}
+/* 【核心公式】【适用条件】这类次级标记 */
+.sec-core .box p > strong:only-child{color:var(--acc);letter-spacing:.02em}
+.sec-core .box{font-size:16.8px;line-height:1.95}
+.sec-core .box p{margin:1.05em 0}
+.sec-core .box p:first-child{margin-top:0}
+.sec-core .box p:first-child::first-letter{font-size:1.02em}
+
+/* 关键结论速记：卡片网格 */
+.sec-key .box{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sec-key ul{display:contents;margin:0;padding:0;list-style:none}
+.sec-key li{margin:0;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;padding:13px 15px;font-size:14.8px;line-height:1.72;
+ position:relative;overflow:hidden}
+.sec-key li::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+ background:linear-gradient(180deg,var(--acc),#7c3aed);opacity:.85}
+.sec-key li strong:first-child,.sec-key li em:first-child{color:var(--acc2)}
+
+/* 示意图 */
+.sec-fig .box{background:var(--bg);border-radius:10px}
+.sec-fig img{display:block;width:100%;height:auto;margin:12px 0;border-radius:10px;
+ border:1px solid var(--line2);background:#fff}
+.sec-fig .mermaid{margin:14px 0;padding:14px;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;overflow:auto;text-align:center}
+.sec-fig details{margin:6px 0 0}
+.sec-fig .ascii{background:var(--bg);border:1px solid var(--line);border-radius:10px;
+ font-size:12.5px;line-height:1.5}
+
+/* 易错点：警示样式 */
+.sec-err .box{background:var(--warnbg)}
+.sec-err ul{margin:10px 0 0;padding:0;list-style:none}
+.sec-err li{margin:12px 0;padding-left:30px;position:relative;font-size:15.6px;line-height:1.85}
+.sec-err li::before{content:"⚠";position:absolute;left:0;top:0;color:#d97706;font-size:15px}
+.sec-err li strong:first-child{color:#b45309}
+html[data-theme="dark"] .sec-err li strong:first-child{color:#fbbf24}
+
+/* 真题示例 */
+.sec-real .box{background:var(--realbg)}
+.sec-real .box > p:first-child{font-weight:700;color:#166534;font-size:16px;margin-top:0}
+html[data-theme="dark"] .sec-real .box > p:first-child{color:#86efac}
+.sec-real blockquote{margin:14px 0 6px;padding:12px 16px;background:var(--paper);
+ border-left:4px solid var(--realbd);border-radius:0 10px 10px 0;font-size:15.4px}
+.sec-real blockquote p{margin:.55em 0}
+.sec-real blockquote ol,.sec-real blockquote ul{margin:.5em 0;padding-left:1.35em}
+
+/* ---------- 通用元素 ---------- */
+blockquote{margin:1.1em 0;padding:12px 16px;background:var(--codebg);
+ border-left:4px solid var(--acc);border-radius:0 10px 10px 0;color:var(--fg2)}
+code{background:var(--codebg);padding:.16em .42em;border-radius:6px;
+ font:13.6px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;
+ border:1px solid var(--line2)}
+pre{background:var(--codebg);padding:14px 16px;border-radius:12px;overflow:auto;
+ border:1px solid var(--line)}
+pre code{background:none;padding:0;border:0;font-size:12.8px;line-height:1.62}
+img{max-width:100%;height:auto}
+hr{border:0;border-top:1px solid var(--line);margin:36px 0}
+ul,ol{padding-left:1.5em}
+li{margin:.34em 0}
+table{border-collapse:separate;border-spacing:0;margin:16px 0;width:100%;
+ display:block;overflow:auto;max-width:100%;font-size:14.6px;
+ background:var(--paper);border:1px solid var(--line);border-radius:12px}
+th,td{border-bottom:1px solid var(--line2);padding:9px 14px;text-align:left}
+th{background:var(--codebg);font-weight:700;font-size:13.6px;color:var(--fg2);
+ position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--codebg)}
+td:first-child,th:first-child{padding-left:16px}
+.katex{font-size:1.04em}
+.katex-display{margin:1.1em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.warn,.missing{background:var(--warnbg);border:1px solid var(--warnbd);padding:11px 15px;
+ border-radius:10px;font-size:14px;margin:14px 0}
+.missing{background:#fdecec;border-color:#f0b4b4}
+html[data-theme="dark"] .missing{background:#2c1616;border-color:#6b2b2b}
+#navtoggle{position:fixed;left:12px;top:12px;z-index:40;display:none;
+ padding:8px 13px;border:1px solid var(--line);border-radius:9px;background:var(--paper);
+ color:var(--fg);cursor:pointer;font-size:13.5px;box-shadow:var(--sh);font-family:var(--sans)}
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;
+ background:var(--hi);border:1px solid var(--line);margin-left:6px;vertical-align:2px}
+
+@media (max-width:1080px){ .sec-key .box{grid-template-columns:1fr} }
+@media (max-width:860px){
+ #navtoggle{display:block}
+ nav{position:fixed;left:0;top:0;z-index:35;transform:translateX(-102%);
+  transition:transform .22s ease;box-shadow:2px 0 18px rgba(0,0,0,.16);width:86vw;max-width:320px;
+  flex-basis:auto}
+ body.navopen nav{transform:none}
+ .inner{padding:0 18px}
+ .chapterbar{padding:10px 18px}
+ h1{font-size:25px} h2{font-size:21px} .sec-core .box{font-size:16px}
+}
+@media print{
+ nav,#navtoggle,#totop,#themetoggle,#progress,.chapterbar{display:none!important}
+ main{padding:0} .inner{max-width:none;padding:0}
+ .sec,.sec > .box{box-shadow:none;break-inside:avoid}
+ a{color:inherit;text-decoration:none}
+}
+</style>
+<link rel="stylesheet" href="../katex/katex.min.css">
+<script src="../katex/katex.min.js"></script>
+<script src="../katex/contrib/auto-render.min.js"></script>
+<script src="../mermaid.min.js"></script>
+<script>try{var t=localStorage.getItem('dsh-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-prev="05-特征值与特征向量.html" data-next="">
+<div id="progress"></div><button id="navtoggle" type="button">☰ 目录</button>
+<div id="wrap"><nav><div class="navhead"><h1>数学二速成资料</h1><a class="sitehome" href="../index.html">全科合集</a></div>
+<input id="q" placeholder="筛选章节（输入即过滤）">
+<div class="grp">高等数学（约 117 分 · 约 78%）</div>
+<a class="" href="../高等数学/01-函数极限与连续.html">函数、极限与连续 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/02-导数与微分.html">导数与微分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/03-中值定理与导数应用.html">中值定理与导数应用 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/04-不定积分.html">不定积分</a>
+<a class="" href="../高等数学/05-定积分与反常积分.html">定积分与反常积分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/06-定积分的几何与物理应用.html">定积分的几何与物理应用 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/07-微分方程.html">微分方程 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/08-数二高数综合与证明专题.html">数二高数综合与证明专题</a>
+<a class="" href="../高等数学/09-多元函数微积分学.html">多元函数微积分学 <span class="tag">高频</span></a>
+<div class="grp">线性代数（约 33 分 · 约 22%）</div>
+<a class="" href="../线性代数/01-行列式.html">行列式</a>
+<a class="" href="../线性代数/02-矩阵.html">矩阵 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/03-向量与向量组.html">向量与向量组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/04-线性方程组.html">线性方程组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/05-特征值与特征向量.html">特征值与特征向量 <span class="tag">高频</span></a>
+<a class="cur" href="../线性代数/06-二次型.html">二次型 <span class="tag">高频</span></a>
+<div class="tocbox"><a class="toclink" href="#sec-freq">考频统计</a><a class="toclink" href="#sec-core">核心讲解</a><a class="toclink" href="#sec-key">关键结论速记</a><a class="toclink" href="#sec-fig">示意图</a><a class="toclink" href="#sec-err">易错点</a><a class="toclink" href="#sec-real">真题示例</a></div></nav><main><div class="chapterbar"><a class="cb-home" href="../index.html">线性代数</a><span class="cb-sub">第 二次型 章 · 4 分 · 高频</span><span class="cb-spacer"></span><a class="cb-btn" href="05-特征值与特征向量.html" title="键盘 ← 或 k">← 特征值与特征向量</a><a class="cb-btn off" href="#" title="键盘 → 或 j">已是最后一章 →</a></div><div class="inner">
+<header class="chaphead"><h1>二次型</h1><div class="badges"><span class="badge hot">高频考点</span><span class="badge">线性代数</span><span class="badge">建议 4 分</span></div></header>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 12%；主要题型：选择、解答（正交变换化标准形、正定性、惯性指数）。</p>
+</div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h2 class="tt">核心讲解</h2><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
+<h3>【二次型与矩阵表示】</h3>
+<ul>
+<li><strong>二次型定义</strong>：含 $n$ 个变量的二次齐次多项式 $f(x_1,\dots,x_n)=\sum_{i=1}^{n}\sum_{j=1}^{n}a_{ij}x_ix_j$。</li>
+<li><strong>对称约定</strong>：约定 $a_{ij}=a_{ji}$，于是交叉项的系数必须 <strong>对半分</strong> 给对称位置。</li>
+<li><strong>矩阵形式</strong>：$f=x^{T}Ax$，其中 $A$ 是 <strong>对称</strong> 矩阵，称为该二次型的矩阵。</li>
+<li><strong>二次型的秩</strong>：$r(A)$ 称为二次型的秩。</li>
+<li><strong>写矩阵的关键</strong>：$a_{ii}$ 是 $x_i^{2}$ 的系数，$a_{ij}=a_{ji}$ 是 $x_ix_j$ 系数的一半。</li>
+<li><strong>合同关系</strong>：$A$ 与 $C^{T}AC$（$C$ <strong>可逆</strong>）合同，合同保持秩与惯性指数。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ f(x_1,\dots,x_n)=\sum_{i=1}^{n}\sum_{j=1}^{n}a_{ij}x_ix_j=x^{T}Ax,\qquad A^{T}=A $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>$A$ 必须写成 <strong>对称</strong> 矩阵，即 $A^{T}=A$；</li>
+<li>$x_ix_j$ 的系数必须拆成 $a_{ij}=a_{ji}=\frac{c}{2}$ 两半；</li>
+<li>$C^{T}AC$ 中的 $C$ 必须 <strong>可逆</strong>，否则秩与惯性指数都可能改变；</li>
+<li>二次型研究的等价关系是合同，不是相似。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：把交叉项系数直接填进 $a_{ij}$。写成非对称矩阵后特征值全错，正交变换也就无从谈起。</p>
+</blockquote>
+<h3>【标准形与规范形】</h3>
+<ul>
+<li><strong>标准形</strong>：只含平方项、不含交叉项的二次型，形如 $d_1y_1^{2}+\cdots+d_ny_n^{2}$。</li>
+<li><strong>规范形</strong>：系数只取 $1,-1,0$ 的标准形。</li>
+<li><strong>配方法</strong>：对应一般的 <strong>可逆</strong> 线性变换 $x=Cy$，只要求 $C$ 可逆。</li>
+<li><strong>正交变换法</strong>：取 $C=Q$ 为 <strong>正交矩阵</strong>，即 $x=Qy$，其步骤与实对称矩阵正交对角化完全一致。</li>
+<li><strong>正交变换法的系数</strong>：标准形的系数恰为 $A$ 的 <strong>全部特征值</strong>，且 $Q$ 的列与系数一一对应。</li>
+<li><strong>重根处理</strong>：不同特征值的特征向量自动正交，只需在重根内部做施密特正交化。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ x=Qy\ \Longrightarrow\ f=x^{T}Ax=\lambda_1y_1^{2}+\lambda_2y_2^{2}+\cdots+\lambda_ny_n^{2},\qquad Q^{T}AQ=\Lambda $$</p>
+<p><strong>正交变换法与配方法对照</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>正交变换法</th>
+<th>配方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>所用变换</td>
+<td>$x=Qy$，$Q$ 为 <strong>正交矩阵</strong></td>
+<td>$x=Cy$，$C$ 只要求 <strong>可逆</strong></td>
+</tr>
+<tr>
+<td>标准形系数</td>
+<td>恰为 $A$ 的 <strong>特征值</strong></td>
+<td>由配方过程决定，一般不是特征值</td>
+</tr>
+<tr>
+<td>是否需要求特征值</td>
+<td>必须先解 $\lvert A-\lambda E\rvert=0$</td>
+<td>不需要</td>
+</tr>
+<tr>
+<td>是否需要正交化、单位化</td>
+<td>重根内部需要，且必须 <strong>单位化</strong></td>
+<td>完全不需要</td>
+</tr>
+<tr>
+<td>变换的唯一性</td>
+<td>系数顺序可调，系数集合唯一</td>
+<td>结果不唯一，与配方顺序有关</td>
+</tr>
+<tr>
+<td>计算量</td>
+<td>较大，但结论规范</td>
+<td>较小，适合只求标准形</td>
+</tr>
+<tr>
+<td>典型用途</td>
+<td>要求写出 $Q$、或需要标准形系数</td>
+<td>只需判惯性指数或求标准形</td>
+</tr>
+</tbody>
+</table>
+<p>【适用条件】</p>
+<ol>
+<li>配方法中的 $C$ 必须 <strong>可逆</strong>，配完后要做可逆性检验；</li>
+<li>正交变换法要求先求出 $A$ 的全部特征值；</li>
+<li>重根内部必须做施密特正交化，不同特征值之间不必再做；</li>
+<li>单位正交特征向量按列拼成 $Q$，$Q^{T}AQ=\Lambda$ 才成立。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>秒杀技</strong>：只要求标准形、不要求写出变换矩阵时，用配方法最快，完全绕过特征值；一旦题目要求正交矩阵 $Q$，就必须走特征值这条路。</p>
+</blockquote>
+<h3>【惯性定理与正定性】</h3>
+<ul>
+<li><strong>惯性定理</strong>：无论用哪种可逆线性变换，标准形中正平方项的个数 $p$（正惯性指数）与负平方项的个数 $q$（负惯性指数）都 <strong>唯一确定</strong>。</li>
+<li><strong>指数关系</strong>：$p+q=r(A)$，$p-q$ 称为符号差。</li>
+<li><strong>规范形唯一</strong>：$y_1^{2}+\cdots+y_p^{2}-y_{p+1}^{2}-\cdots-y_{p+q}^{2}$ 是唯一确定的规范形。</li>
+<li><strong>正定定义</strong>：对任意 $x\neq 0$ 都有 $x^{T}Ax>0$。</li>
+<li><strong>正定的判据群</strong>：特征值全为正、正惯性指数 $p=n$、各阶顺序主子式全大于零（Sylvester 判据）。</li>
+<li><strong>负定与不定</strong>：负定的判定是 $-f$ 正定；若 $f$ 既能取到正值又能取到负值，则是不定的。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ p+q=r(A),\qquad \text{规范形}=y_1^{2}+\cdots+y_p^{2}-y_{p+1}^{2}-\cdots-y_{p+q}^{2} $$</p>
+<p>$$ f\ \text{正定}\iff x^{T}Ax>0\ (\forall x\neq 0)\iff \lambda_i>0\iff p=n\iff \text{各阶顺序主子式全}>0 $$</p>
+<p><strong>正定、半正定、负定、不定判定对照</strong>（$A$ 为 <strong>实对称</strong> 矩阵）：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>定义（对任意 $x\neq 0$）</th>
+<th>特征值符号</th>
+<th>惯性指数</th>
+<th>顺序主子式</th>
+<th>典型例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>正定</strong></td>
+<td>$x^{T}Ax>0$</td>
+<td>全 $>0$</td>
+<td>$p=n,\ q=0$</td>
+<td>各阶全 $>0$</td>
+<td>$\begin{pmatrix}2&0\\0&3\end{pmatrix}$</td>
+</tr>
+<tr>
+<td><strong>半正定</strong></td>
+<td>$x^{T}Ax\ge 0$，且存在 $x\neq 0$ 使等号成立</td>
+<td>全 $\ge 0$，含 $0$</td>
+<td>$p=r<n,\ q=0$</td>
+<td>各阶 $\ge 0$</td>
+<td>$\begin{pmatrix}1&0\\0&0\end{pmatrix}$</td>
+</tr>
+<tr>
+<td><strong>负定</strong></td>
+<td>$x^{T}Ax<0$</td>
+<td>全 $<0$</td>
+<td>$p=0,\ q=n$</td>
+<td>奇数阶 $<0$、偶数阶 $>0$</td>
+<td>$\begin{pmatrix}-1&0\\0&-2\end{pmatrix}$</td>
+</tr>
+<tr>
+<td><strong>不定</strong></td>
+<td>既有 $x$ 使 $>0$，又有 $x$ 使 $<0$</td>
+<td>有正有负</td>
+<td>$p>0,\ q>0$</td>
+<td>无固定规律</td>
+<td>$\begin{pmatrix}1&0\\0&-1\end{pmatrix}$</td>
+</tr>
+</tbody>
+</table>
+<p><strong>正定的等价说法</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>等价说法</th>
+<th>表达形式</th>
+<th>最适用的题型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定义式</td>
+<td>对任意 $x\neq 0$ 有 $x^{T}Ax>0$</td>
+<td>证明题</td>
+</tr>
+<tr>
+<td>特征值判据</td>
+<td>$\lambda_i>0\ (i=1,\dots,n)$</td>
+<td>已知特征值或易求特征值</td>
+</tr>
+<tr>
+<td>惯性指数判据</td>
+<td>$p=n$，即 $p+q=n$</td>
+<td>已知规范形或标准形</td>
+</tr>
+<tr>
+<td>顺序主子式判据</td>
+<td>各阶顺序主子式全 $>0$</td>
+<td>含参数的矩阵求参数范围</td>
+</tr>
+<tr>
+<td>合同于单位阵</td>
+<td>$A$ 合同于 $E$</td>
+<td>抽象合同讨论</td>
+</tr>
+</tbody>
+</table>
+<p>【适用条件】</p>
+<ol>
+<li>判定正定前必须先确认 $A$ 是 <strong>实对称</strong> 矩阵；</li>
+<li>Sylvester 判据要求「各阶 <strong>顺序</strong> 主子式」全大于零，不能只验一部分；</li>
+<li>$r(A)<n$ 时二次型必不可能是正定或负定，秩亏立刻排除；</li>
+<li>负定的顺序主子式是 <strong>奇数阶为负、偶数阶为正</strong>，与正定的全正不同。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：把「特征值非负」当成正定，那是半正定。反例 $\begin{pmatrix}1&0\\0&0\end{pmatrix}$ 半正定但不正定。</p>
+</blockquote>
+</div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h2 class="tt">关键结论速记</h2><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
+<ul>
+<li>$f=x^{T}Ax$，$A=A^{T}$，$a_{ii}$ 是 $x_i^{2}$ 的系数，$a_{ij}=a_{ji}$ 是 $x_ix_j$ 系数的一半 —— 写二次型矩阵时最易错的一步</li>
+<li>正交变换 $x=Qy$ $\Rightarrow$ $f=\lambda_1y_1^{2}+\cdots+\lambda_ny_n^{2}$ —— 标准形系数就是 $A$ 的全部特征值</li>
+<li>$p+q=r(A)$，规范形唯一 —— 惯性定理，正负惯性指数与所用变换无关</li>
+<li>正定 $\iff$ 特征值全正 $\iff$ 正惯性指数 $p=n \iff$ 各阶顺序主子式全大于零 —— 正定判定的四条等价说法</li>
+<li>$A$ 与 $C^{T}AC$ 合同（$C$ 可逆），合同的矩阵秩与惯性指数相同 —— 二次型研究的等价关系是合同而非相似</li>
+<li>实对称矩阵必存在正交阵 $Q$ 使 $Q^{T}AQ=\Lambda$ —— 正交变换法的全部依据</li>
+<li>$r(A)<n$ 时二次型必不可能是正定或负定 —— 秩亏立刻排除正定</li>
+</ul>
+</div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h2 class="tt">示意图</h2><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
+<p><img alt="结构图：二次型的三种形态与正交变换对角线化 A = Q Λ Q 转置" src="../assets/xiandai-06-fig1.png" /></p>
+<pre class="ascii"><code>  general form            congruence              standard form
+ +-----------------+     +-------------+     +-----------------+
+ |  x^T A x        | --&gt; |  x = C y    | --&gt; |  d1 y1^2 + ...  |
+ |  A symmetric    |     |  C invertible|    |  + dn yn^2      |
+ +-----------------+     +-------------+     +-----------------+
+        |                                              |
+        |  orthogonal case:  x = Q y,  Q^T Q = E        |
+        v                                              v
+ +-----------------+                          +-----------------+
+ | Q^T A Q = Lambda|  ---------------------&gt;  | l1 y1^2 + ...   |
+ | Lambda diagonal |                          | + ln yn^2       |
+ +-----------------+                          +-----------------+
+        |                                              |
+        +---- eigenvalues of A are the coefficients ----+
+
+ normal form:  coefficients are only 1, -1, 0
+ +--------------------------------------------------+
+ | y1^2 + ... + yp^2 - y(p+1)^2 - ... - y(p+q)^2     |
+ | p = positive index, q = negative index, p+q = r(A)|
+ +--------------------------------------------------+
+</code></pre>
+<p>图中横向是「一般二次型 $\to$ 可逆线性变换 $\to$ 标准形」的合同路线，纵向是正交变换这一特殊情形；正交变换下标准形的系数就是 $A$ 的特征值，而规范形的系数只有 $1,-1,0$，由惯性指数 $p,q$ 唯一决定。</p>
+<div class="mermaid">flowchart TD
+    A[&quot;二次型 f = x^T A x&quot;] --&gt; B[&quot;写出对称矩阵 A&quot;]
+    B --&gt; C[&quot;解 |A - lambda E| = 0 求全部特征值&quot;]
+    C --&gt; D[&quot;对每个特征向量正交化并单位化&quot;]
+    D --&gt; E[&quot;按列排成正交矩阵 Q&quot;]
+    E --&gt; F[&quot;标准形 f = lambda1 y1^2 + ... + lambda_n yn^2&quot;]
+    B --&gt; G{&quot;判定正定性&quot;}
+    G --&gt; H[&quot;算各阶顺序主子式&quot;]
+    H --&gt; I{&quot;全部大于零&quot;}
+    I --&gt;|&quot;是&quot;| J[&quot;正定, 正惯性指数 p = n&quot;]
+    I --&gt;|&quot;否&quot;| K[&quot;再看特征值符号定惯性指数&quot;]
+</div><details><summary>查看该图源码</summary><pre><code>flowchart TD
+    A[&quot;二次型 f = x^T A x&quot;] --&gt; B[&quot;写出对称矩阵 A&quot;]
+    B --&gt; C[&quot;解 |A - lambda E| = 0 求全部特征值&quot;]
+    C --&gt; D[&quot;对每个特征向量正交化并单位化&quot;]
+    D --&gt; E[&quot;按列排成正交矩阵 Q&quot;]
+    E --&gt; F[&quot;标准形 f = lambda1 y1^2 + ... + lambda_n yn^2&quot;]
+    B --&gt; G{&quot;判定正定性&quot;}
+    G --&gt; H[&quot;算各阶顺序主子式&quot;]
+    H --&gt; I{&quot;全部大于零&quot;}
+    I --&gt;|&quot;是&quot;| J[&quot;正定, 正惯性指数 p = n&quot;]
+    I --&gt;|&quot;否&quot;| K[&quot;再看特征值符号定惯性指数&quot;]
+</code></pre></details>
+</div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
+<ul>
+<li>写二次型矩阵时把交叉项系数直接填进 $a_{ij}$。 错在忘记对称位置要各分一半。正确做法：$x_ix_j$ 的系数 $c$ 要拆成 $a_{ij}=a_{ji}=\frac{c}{2}$，例如 $f=2x_1x_2$ 的矩阵是 $\begin{pmatrix}0&1\1&0\end{pmatrix}$ 而不是 $\begin{pmatrix}0&2\2&0\end{pmatrix}$。写成非对称矩阵后特征值全错，正交变换也就无从谈起。</li>
+<li>把正交变换下的标准形系数写成任意数，或与特征值顺序错配。 错在脱离特征值去配系数。正确做法：正交变换 $x=Qy$ 下标准形的系数只能是 $A$ 的特征值，且 $Q$ 的第 $i$ 列必须对应第 $i$ 个系数；若只要求写出标准形（不要求写出 $Q$），系数顺序可以任意排列。</li>
+<li>判定正定时只看部分主子式、或把「特征值非负」当成正定。 错在把半正定与正定混淆，也错把「顺序主子式」偷换成「一般主子式」。正确做法：正定必须验证各阶顺序主子式全大于零，或等价地验证特征值全为正。反例：$\begin{pmatrix}1&0\0&0\end{pmatrix}$ 的一阶主子式为 $1,0$，它半正定但不正定；再看 $\begin{pmatrix}-1&0\0&-2\end{pmatrix}$ 这种特征值全负的矩阵，它是负定而非正定。</li>
+<li>把合同的矩阵当成相似矩阵来处理。 错在混用两种等价关系。正确做法：二次型化标准形用的是合同变换 $C^{T}AC$（保持秩与惯性指数），不保持特征值；只有正交变换这一特殊情形才同时是相似变换，此时系数才等于特征值。</li>
+</ul>
+</div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
+<p><strong>2024 年数二第 22 题（解答题，12 分）</strong></p>
+<p>设矩阵 $A=\begin{pmatrix} 0 & 1 & a \\ 1 & 0 & 1 \end{pmatrix}$，$B=\begin{pmatrix} 1 & 1 \\ 1 & 1 \\ b & 2 \end{pmatrix}$，二次型 $f(x_1,x_2,x_3)=x^{T}BAx$，已知方程组 $Ax=0$ 的解是 $B^{T}x=0$ 的解，但两个方程组不同解。</p>
+<p>（1）求 $a,b$ 的值；（2）求正交矩阵 $Q$，使变换 $x=Qy$ 将 $f(x_1,x_2,x_3)$ 化为标准形。</p>
+<blockquote>
+<p>解析（本例只解第（2）问，$a=1,b=2$ 由第（1）问得到，见「线性方程组」一章）：第一步，代入 $a=1,b=2$ 算出二次型矩阵。$BA=\begin{pmatrix}1&1&2\\1&1&2\\2&2&4\end{pmatrix}$，它本身已经是对称矩阵，故 $f=x^{T}(BA)x$ 的矩阵就是 $S=\begin{pmatrix}1&1&2\\1&1&2\\2&2&4\end{pmatrix}$。</p>
+<p>第二步，求 $S$ 的特征值：$|S-\lambda E|=\lambda^{2}(\lambda-6)$，sympy 复算特征值为 $6,0,0$，于是二次型的标准形只含一个平方项，系数为 $6$。</p>
+<p>第三步，求正交矩阵。$\lambda=6$ 对应特征向量 $(1,1,2)^{T}$，单位化得 $q_1=\frac{1}{\sqrt6}(1,1,2)^{T}$；$\lambda=0$ 的特征子空间由 $(-1,1,0)^{T}$、$(-2,0,1)^{T}$ 张成，对其做施密特正交化并单位化得 $q_2=\frac{1}{\sqrt2}(1,-1,0)^{T}$、$q_3=\frac{1}{\sqrt3}(-1,-1,1)^{T}$。sympy 复算 $Q^{T}Q=E$ 且 $Q^{T}SQ=\operatorname{diag}(6,0,0)$。</p>
+<p>第四步，写出结论：取 $Q=\begin{pmatrix}\frac{1}{\sqrt6}&\frac{1}{\sqrt2}&-\frac{1}{\sqrt3}\\ \frac{1}{\sqrt6}&-\frac{1}{\sqrt2}&-\frac{1}{\sqrt3}\\ \frac{2}{\sqrt6}&0&\frac{1}{\sqrt3}\end{pmatrix}$，则正交变换 $x=Qy$ 把 $f$ 化为标准形 $f=6y_1^{2}$。</p>
+</blockquote>
+<hr /></div></section></div></main></div>
+<button id="totop" type="button">↑ 回到当前小节</button>
+<button id="themetoggle" type="button" title="切换深色/浅色">◐ 主题</button>
+<script>
+document.getElementById('q')?.addEventListener('input',e=>{
+  const v=e.target.value.trim().toLowerCase();
+  document.querySelectorAll('nav a').forEach(a=>{
+    a.style.display = !v || a.textContent.toLowerCase().includes(v) ? '' : 'none';});
+});
+</script>
+<script>
+(function () {
+  var main = document.querySelector('main');
+  // 1) 侧栏高亮当前小节（滚动位置驱动）
+  var links = [].slice.call(document.querySelectorAll('nav a.toclink'));
+  var targets = links.map(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    return document.getElementById(id);
+  });
+  function sync() {
+    var y = window.scrollY + 120, best = -1;
+    targets.forEach(function (t, i) { if (t && t.offsetTop <= y) best = i; });
+    links.forEach(function (a, i) { a.classList.toggle('cur', i === best); });
+  }
+  if (links.length) {
+    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  }
+  // 2) 键盘：j/k 或 ←/→ 翻章
+  var prev = document.body.getAttribute('data-prev');
+  var next = document.body.getAttribute('data-next');
+  document.addEventListener('keydown', function (e) {
+    if (e.target.matches('input, textarea')) return;
+    if (e.key === 'ArrowLeft' || e.key === 'k') { if (prev) location.href = prev; }
+    if (e.key === 'ArrowRight' || e.key === 'j') { if (next) location.href = next; }
+  });
+  // 3) 移动端侧栏抽屉 + 回到顶部
+  var t = document.getElementById('navtoggle');
+  if (t) t.addEventListener('click', function () { document.body.classList.toggle('navopen'); });
+  // 4) 阅读进度条
+  var bar = document.getElementById('progress');
+  if (bar) {
+    var upd = function () {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd); upd();
+  }
+  // 5) 主题切换（记忆到 localStorage）
+  var tb = document.getElementById('themetoggle');
+  if (tb) tb.addEventListener('click', function () {
+    var cur = document.documentElement.dataset.theme;
+    if (cur === 'auto') cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var nx = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = nx;
+    try { localStorage.setItem('dsh-theme', nx); } catch (e) {}
+  });
+  var top = document.getElementById('totop');
+  if (top) {
+    top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    window.addEventListener('scroll', function () {
+      top.style.display = window.scrollY > 500 ? 'block' : 'none';
+    }, { passive: true });
+  }
+})();
+</script>
+<script>
+(function () {
+  if (!window.renderMathInElement) {
+    // 公式渲染器没加载到：明确提示，而不是留一堆 $...$ 让读者困惑
+    var has = /\$[^$]+\$/.test(document.body.innerText || '');
+    if (has) {
+      var p = document.createElement('p');
+      p.className = 'missing';
+      p.textContent = '未加载到公式渲染器（katex/），页面里的 LaTeX 公式以源码显示。'
+        + '请确认 数学二/katex/ 目录存在。';
+      document.querySelector('main').insertBefore(p, document.querySelector('main').firstChild);
+    }
+    return;
+  }
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '$', right: '$', display: false }
+    ],
+    throwOnError: false,
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  });
+})();
+</script>
+<script>
+(function () {
+  var nodes = document.querySelectorAll('.mermaid');
+  if (!nodes.length) return;
+  if (!window.mermaid) {
+    nodes.forEach(function (el) {
+      el.insertAdjacentHTML('beforebegin',
+        '<p class="missing">未加载到 mermaid 运行时（mermaid.min.js 不在预期位置），' +
+        '下图暂以源码显示，可复制到任意 mermaid 编辑器查看。</p>');
+      var pre = document.createElement('pre');
+      var code = document.createElement('code');
+      code.textContent = el.textContent;
+      pre.appendChild(code); el.innerHTML = ''; el.appendChild(pre);
+    });
+    return;
+  }
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: 'neutral',
+    flowchart: { useMaxWidth: true }, state: { useMaxWidth: true } });
+  nodes.forEach(function (el, i) {
+    mermaid.render('mmd-' + i, el.textContent.trim()).then(function (r) {
+      el.innerHTML = r.svg;
+    }).catch(function (e) {
+      el.innerHTML = '<p class="missing">该图渲染失败：' + e.message + '</p>';
+    });
+  });
+})();
+</script></body></html>

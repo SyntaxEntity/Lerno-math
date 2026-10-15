@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>高等数学 · 定积分的几何与物理应用</title><style>
+:root{
+ --bg:#f7f7f5; --paper:#ffffff; --fg:#1f2328; --fg2:#3d444d; --mut:#6b7280;
+ --line:#e3e6ea; --line2:#eef1f4; --acc:#1d4ed8; --acc2:#0b3d91;
+ --codebg:#f5f7fa; --hi:#fff6d6; --warnbg:#fff8ec; --warnbd:#f0d9a8;
+ --realbg:#f1f8f2; --realbd:#bcdcc2; --chip:#eef2f7;
+ --sh:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.05);
+ --serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",Georgia,"Times New Roman",serif;
+ --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+}
+html[data-theme="dark"]{
+ --bg:#0d1117; --paper:#161b22; --fg:#e6edf3; --fg2:#c9d1d9; --mut:#8b949e;
+ --line:#2b3138; --line2:#22272e; --acc:#6ea8fe; --acc2:#9ec5fe;
+ --codebg:#1b2129; --hi:#3a2f10; --warnbg:#2c2415; --warnbd:#5c4a1e;
+ --realbg:#14251a; --realbd:#2f5c3c; --chip:#1f2630;
+ --sh:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
+ font-size:16.5px;line-height:1.82;-webkit-font-smoothing:antialiased}
+#wrap{display:flex;min-height:100vh}
+
+/* ---------- 侧栏 ---------- */
+nav{width:302px;flex:0 0 302px;background:var(--paper);border-right:1px solid var(--line);
+ position:sticky;top:0;height:100vh;overflow:auto;padding:18px 14px 40px}
+nav .navhead{display:flex;align-items:center;justify-content:space-between;
+ gap:8px;margin:0 6px 12px}
+nav .navhead h1{font-size:14.5px;margin:0;font-weight:700;letter-spacing:.02em}
+nav .sitehome{font-size:12px;color:var(--acc);text-decoration:none;
+ border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap}
+nav .sitehome:hover{border-color:var(--acc)}
+nav input{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:9px;
+ background:var(--bg);color:var(--fg);margin-bottom:12px;font-size:13px;font-family:var(--sans)}
+nav input:focus{outline:2px solid var(--acc);outline-offset:-1px;border-color:transparent}
+nav a{display:block;padding:6px 10px;color:var(--fg2);text-decoration:none;
+ font-size:13.5px;border-radius:8px;line-height:1.5}
+nav a:hover{background:var(--codebg);color:var(--fg)}
+nav .grp{margin:16px 6px 6px;font-size:11.5px;color:var(--mut);
+ font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+nav a.cur{background:var(--chip);color:var(--acc);font-weight:700}
+nav .tocbox{margin:2px 0 10px 16px;padding-left:10px;border-left:2px solid var(--line)}
+nav .tocbox a{font-size:12.5px;color:var(--mut);padding:3px 8px}
+nav .tocbox a.cur{color:var(--acc);font-weight:600;background:none}
+
+/* ---------- 主区 ---------- */
+main{flex:1;min-width:0;padding:0 0 100px}
+.inner{max-width:880px;margin:0 auto;padding:0 46px}
+.chapterbar{position:sticky;top:0;z-index:20;background:var(--paper);
+ border-bottom:1px solid var(--line);
+ padding:12px 46px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+@supports (backdrop-filter:blur(1px)){
+ .chapterbar{background:color-mix(in srgb,var(--paper) 86%,transparent);
+  backdrop-filter:saturate(1.6) blur(10px)}
+}
+.chapterbar .cb-title{font-weight:750;font-size:15px;font-family:var(--serif)}
+.chapterbar .cb-sub{color:var(--mut);font-size:12.5px}
+.chapterbar .cb-spacer{flex:1}
+.chapterbar a.cb-btn{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;
+ padding:6px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);text-decoration:none;white-space:nowrap;transition:.15s}
+.chapterbar a.cb-btn:hover{border-color:var(--acc);color:var(--acc);transform:translateY(-1px)}
+.chapterbar a.cb-btn.off{opacity:.32;pointer-events:none}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--acc),#7c3aed);
+ width:0;z-index:50;transition:width .1s linear}
+#totop{position:fixed;right:22px;bottom:24px;z-index:30;display:none;
+ padding:9px 15px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+#totop:hover{border-color:var(--acc);color:var(--acc)}
+#themetoggle{position:fixed;right:22px;bottom:70px;z-index:30;
+ padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+
+/* ---------- 标题 ---------- */
+h1{font-family:var(--serif);font-size:30px;line-height:1.35;font-weight:700;
+ margin:34px 0 18px;letter-spacing:.01em}
+h2{font-family:var(--serif);font-size:25px;margin:42px 0 8px;font-weight:700;
+ line-height:1.4;scroll-margin-top:80px}
+h3{font-size:18px;margin:26px 0 10px;font-weight:700}
+p{margin:1em 0}
+strong{font-weight:700}
+
+/* ---------- 章节头（知识点标题 + 高频标签） ---------- */
+.chaphead{margin:10px 0 26px;padding-bottom:16px;border-bottom:2px solid var(--line)}
+h2.bookmark{margin:60px 0 0;padding:14px 18px;font-size:24px;font-weight:800;
+ color:#fff;background:linear-gradient(100deg,var(--acc2),var(--acc));
+ border-radius:12px;box-shadow:var(--sh);letter-spacing:.01em}
+h2.bookmark .badge{background:rgba(255,255,255,.22);color:#fff;border-color:transparent;
+ font-weight:700;margin-left:8px;vertical-align:3px}
+h2.bookmark + .sec, h2.bookmark ~ .sec:first-of-type{margin-top:18px}
+.bookhead{margin:34px 0 10px;padding-bottom:14px;border-bottom:2px solid var(--line)}
+.bookhead h1{margin:0 0 8px}
+.bookhead .lede{margin:0;color:var(--mut);font-size:14.5px;line-height:1.7}
+/* ===== 第 1 层：部分（高等数学 / 线性代数）===== */
+h2.parthead{margin:64px 0 10px;padding:18px 24px;font-size:29px;font-weight:800;
+ color:#fff;letter-spacing:.02em;border-radius:14px;box-shadow:var(--sh);
+ background:linear-gradient(100deg,#111827,#374151)}
+html[data-theme="dark"] h2.parthead{background:linear-gradient(100deg,#1f2937,#374151)}
+h2.parthead .tag{background:rgba(255,255,255,.18);color:#fff;border-color:transparent;
+ font-weight:700;font-size:13px;margin-left:10px;vertical-align:4px}
+h2.parthead:first-of-type{margin-top:26px}
+.partoverview{margin:0 0 8px;padding:2px 0 2px 20px;color:var(--fg2)}
+.partoverview h3{font-size:17px;margin:22px 0 8px;border:0;color:var(--mut);
+ font-family:var(--sans);font-weight:700;letter-spacing:.02em}
+.partoverview table{max-width:100%}
+.anchor{scroll-margin-top:16px}
+.backtop{margin:22px 0 0;font-size:13px}
+.backtop a{color:var(--mut);text-decoration:none}
+.backtop a:hover{color:var(--acc)}
+.chapterbar .cb-home{font-weight:700;font-size:14px;color:var(--acc);
+ text-decoration:none;font-family:var(--serif)}
+.chaphead h2{margin:0 0 10px;border:0}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{font-size:12px;padding:3px 11px;border-radius:999px;background:var(--chip);
+ color:var(--fg2);border:1px solid var(--line)}
+.badge.hot{background:linear-gradient(135deg,#fff1c9,#ffe0a3);color:#7a4b00;
+ border-color:#f0cf8a;font-weight:700}
+html[data-theme="dark"] .badge.hot{background:#3a2f10;color:#ffd479;border-color:#5c4a1e}
+
+/* ---------- 模板六段式 ---------- */
+.sec{margin:30px 0}
+/* ===== 字段层级：整块卡片 + 明显的标题条 ===== */
+.sec{margin:34px 0;background:var(--paper);border:1px solid var(--line);
+ border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.sec > .sec-h{display:flex;align-items:center;gap:11px;margin:0;
+ padding:13px 20px;background:linear-gradient(90deg,var(--codebg),transparent);
+ border-bottom:1px solid var(--line);border-left:5px solid var(--acc)}
+.sec > .sec-h .ic{width:30px;height:30px;flex:0 0 30px;border-radius:9px;
+ display:grid;place-items:center;font-size:16px;background:var(--chip)}
+.sec > .sec-h .tt{font-family:var(--serif);font-size:20px;font-weight:800;
+ margin:0;padding:0;border:0;line-height:1.35;color:var(--fg)}
+.sec > .sec-h .hint{font-size:12.5px;color:var(--mut);margin-left:auto;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sec > .box{padding:18px 22px}
+/* 每个字段给一条自己的主色，帮助扫读时快速定位 */
+.sec-freq > .sec-h{border-left-color:#0ea5e9}
+.sec-core > .sec-h{border-left-color:var(--acc)}
+.sec-key  > .sec-h{border-left-color:#7c3aed}
+.sec-fig  > .sec-h{border-left-color:#0891b2}
+.sec-err  > .sec-h{border-left-color:#d97706}
+.sec-real > .sec-h{border-left-color:#16a34a}
+
+.sec-freq .box{font-size:15.5px;font-weight:600}
+.sec-freq .box blockquote{margin:0 0 4px;background:var(--codebg);border-left:3px solid var(--acc);
+ border-radius:0 8px 8px 0;padding:9px 13px;font-size:14.6px;color:var(--fg2)}
+.sec-freq .box > p:first-child{margin-top:0}
+/* ===== 模块层级：核心讲解里的 【模块名】 ===== */
+.sec-core .box h3, .sec-core .box h4, .sec-core .box h5{
+ margin:30px 0 12px;padding:9px 0 9px 15px;font-size:18.5px;font-weight:800;
+ font-family:var(--serif);color:var(--acc2);letter-spacing:.01em;
+ border-left:6px solid var(--acc);border-radius:0 8px 8px 0;
+ background:linear-gradient(90deg,var(--codebg),transparent)}
+.sec-core .box > h3:first-child, .sec-core .box > h4:first-child,
+.sec-core .box > h5:first-child{margin-top:2px}
+.sec-core .box h4{font-size:17px;border-left-width:4px}
+/* 【核心公式】【适用条件】这类次级标记 */
+.sec-core .box p > strong:only-child{color:var(--acc);letter-spacing:.02em}
+.sec-core .box{font-size:16.8px;line-height:1.95}
+.sec-core .box p{margin:1.05em 0}
+.sec-core .box p:first-child{margin-top:0}
+.sec-core .box p:first-child::first-letter{font-size:1.02em}
+
+/* 关键结论速记：卡片网格 */
+.sec-key .box{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sec-key ul{display:contents;margin:0;padding:0;list-style:none}
+.sec-key li{margin:0;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;padding:13px 15px;font-size:14.8px;line-height:1.72;
+ position:relative;overflow:hidden}
+.sec-key li::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+ background:linear-gradient(180deg,var(--acc),#7c3aed);opacity:.85}
+.sec-key li strong:first-child,.sec-key li em:first-child{color:var(--acc2)}
+
+/* 示意图 */
+.sec-fig .box{background:var(--bg);border-radius:10px}
+.sec-fig img{display:block;width:100%;height:auto;margin:12px 0;border-radius:10px;
+ border:1px solid var(--line2);background:#fff}
+.sec-fig .mermaid{margin:14px 0;padding:14px;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;overflow:auto;text-align:center}
+.sec-fig details{margin:6px 0 0}
+.sec-fig .ascii{background:var(--bg);border:1px solid var(--line);border-radius:10px;
+ font-size:12.5px;line-height:1.5}
+
+/* 易错点：警示样式 */
+.sec-err .box{background:var(--warnbg)}
+.sec-err ul{margin:10px 0 0;padding:0;list-style:none}
+.sec-err li{margin:12px 0;padding-left:30px;position:relative;font-size:15.6px;line-height:1.85}
+.sec-err li::before{content:"⚠";position:absolute;left:0;top:0;color:#d97706;font-size:15px}
+.sec-err li strong:first-child{color:#b45309}
+html[data-theme="dark"] .sec-err li strong:first-child{color:#fbbf24}
+
+/* 真题示例 */
+.sec-real .box{background:var(--realbg)}
+.sec-real .box > p:first-child{font-weight:700;color:#166534;font-size:16px;margin-top:0}
+html[data-theme="dark"] .sec-real .box > p:first-child{color:#86efac}
+.sec-real blockquote{margin:14px 0 6px;padding:12px 16px;background:var(--paper);
+ border-left:4px solid var(--realbd);border-radius:0 10px 10px 0;font-size:15.4px}
+.sec-real blockquote p{margin:.55em 0}
+.sec-real blockquote ol,.sec-real blockquote ul{margin:.5em 0;padding-left:1.35em}
+
+/* ---------- 通用元素 ---------- */
+blockquote{margin:1.1em 0;padding:12px 16px;background:var(--codebg);
+ border-left:4px solid var(--acc);border-radius:0 10px 10px 0;color:var(--fg2)}
+code{background:var(--codebg);padding:.16em .42em;border-radius:6px;
+ font:13.6px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;
+ border:1px solid var(--line2)}
+pre{background:var(--codebg);padding:14px 16px;border-radius:12px;overflow:auto;
+ border:1px solid var(--line)}
+pre code{background:none;padding:0;border:0;font-size:12.8px;line-height:1.62}
+img{max-width:100%;height:auto}
+hr{border:0;border-top:1px solid var(--line);margin:36px 0}
+ul,ol{padding-left:1.5em}
+li{margin:.34em 0}
+table{border-collapse:separate;border-spacing:0;margin:16px 0;width:100%;
+ display:block;overflow:auto;max-width:100%;font-size:14.6px;
+ background:var(--paper);border:1px solid var(--line);border-radius:12px}
+th,td{border-bottom:1px solid var(--line2);padding:9px 14px;text-align:left}
+th{background:var(--codebg);font-weight:700;font-size:13.6px;color:var(--fg2);
+ position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--codebg)}
+td:first-child,th:first-child{padding-left:16px}
+.katex{font-size:1.04em}
+.katex-display{margin:1.1em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.warn,.missing{background:var(--warnbg);border:1px solid var(--warnbd);padding:11px 15px;
+ border-radius:10px;font-size:14px;margin:14px 0}
+.missing{background:#fdecec;border-color:#f0b4b4}
+html[data-theme="dark"] .missing{background:#2c1616;border-color:#6b2b2b}
+#navtoggle{position:fixed;left:12px;top:12px;z-index:40;display:none;
+ padding:8px 13px;border:1px solid var(--line);border-radius:9px;background:var(--paper);
+ color:var(--fg);cursor:pointer;font-size:13.5px;box-shadow:var(--sh);font-family:var(--sans)}
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;
+ background:var(--hi);border:1px solid var(--line);margin-left:6px;vertical-align:2px}
+
+@media (max-width:1080px){ .sec-key .box{grid-template-columns:1fr} }
+@media (max-width:860px){
+ #navtoggle{display:block}
+ nav{position:fixed;left:0;top:0;z-index:35;transform:translateX(-102%);
+  transition:transform .22s ease;box-shadow:2px 0 18px rgba(0,0,0,.16);width:86vw;max-width:320px;
+  flex-basis:auto}
+ body.navopen nav{transform:none}
+ .inner{padding:0 18px}
+ .chapterbar{padding:10px 18px}
+ h1{font-size:25px} h2{font-size:21px} .sec-core .box{font-size:16px}
+}
+@media print{
+ nav,#navtoggle,#totop,#themetoggle,#progress,.chapterbar{display:none!important}
+ main{padding:0} .inner{max-width:none;padding:0}
+ .sec,.sec > .box{box-shadow:none;break-inside:avoid}
+ a{color:inherit;text-decoration:none}
+}
+</style>
+<link rel="stylesheet" href="../katex/katex.min.css">
+<script src="../katex/katex.min.js"></script>
+<script src="../katex/contrib/auto-render.min.js"></script>
+<script src="../mermaid.min.js"></script>
+<script>try{var t=localStorage.getItem('dsh-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-prev="05-定积分与反常积分.html" data-next="07-微分方程.html">
+<div id="progress"></div><button id="navtoggle" type="button">☰ 目录</button>
+<div id="wrap"><nav><div class="navhead"><h1>数学二速成资料</h1><a class="sitehome" href="../index.html">全科合集</a></div>
+<input id="q" placeholder="筛选章节（输入即过滤）">
+<div class="grp">高等数学（约 117 分 · 约 78%）</div>
+<a class="" href="../高等数学/01-函数极限与连续.html">函数、极限与连续 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/02-导数与微分.html">导数与微分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/03-中值定理与导数应用.html">中值定理与导数应用 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/04-不定积分.html">不定积分</a>
+<a class="" href="../高等数学/05-定积分与反常积分.html">定积分与反常积分 <span class="tag">高频</span></a>
+<a class="cur" href="../高等数学/06-定积分的几何与物理应用.html">定积分的几何与物理应用 <span class="tag">高频</span></a>
+<div class="tocbox"><a class="toclink" href="#sec-freq">考频统计</a><a class="toclink" href="#sec-core">核心讲解</a><a class="toclink" href="#sec-key">关键结论速记</a><a class="toclink" href="#sec-fig">示意图</a><a class="toclink" href="#sec-err">易错点</a><a class="toclink" href="#sec-real">真题示例</a></div>
+<a class="" href="../高等数学/07-微分方程.html">微分方程 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/08-数二高数综合与证明专题.html">数二高数综合与证明专题</a>
+<a class="" href="../高等数学/09-多元函数微积分学.html">多元函数微积分学 <span class="tag">高频</span></a>
+<div class="grp">线性代数（约 33 分 · 约 22%）</div>
+<a class="" href="../线性代数/01-行列式.html">行列式</a>
+<a class="" href="../线性代数/02-矩阵.html">矩阵 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/03-向量与向量组.html">向量与向量组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/04-线性方程组.html">线性方程组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/05-特征值与特征向量.html">特征值与特征向量 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/06-二次型.html">二次型 <span class="tag">高频</span></a></nav><main><div class="chapterbar"><a class="cb-home" href="../index.html">高等数学</a><span class="cb-sub">第 定积分的几何与物理应用 章 · 11 分 · 高频</span><span class="cb-spacer"></span><a class="cb-btn" href="05-定积分与反常积分.html" title="键盘 ← 或 k">← 定积分与反常积分</a><a class="cb-btn" href="07-微分方程.html" title="键盘 → 或 j">微分方程 →</a></div><div class="inner">
+<header class="chaphead"><h1>定积分的几何与物理应用</h1><div class="badges"><span class="badge hot">高频考点</span><span class="badge">高等数学</span><span class="badge">建议 11 分</span></div></header>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 2 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 9%；主要题型：选择、填空、解答（面积、体积、弧长、平均值、物理量）。</p>
+</div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h2 class="tt">核心讲解</h2><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
+<h3>【微元法：四步框架与定限】</h3>
+<ul>
+<li><strong>本质</strong>：把所求量 $Q$ 写成 $\int_a^b\mathrm{d}Q$，即"分割、近似、求和、取极限"四步的浓缩形式。</li>
+<li><strong>可加性</strong>：$Q$ 对区间必须<strong>可加</strong>——大区间上的量等于各小区间上量之和，这是能用定积分表示的前提。</li>
+<li><strong>微元精度</strong>：微元 $\mathrm{d}Q=f(x)\,\mathrm{d}x$ 与小区间上真实部分量之差必须是 $\mathrm{d}x$ 的<strong>高阶无穷小</strong>。</li>
+<li><strong>定限</strong>：上限必须大于下限，且微元 $\mathrm{d}Q$ <strong>不变号</strong>（取正），否则算出的不是几何量或物理量。</li>
+<li><strong>通式</strong>：$\displaystyle Q=\int_a^b\mathrm{d}Q$，其中 $\mathrm{d}Q$ 按所求量的几何或物理意义确定。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ Q=\int_a^b\mathrm{d}Q $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>$Q$ 对区间具有<strong>可加性</strong>；</li>
+<li>微元与真实部分量之差是 $\mathrm{d}x$ 的<strong>高阶无穷小</strong>；</li>
+<li>积分上限大于下限，微元<strong>不变号</strong>。</li>
+</ol>
+<p><strong>四类常见量的微元与定限对照</strong>（画图定性、按量选微元）：</p>
+<table>
+<thead>
+<tr>
+<th>所求量</th>
+<th>微元 $\mathrm{d}Q$</th>
+<th>定限方式</th>
+<th>易错处</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>面积</strong> $A$</td>
+<td>$[f(x)-g(x)]\,\mathrm{d}x$（上减下）</td>
+<td>解 $f(x)=g(x)$ 定交点，再定积分限</td>
+<td>不先求交点，或全程只用一个"上减下"</td>
+</tr>
+<tr>
+<td><strong>旋转体体积</strong> $V_x$</td>
+<td>$\pi[f^2(x)-g^2(x)]\,\mathrm{d}x$（圆盘法）</td>
+<td>沿 $x$ 轴定限，取 $x\in[a,b]$</td>
+<td>写成 $\pi\left(\int_a^bf\,\mathrm{d}x\right)^2$，先积分后平方</td>
+</tr>
+<tr>
+<td><strong>旋转体体积</strong> $V_y$</td>
+<td>$2\pi xf(x)\,\mathrm{d}x$（柱壳法）</td>
+<td>沿 $x$ 轴定限，要求 $a\geqslant0$、$f(x)\geqslant0$</td>
+<td>漏掉因子 $x$（壳的周长）</td>
+</tr>
+<tr>
+<td><strong>弧长</strong> $s$</td>
+<td>$\sqrt{1+y'^2}\,\mathrm{d}x$</td>
+<td>沿 $x$ 定限；参数式沿 $t$ 定限</td>
+<td>忘开根号，或把它写成 $\mathrm{d}x+\mathrm{d}y$</td>
+</tr>
+<tr>
+<td><strong>功与压力</strong></td>
+<td>$F(x)\,\mathrm{d}x$；$\rho g\,y\,w(y)\,\mathrm{d}y$</td>
+<td>沿位移定限；水深从水面量起</td>
+<td>水深起点取错，$F$ 与位移反向时忘取负号</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ <strong>秒杀技</strong>：先画图求交点、再按所求量选微元、最后定限。微元选对之后上下限只是"看图写数"，真正的难点全在选微元这一步。</p>
+</blockquote>
+<h3>【平面图形的面积与旋转体体积】</h3>
+<ul>
+<li><strong>面积</strong>：直角坐标下"上减下"，若 $f(x)\geqslant g(x)$ 在 $[a,b]$ 上成立，则 $A=\int_a^b[f(x)-g(x)]\,\mathrm{d}x$。</li>
+<li><strong>$y$ 型区域</strong>：同一区域若改按 $y$ 定限，面积写成"右减左" $\int_c^d[\varphi(y)-\psi(y)]\,\mathrm{d}y$。</li>
+<li><strong>面积实例</strong>：$y=\sqrt{x}$ 与 $y=x^2$ 交于 $(0,0)$、$(1,1)$，故 $A=\int_0^1(\sqrt{x}-x^2)\,\mathrm{d}x=\frac13$。</li>
+<li><strong>代数和陷阱</strong>：曲线在区间内<strong>穿过</strong> $x$ 轴时必须分段计算或对 $|f(x)|$ 积分，否则得到的是面积的代数和。</li>
+<li><strong>圆盘法与柱壳法</strong>：曲边梯形 $0\leqslant g(x)\leqslant f(x)$、$x\in[a,b]$ 绕 $x$ 轴旋转用 $V_x=\pi\int_a^b[f^2(x)-g^2(x)]\,\mathrm{d}x$；绕 $y$ 轴旋转用 $V_y=2\pi\int_a^bxf(x)\,\mathrm{d}x$。</li>
+<li><strong>已知截面面积</strong>：若立体在 $x$ 处垂直于 $x$ 轴的截面面积为 $A(x)$，则 $V=\int_a^bA(x)\,\mathrm{d}x$。</li>
+<li><strong>体积实例</strong>：$y=\sqrt{x}$ 与 $y=x^2$ 围成的图形绕 $x$ 轴旋转，$V_x=\pi\int_0^1(x-x^4)\,\mathrm{d}x=\frac{3\pi}{10}\approx0.9425$。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ A=\int_a^b[f(x)-g(x)]\,\mathrm{d}x,\qquad V_x=\pi\int_a^b[f^2(x)-g^2(x)]\,\mathrm{d}x,\qquad V_y=2\pi\int_a^bxf(x)\,\mathrm{d}x $$</p>
+<p>$$ V=\int_a^bA(x)\,\mathrm{d}x $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>面积公式要求 $f(x)$ 与 $g(x)$ 在 $[a,b]$ 上<strong>连续</strong>且 $f(x)\geqslant g(x)$；</li>
+<li>计算前必须先解 $f(x)=g(x)$ 求出交点，并由交点确定积分限；</li>
+<li>柱壳法要求 $a\geqslant0$、$f(x)\geqslant0$（否则 $2\pi xf(x)$ 变号，"壳"失去意义）；</li>
+<li>圆盘法要求外层曲线 $f$ 与内层曲线 $g$ 满足 $0\leqslant g(x)\leqslant f(x)$；</li>
+<li>曲线在区间内变号时必须<strong>分段</strong>计算或改用 $|f(x)|$。</li>
+</ol>
+<p><strong>两条路线的选择对照</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>情形</th>
+<th>选法</th>
+<th>公式</th>
+<th>前提</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>图形绕 $x$ 轴旋转</td>
+<td><strong>圆盘法</strong>（切片）</td>
+<td>$V_x=\pi\int_a^b[f^2(x)-g^2(x)]\,\mathrm{d}x$</td>
+<td>半径沿 $x$ 方向可读出</td>
+</tr>
+<tr>
+<td>图形绕 $y$ 轴旋转</td>
+<td><strong>柱壳法</strong></td>
+<td>$V_y=2\pi\int_a^bxf(x)\,\mathrm{d}x$</td>
+<td>$a\geqslant0$、$f(x)\geqslant0$</td>
+</tr>
+<tr>
+<td>截面面积已知</td>
+<td>切片法</td>
+<td>$V=\int_a^bA(x)\,\mathrm{d}x$</td>
+<td>$A(x)$ 在 $[a,b]$ 上<strong>连续</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：柱壳法漏掉因子 $x$ 是最高频失分点。$2\pi x$ 是壳的周长、$f(x)$ 是壳的高、$\mathrm{d}x$ 是厚度，三项缺一不可；另外 $\pi\left(\int_a^bf(x)\,\mathrm{d}x\right)^2$ 是错的，正确写法是 $\pi\int_a^bf^2(x)\,\mathrm{d}x$——<strong>先平方再积分</strong>。</p>
+</blockquote>
+<h3>【弧长、极坐标面积与平均值】</h3>
+<ul>
+<li><strong>直角坐标弧长</strong>：$y=y(x)$ 在 $[a,b]$ 上有一阶<strong>连续</strong>导数时，$s=\int_a^b\sqrt{1+y'^2}\,\mathrm{d}x$。</li>
+<li><strong>参数方程弧长</strong>：曲线由 $x=x(t),y=y(t)$（$\alpha\leqslant t\leqslant\beta$）给出且 $x'(t),y'(t)$ <strong>连续</strong>、不同时为零时，$s=\int_\alpha^\beta\sqrt{x'^2(t)+y'^2(t)}\,\mathrm{d}t$。</li>
+<li><strong>实例</strong>：上半圆 $y=\sqrt{1-x^2}$ 在 $[-1,1]$ 上的弧长为 $\pi$。</li>
+<li><strong>极坐标曲边扇形</strong>：由 $r=r(\theta)$、$\theta\in[\alpha,\beta]$ 围成时，$A=\frac12\int_\alpha^\beta r^2(\theta)\,\mathrm{d}\theta$。</li>
+<li><strong>平均值</strong>：连续函数 $f$ 在 $[a,b]$ 上的平均值是 $\bar y=\frac1{b-a}\int_a^bf(x)\,\mathrm{d}x$，即"总量除以区间长度"。</li>
+<li><strong>平均值实例</strong>：$v(t)=t+k\sin\pi t$ 在 $[0,3]$ 上的平均速度是 $\frac13\int_0^3v(t)\,\mathrm{d}t$，不是 $\frac{v(0)+v(3)}{2}$。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ s=\int_a^b\sqrt{1+y'^2}\,\mathrm{d}x,\qquad s=\int_\alpha^\beta\sqrt{x'^2(t)+y'^2(t)}\,\mathrm{d}t $$</p>
+<p>$$ A=\frac12\int_\alpha^\beta r^2(\theta)\,\mathrm{d}\theta,\qquad \bar y=\frac1{b-a}\int_a^bf(x)\,\mathrm{d}x $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>弧长公式要求 $y(x)$ 在 $[a,b]$ 上有一阶<strong>连续</strong>导数；</li>
+<li>参数式弧长要求 $x'(t)$ 与 $y'(t)$ <strong>连续</strong>且<strong>不同时为零</strong>（否则曲线出现尖点或静止点）；</li>
+<li>极坐标面积公式要求 $r(\theta)$ 在 $[\alpha,\beta]$ 上<strong>连续</strong>，且 $\alpha<\beta$；</li>
+<li>平均值公式要求 $f$ 在 $[a,b]$ 上<strong>连续</strong>（可积），且 $a\neq b$。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>秒杀技</strong>：平均值的分母是<strong>区间长度</strong>不是取样个数。填空题里凡出现"平均速度""平均浓度"，一律写成 $\frac1{b-a}\int_a^b(\cdot)\,\mathrm{d}x$，比逐段求算术平均稳得多。</p>
+</blockquote>
+<h3>【物理应用：变力做功、水压力与形心】</h3>
+<ul>
+<li><strong>变力做功</strong>：$W=\int_a^bF(x)\,\mathrm{d}x$，其中 $F$ 取位移方向为正。</li>
+<li><strong>水压力</strong>：$P=\int_0^h\rho g\,y\,w(y)\,\mathrm{d}y$，其中 $y$ 是水深（水面取 $0$、向下为正），$w(y)$ 是该深度处平板的宽度，$\rho$ 是水的密度，$g$ 是重力加速度。</li>
+<li><strong>水压力实例</strong>：斜边长为 $2a$ 的等腰直角三角形平板铅直放入水中、斜边与水面相齐，深度 $y$ 处宽度为 $w(y)=2(a-y)$，故 $P=2\rho g\int_0^a y(a-y)\,\mathrm{d}y=\frac13\rho ga^3$。</li>
+<li><strong>形心横坐标</strong>：均匀薄片可用 $\bar x=\frac{\int_a^bx f(x)\,\mathrm{d}x}{\int_a^bf(x)\,\mathrm{d}x}$ 求。</li>
+<li><strong>形心纵坐标</strong>：$\bar y=\frac{\frac12\int_a^bf^2(x)\,\mathrm{d}x}{\int_a^bf(x)\,\mathrm{d}x}$，对应 $f(x)\geqslant0$ 时曲线与 $x$ 轴所夹的曲边梯形。</li>
+<li><strong>列式套路</strong>：微元乘以力臂即得矩微元，分子是矩、分母是总量（面积）。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ W=\int_a^bF(x)\,\mathrm{d}x,\qquad P=\int_0^h\rho g\,y\,w(y)\,\mathrm{d}y,\qquad \bar x=\frac{\int_a^bx f(x)\,\mathrm{d}x}{\int_a^bf(x)\,\mathrm{d}x},\qquad \bar y=\frac{\frac12\int_a^bf^2(x)\,\mathrm{d}x}{\int_a^bf(x)\,\mathrm{d}x} $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>做功要求 $F(x)$ 在位移区间上<strong>连续</strong>，且 $F$ 与位移同向时取正、反向时取负；</li>
+<li>水压力要求平板铅直置于液体中，$y$ 一律从<strong>水面</strong>量起、向下为正；</li>
+<li>$w(y)$ 是该深度处平板的<strong>水平宽度</strong>，必须由几何关系先求出；</li>
+<li>形心公式要求 $f(x)$ 在 $[a,b]$ 上<strong>连续</strong>且 $f(x)\geqslant0$，分母 $\int_a^bf(x)\,\mathrm{d}x$ <strong>不为 0</strong>。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：水压力公式里 $y$ 是<strong>水深</strong>而不是坐标值，水深一律从水面量起；宽度函数 $w(y)$ 写错（例如把三角形斜边当成竖直边）会让结果整体差一个系数，列式前先在图上标出 $y$ 与 $w(y)$ 的关系。</p>
+</blockquote>
+</div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h2 class="tt">关键结论速记</h2><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
+<ul>
+<li>$A=\int_a^b[f(x)-g(x)]\,\mathrm{d}x$（$f\geqslant g$ 于 $[a,b]$） —— 面积永远“上减下”，与 $x$ 轴的位置无关。</li>
+<li>$V_x=\pi\int_a^b[f^2(x)-g^2(x)]\,\mathrm{d}x$ —— 绕 $x$ 轴旋转用圆盘法，微元是圆环面积 $\pi(f^2-g^2)\,\mathrm{d}x$。</li>
+<li>$V_y=2\pi\int_a^bxf(x)\,\mathrm{d}x$ —— 绕 $y$ 轴旋转用柱壳法，$2\pi x$ 是壳的周长，$f(x)$ 是高，$\mathrm{d}x$ 是厚度。</li>
+<li>$s=\int_a^b\sqrt{1+y'^2}\,\mathrm{d}x=\int_\alpha^\beta\sqrt{x'^2+y'^2}\,\mathrm{d}t$ —— 弧长微元 $\mathrm{d}s=\sqrt{\mathrm{d}x^2+\mathrm{d}y^2}$，两种写法同源。</li>
+<li>$\bar y=\frac1{b-a}\int_a^bf(x)\,\mathrm{d}x$ —— 平均值是“总量除以区间长度”，不是两端点的算术平均。</li>
+<li>$P=\int_0^h\rho g\,y\,w(y)\,\mathrm{d}y$ —— 水压力微元等于压强 $\rho gy$ 乘面积微元 $w(y)\,\mathrm{d}y$，水深一律从水面量起。</li>
+<li>$W=\int_a^bF(x)\,\mathrm{d}x$ —— 变力做功；$F(x)$ 与位移方向相反时取负号。</li>
+</ul>
+</div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h2 class="tt">示意图</h2><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
+<p><img alt="函数图像：左子图为由 y=sqrt(x) 与 y=x^2 围成的平面区域，交点标注为 （0,0） 与 （1,1），面积等于 1/3；右子图为该区域绕 x 轴旋转所得的旋转体轮廓，内外半径分别为 x^2 与 sqrt(x)，体积等于 3π/10 约等于 0.9425" src="../assets/gaoshu-06-fig1.png" /></p>
+<p><img alt="解题流程：定积分几何与物理应用的微元法流程，依次为画图定界、按所求量选微元、定限、计算" src="../assets/gaoshu-06-fig2.png" /></p>
+<div class="mermaid">flowchart TD
+    A[&quot;几何或物理应用问题&quot;] --&gt; B[&quot;画图：求交点，确定区域与边界&quot;]
+    B --&gt; C{&quot;所求的是什么量&quot;}
+    C --&gt;|&quot;面积&quot;| D[&quot;取微元 dA 等于上减下乘 dx&quot;]
+    C --&gt;|&quot;旋转体体积&quot;| E[&quot;圆盘法取 pi 乘 y 方乘 dx，或柱壳法取 2 pi x y dx&quot;]
+    C --&gt;|&quot;弧长&quot;| F[&quot;取 ds 等于根号下 1 加 y 导数平方再乘 dx&quot;]
+    C --&gt;|&quot;平均值&quot;| G[&quot;先积分，再除以区间长度&quot;]
+    C --&gt;|&quot;功、压力、形心&quot;| H[&quot;按物理公式写微元，如压力取 rho g y w dy&quot;]
+    D --&gt; I[&quot;定限：上限大于下限，微元非负&quot;]
+    E --&gt; I
+    F --&gt; I
+    G --&gt; I
+    H --&gt; I
+    I --&gt; J[&quot;算出结果，检验量纲与对称性&quot;]
+</div><details><summary>查看该图源码</summary><pre><code>flowchart TD
+    A[&quot;几何或物理应用问题&quot;] --&gt; B[&quot;画图：求交点，确定区域与边界&quot;]
+    B --&gt; C{&quot;所求的是什么量&quot;}
+    C --&gt;|&quot;面积&quot;| D[&quot;取微元 dA 等于上减下乘 dx&quot;]
+    C --&gt;|&quot;旋转体体积&quot;| E[&quot;圆盘法取 pi 乘 y 方乘 dx，或柱壳法取 2 pi x y dx&quot;]
+    C --&gt;|&quot;弧长&quot;| F[&quot;取 ds 等于根号下 1 加 y 导数平方再乘 dx&quot;]
+    C --&gt;|&quot;平均值&quot;| G[&quot;先积分，再除以区间长度&quot;]
+    C --&gt;|&quot;功、压力、形心&quot;| H[&quot;按物理公式写微元，如压力取 rho g y w dy&quot;]
+    D --&gt; I[&quot;定限：上限大于下限，微元非负&quot;]
+    E --&gt; I
+    F --&gt; I
+    G --&gt; I
+    H --&gt; I
+    I --&gt; J[&quot;算出结果，检验量纲与对称性&quot;]
+</code></pre></details>
+</div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
+<ul>
+<li>求面积时不先求交点、不判断上下关系。 错在把两条曲线围成的面积写成 $\int_a^b[f(x)+g(x)]\,\mathrm{d}x$，或全程只用同一个“上减下”；正确做法是先解 $f(x)=g(x)$ 定出积分限，再逐段确认谁在上，用 $\int(\text{上}-\text{下})\,\mathrm{d}x$。</li>
+<li>把旋转体体积写成 $\pi\left(\int_a^bf(x)\,\mathrm{d}x\right)^2$，或漏掉内圈。 正确是 $V_x=\pi\int_a^bf^2(x)\,\mathrm{d}x$，先平方后积分；两条曲线围成的图形绕 $x$ 轴旋转时，微元是圆环面积 $\pi[f^2(x)-g^2(x)]\,\mathrm{d}x$。</li>
+<li>用柱壳法求 $V_y$ 时漏掉因子 $x$。 正确是 $V_y=2\pi\int_a^bxf(x)\,\mathrm{d}x$：$2\pi x$ 是壳的周长、$f(x)$ 是壳的高、$\mathrm{d}x$ 是厚度，三项缺一不可。</li>
+<li>把平均值当成两端点的算术平均。 正确是 $\bar y=\frac1{b-a}\int_a^bf(x)\,\mathrm{d}x$，例如 $v(t)=t+k\sin\pi t$ 在 $[0,3]$ 上的平均速度是 $\frac13\int_0^3v(t)\,\mathrm{d}t$，而不是 $\frac{v(0)+v(3)}{2}$。</li>
+</ul>
+</div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
+<p><strong>2024 年数二第 15 题（填空题，5 分）</strong></p>
+<p>某物体以速度 $v(t)=t+k\sin\pi t$ 做直线运动，若它从 $t=0$ 到 $t=3$ 的时间段内平均速度是 $\frac52$，则 $k=$ ________。</p>
+<blockquote>
+<p>解析：
+1. 平均速度是速度函数在时间区间上的平均值：$\bar v=\frac1{3-0}\int_0^3v(t)\,\mathrm{d}t$。
+2. 计算积分：$\int_0^3\left(t+k\sin\pi t\right)\mathrm{d}t=\left[\frac{t^2}{2}-\frac{k}{\pi}\cos\pi t\right]_0^3=\frac92+\frac{2k}{\pi}$。
+3. 由 $\frac13\left(\frac92+\frac{2k}{\pi}\right)=\frac52$ 得 $\frac{2k}{3\pi}=1$，故 $k=\frac{3\pi}{2}\approx4.712$。
+结论：$k=\frac{3\pi}{2}$；此时总位移为 $\int_0^3v(t)\,\mathrm{d}t=\frac{15}{2}$，平均速度恰为 $\frac52$。</p>
+</blockquote>
+<hr /></div></section></div></main></div>
+<button id="totop" type="button">↑ 回到当前小节</button>
+<button id="themetoggle" type="button" title="切换深色/浅色">◐ 主题</button>
+<script>
+document.getElementById('q')?.addEventListener('input',e=>{
+  const v=e.target.value.trim().toLowerCase();
+  document.querySelectorAll('nav a').forEach(a=>{
+    a.style.display = !v || a.textContent.toLowerCase().includes(v) ? '' : 'none';});
+});
+</script>
+<script>
+(function () {
+  var main = document.querySelector('main');
+  // 1) 侧栏高亮当前小节（滚动位置驱动）
+  var links = [].slice.call(document.querySelectorAll('nav a.toclink'));
+  var targets = links.map(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    return document.getElementById(id);
+  });
+  function sync() {
+    var y = window.scrollY + 120, best = -1;
+    targets.forEach(function (t, i) { if (t && t.offsetTop <= y) best = i; });
+    links.forEach(function (a, i) { a.classList.toggle('cur', i === best); });
+  }
+  if (links.length) {
+    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  }
+  // 2) 键盘：j/k 或 ←/→ 翻章
+  var prev = document.body.getAttribute('data-prev');
+  var next = document.body.getAttribute('data-next');
+  document.addEventListener('keydown', function (e) {
+    if (e.target.matches('input, textarea')) return;
+    if (e.key === 'ArrowLeft' || e.key === 'k') { if (prev) location.href = prev; }
+    if (e.key === 'ArrowRight' || e.key === 'j') { if (next) location.href = next; }
+  });
+  // 3) 移动端侧栏抽屉 + 回到顶部
+  var t = document.getElementById('navtoggle');
+  if (t) t.addEventListener('click', function () { document.body.classList.toggle('navopen'); });
+  // 4) 阅读进度条
+  var bar = document.getElementById('progress');
+  if (bar) {
+    var upd = function () {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd); upd();
+  }
+  // 5) 主题切换（记忆到 localStorage）
+  var tb = document.getElementById('themetoggle');
+  if (tb) tb.addEventListener('click', function () {
+    var cur = document.documentElement.dataset.theme;
+    if (cur === 'auto') cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var nx = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = nx;
+    try { localStorage.setItem('dsh-theme', nx); } catch (e) {}
+  });
+  var top = document.getElementById('totop');
+  if (top) {
+    top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    window.addEventListener('scroll', function () {
+      top.style.display = window.scrollY > 500 ? 'block' : 'none';
+    }, { passive: true });
+  }
+})();
+</script>
+<script>
+(function () {
+  if (!window.renderMathInElement) {
+    // 公式渲染器没加载到：明确提示，而不是留一堆 $...$ 让读者困惑
+    var has = /\$[^$]+\$/.test(document.body.innerText || '');
+    if (has) {
+      var p = document.createElement('p');
+      p.className = 'missing';
+      p.textContent = '未加载到公式渲染器（katex/），页面里的 LaTeX 公式以源码显示。'
+        + '请确认 数学二/katex/ 目录存在。';
+      document.querySelector('main').insertBefore(p, document.querySelector('main').firstChild);
+    }
+    return;
+  }
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '$', right: '$', display: false }
+    ],
+    throwOnError: false,
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  });
+})();
+</script>
+<script>
+(function () {
+  var nodes = document.querySelectorAll('.mermaid');
+  if (!nodes.length) return;
+  if (!window.mermaid) {
+    nodes.forEach(function (el) {
+      el.insertAdjacentHTML('beforebegin',
+        '<p class="missing">未加载到 mermaid 运行时（mermaid.min.js 不在预期位置），' +
+        '下图暂以源码显示，可复制到任意 mermaid 编辑器查看。</p>');
+      var pre = document.createElement('pre');
+      var code = document.createElement('code');
+      code.textContent = el.textContent;
+      pre.appendChild(code); el.innerHTML = ''; el.appendChild(pre);
+    });
+    return;
+  }
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: 'neutral',
+    flowchart: { useMaxWidth: true }, state: { useMaxWidth: true } });
+  nodes.forEach(function (el, i) {
+    mermaid.render('mmd-' + i, el.textContent.trim()).then(function (r) {
+      el.innerHTML = r.svg;
+    }).catch(function (e) {
+      el.innerHTML = '<p class="missing">该图渲染失败：' + e.message + '</p>';
+    });
+  });
+})();
+</script></body></html>

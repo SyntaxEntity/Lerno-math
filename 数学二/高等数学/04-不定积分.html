@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>高等数学 · 不定积分</title><style>
+:root{
+ --bg:#f7f7f5; --paper:#ffffff; --fg:#1f2328; --fg2:#3d444d; --mut:#6b7280;
+ --line:#e3e6ea; --line2:#eef1f4; --acc:#1d4ed8; --acc2:#0b3d91;
+ --codebg:#f5f7fa; --hi:#fff6d6; --warnbg:#fff8ec; --warnbd:#f0d9a8;
+ --realbg:#f1f8f2; --realbd:#bcdcc2; --chip:#eef2f7;
+ --sh:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.05);
+ --serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",Georgia,"Times New Roman",serif;
+ --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+}
+html[data-theme="dark"]{
+ --bg:#0d1117; --paper:#161b22; --fg:#e6edf3; --fg2:#c9d1d9; --mut:#8b949e;
+ --line:#2b3138; --line2:#22272e; --acc:#6ea8fe; --acc2:#9ec5fe;
+ --codebg:#1b2129; --hi:#3a2f10; --warnbg:#2c2415; --warnbd:#5c4a1e;
+ --realbg:#14251a; --realbd:#2f5c3c; --chip:#1f2630;
+ --sh:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
+ font-size:16.5px;line-height:1.82;-webkit-font-smoothing:antialiased}
+#wrap{display:flex;min-height:100vh}
+
+/* ---------- 侧栏 ---------- */
+nav{width:302px;flex:0 0 302px;background:var(--paper);border-right:1px solid var(--line);
+ position:sticky;top:0;height:100vh;overflow:auto;padding:18px 14px 40px}
+nav .navhead{display:flex;align-items:center;justify-content:space-between;
+ gap:8px;margin:0 6px 12px}
+nav .navhead h1{font-size:14.5px;margin:0;font-weight:700;letter-spacing:.02em}
+nav .sitehome{font-size:12px;color:var(--acc);text-decoration:none;
+ border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap}
+nav .sitehome:hover{border-color:var(--acc)}
+nav input{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:9px;
+ background:var(--bg);color:var(--fg);margin-bottom:12px;font-size:13px;font-family:var(--sans)}
+nav input:focus{outline:2px solid var(--acc);outline-offset:-1px;border-color:transparent}
+nav a{display:block;padding:6px 10px;color:var(--fg2);text-decoration:none;
+ font-size:13.5px;border-radius:8px;line-height:1.5}
+nav a:hover{background:var(--codebg);color:var(--fg)}
+nav .grp{margin:16px 6px 6px;font-size:11.5px;color:var(--mut);
+ font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+nav a.cur{background:var(--chip);color:var(--acc);font-weight:700}
+nav .tocbox{margin:2px 0 10px 16px;padding-left:10px;border-left:2px solid var(--line)}
+nav .tocbox a{font-size:12.5px;color:var(--mut);padding:3px 8px}
+nav .tocbox a.cur{color:var(--acc);font-weight:600;background:none}
+
+/* ---------- 主区 ---------- */
+main{flex:1;min-width:0;padding:0 0 100px}
+.inner{max-width:880px;margin:0 auto;padding:0 46px}
+.chapterbar{position:sticky;top:0;z-index:20;background:var(--paper);
+ border-bottom:1px solid var(--line);
+ padding:12px 46px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+@supports (backdrop-filter:blur(1px)){
+ .chapterbar{background:color-mix(in srgb,var(--paper) 86%,transparent);
+  backdrop-filter:saturate(1.6) blur(10px)}
+}
+.chapterbar .cb-title{font-weight:750;font-size:15px;font-family:var(--serif)}
+.chapterbar .cb-sub{color:var(--mut);font-size:12.5px}
+.chapterbar .cb-spacer{flex:1}
+.chapterbar a.cb-btn{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;
+ padding:6px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);text-decoration:none;white-space:nowrap;transition:.15s}
+.chapterbar a.cb-btn:hover{border-color:var(--acc);color:var(--acc);transform:translateY(-1px)}
+.chapterbar a.cb-btn.off{opacity:.32;pointer-events:none}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--acc),#7c3aed);
+ width:0;z-index:50;transition:width .1s linear}
+#totop{position:fixed;right:22px;bottom:24px;z-index:30;display:none;
+ padding:9px 15px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+#totop:hover{border-color:var(--acc);color:var(--acc)}
+#themetoggle{position:fixed;right:22px;bottom:70px;z-index:30;
+ padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+
+/* ---------- 标题 ---------- */
+h1{font-family:var(--serif);font-size:30px;line-height:1.35;font-weight:700;
+ margin:34px 0 18px;letter-spacing:.01em}
+h2{font-family:var(--serif);font-size:25px;margin:42px 0 8px;font-weight:700;
+ line-height:1.4;scroll-margin-top:80px}
+h3{font-size:18px;margin:26px 0 10px;font-weight:700}
+p{margin:1em 0}
+strong{font-weight:700}
+
+/* ---------- 章节头（知识点标题 + 高频标签） ---------- */
+.chaphead{margin:10px 0 26px;padding-bottom:16px;border-bottom:2px solid var(--line)}
+h2.bookmark{margin:60px 0 0;padding:14px 18px;font-size:24px;font-weight:800;
+ color:#fff;background:linear-gradient(100deg,var(--acc2),var(--acc));
+ border-radius:12px;box-shadow:var(--sh);letter-spacing:.01em}
+h2.bookmark .badge{background:rgba(255,255,255,.22);color:#fff;border-color:transparent;
+ font-weight:700;margin-left:8px;vertical-align:3px}
+h2.bookmark + .sec, h2.bookmark ~ .sec:first-of-type{margin-top:18px}
+.bookhead{margin:34px 0 10px;padding-bottom:14px;border-bottom:2px solid var(--line)}
+.bookhead h1{margin:0 0 8px}
+.bookhead .lede{margin:0;color:var(--mut);font-size:14.5px;line-height:1.7}
+/* ===== 第 1 层：部分（高等数学 / 线性代数）===== */
+h2.parthead{margin:64px 0 10px;padding:18px 24px;font-size:29px;font-weight:800;
+ color:#fff;letter-spacing:.02em;border-radius:14px;box-shadow:var(--sh);
+ background:linear-gradient(100deg,#111827,#374151)}
+html[data-theme="dark"] h2.parthead{background:linear-gradient(100deg,#1f2937,#374151)}
+h2.parthead .tag{background:rgba(255,255,255,.18);color:#fff;border-color:transparent;
+ font-weight:700;font-size:13px;margin-left:10px;vertical-align:4px}
+h2.parthead:first-of-type{margin-top:26px}
+.partoverview{margin:0 0 8px;padding:2px 0 2px 20px;color:var(--fg2)}
+.partoverview h3{font-size:17px;margin:22px 0 8px;border:0;color:var(--mut);
+ font-family:var(--sans);font-weight:700;letter-spacing:.02em}
+.partoverview table{max-width:100%}
+.anchor{scroll-margin-top:16px}
+.backtop{margin:22px 0 0;font-size:13px}
+.backtop a{color:var(--mut);text-decoration:none}
+.backtop a:hover{color:var(--acc)}
+.chapterbar .cb-home{font-weight:700;font-size:14px;color:var(--acc);
+ text-decoration:none;font-family:var(--serif)}
+.chaphead h2{margin:0 0 10px;border:0}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{font-size:12px;padding:3px 11px;border-radius:999px;background:var(--chip);
+ color:var(--fg2);border:1px solid var(--line)}
+.badge.hot{background:linear-gradient(135deg,#fff1c9,#ffe0a3);color:#7a4b00;
+ border-color:#f0cf8a;font-weight:700}
+html[data-theme="dark"] .badge.hot{background:#3a2f10;color:#ffd479;border-color:#5c4a1e}
+
+/* ---------- 模板六段式 ---------- */
+.sec{margin:30px 0}
+/* ===== 字段层级：整块卡片 + 明显的标题条 ===== */
+.sec{margin:34px 0;background:var(--paper);border:1px solid var(--line);
+ border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.sec > .sec-h{display:flex;align-items:center;gap:11px;margin:0;
+ padding:13px 20px;background:linear-gradient(90deg,var(--codebg),transparent);
+ border-bottom:1px solid var(--line);border-left:5px solid var(--acc)}
+.sec > .sec-h .ic{width:30px;height:30px;flex:0 0 30px;border-radius:9px;
+ display:grid;place-items:center;font-size:16px;background:var(--chip)}
+.sec > .sec-h .tt{font-family:var(--serif);font-size:20px;font-weight:800;
+ margin:0;padding:0;border:0;line-height:1.35;color:var(--fg)}
+.sec > .sec-h .hint{font-size:12.5px;color:var(--mut);margin-left:auto;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sec > .box{padding:18px 22px}
+/* 每个字段给一条自己的主色，帮助扫读时快速定位 */
+.sec-freq > .sec-h{border-left-color:#0ea5e9}
+.sec-core > .sec-h{border-left-color:var(--acc)}
+.sec-key  > .sec-h{border-left-color:#7c3aed}
+.sec-fig  > .sec-h{border-left-color:#0891b2}
+.sec-err  > .sec-h{border-left-color:#d97706}
+.sec-real > .sec-h{border-left-color:#16a34a}
+
+.sec-freq .box{font-size:15.5px;font-weight:600}
+.sec-freq .box blockquote{margin:0 0 4px;background:var(--codebg);border-left:3px solid var(--acc);
+ border-radius:0 8px 8px 0;padding:9px 13px;font-size:14.6px;color:var(--fg2)}
+.sec-freq .box > p:first-child{margin-top:0}
+/* ===== 模块层级：核心讲解里的 【模块名】 ===== */
+.sec-core .box h3, .sec-core .box h4, .sec-core .box h5{
+ margin:30px 0 12px;padding:9px 0 9px 15px;font-size:18.5px;font-weight:800;
+ font-family:var(--serif);color:var(--acc2);letter-spacing:.01em;
+ border-left:6px solid var(--acc);border-radius:0 8px 8px 0;
+ background:linear-gradient(90deg,var(--codebg),transparent)}
+.sec-core .box > h3:first-child, .sec-core .box > h4:first-child,
+.sec-core .box > h5:first-child{margin-top:2px}
+.sec-core .box h4{font-size:17px;border-left-width:4px}
+/* 【核心公式】【适用条件】这类次级标记 */
+.sec-core .box p > strong:only-child{color:var(--acc);letter-spacing:.02em}
+.sec-core .box{font-size:16.8px;line-height:1.95}
+.sec-core .box p{margin:1.05em 0}
+.sec-core .box p:first-child{margin-top:0}
+.sec-core .box p:first-child::first-letter{font-size:1.02em}
+
+/* 关键结论速记：卡片网格 */
+.sec-key .box{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sec-key ul{display:contents;margin:0;padding:0;list-style:none}
+.sec-key li{margin:0;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;padding:13px 15px;font-size:14.8px;line-height:1.72;
+ position:relative;overflow:hidden}
+.sec-key li::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+ background:linear-gradient(180deg,var(--acc),#7c3aed);opacity:.85}
+.sec-key li strong:first-child,.sec-key li em:first-child{color:var(--acc2)}
+
+/* 示意图 */
+.sec-fig .box{background:var(--bg);border-radius:10px}
+.sec-fig img{display:block;width:100%;height:auto;margin:12px 0;border-radius:10px;
+ border:1px solid var(--line2);background:#fff}
+.sec-fig .mermaid{margin:14px 0;padding:14px;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;overflow:auto;text-align:center}
+.sec-fig details{margin:6px 0 0}
+.sec-fig .ascii{background:var(--bg);border:1px solid var(--line);border-radius:10px;
+ font-size:12.5px;line-height:1.5}
+
+/* 易错点：警示样式 */
+.sec-err .box{background:var(--warnbg)}
+.sec-err ul{margin:10px 0 0;padding:0;list-style:none}
+.sec-err li{margin:12px 0;padding-left:30px;position:relative;font-size:15.6px;line-height:1.85}
+.sec-err li::before{content:"⚠";position:absolute;left:0;top:0;color:#d97706;font-size:15px}
+.sec-err li strong:first-child{color:#b45309}
+html[data-theme="dark"] .sec-err li strong:first-child{color:#fbbf24}
+
+/* 真题示例 */
+.sec-real .box{background:var(--realbg)}
+.sec-real .box > p:first-child{font-weight:700;color:#166534;font-size:16px;margin-top:0}
+html[data-theme="dark"] .sec-real .box > p:first-child{color:#86efac}
+.sec-real blockquote{margin:14px 0 6px;padding:12px 16px;background:var(--paper);
+ border-left:4px solid var(--realbd);border-radius:0 10px 10px 0;font-size:15.4px}
+.sec-real blockquote p{margin:.55em 0}
+.sec-real blockquote ol,.sec-real blockquote ul{margin:.5em 0;padding-left:1.35em}
+
+/* ---------- 通用元素 ---------- */
+blockquote{margin:1.1em 0;padding:12px 16px;background:var(--codebg);
+ border-left:4px solid var(--acc);border-radius:0 10px 10px 0;color:var(--fg2)}
+code{background:var(--codebg);padding:.16em .42em;border-radius:6px;
+ font:13.6px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;
+ border:1px solid var(--line2)}
+pre{background:var(--codebg);padding:14px 16px;border-radius:12px;overflow:auto;
+ border:1px solid var(--line)}
+pre code{background:none;padding:0;border:0;font-size:12.8px;line-height:1.62}
+img{max-width:100%;height:auto}
+hr{border:0;border-top:1px solid var(--line);margin:36px 0}
+ul,ol{padding-left:1.5em}
+li{margin:.34em 0}
+table{border-collapse:separate;border-spacing:0;margin:16px 0;width:100%;
+ display:block;overflow:auto;max-width:100%;font-size:14.6px;
+ background:var(--paper);border:1px solid var(--line);border-radius:12px}
+th,td{border-bottom:1px solid var(--line2);padding:9px 14px;text-align:left}
+th{background:var(--codebg);font-weight:700;font-size:13.6px;color:var(--fg2);
+ position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--codebg)}
+td:first-child,th:first-child{padding-left:16px}
+.katex{font-size:1.04em}
+.katex-display{margin:1.1em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.warn,.missing{background:var(--warnbg);border:1px solid var(--warnbd);padding:11px 15px;
+ border-radius:10px;font-size:14px;margin:14px 0}
+.missing{background:#fdecec;border-color:#f0b4b4}
+html[data-theme="dark"] .missing{background:#2c1616;border-color:#6b2b2b}
+#navtoggle{position:fixed;left:12px;top:12px;z-index:40;display:none;
+ padding:8px 13px;border:1px solid var(--line);border-radius:9px;background:var(--paper);
+ color:var(--fg);cursor:pointer;font-size:13.5px;box-shadow:var(--sh);font-family:var(--sans)}
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;
+ background:var(--hi);border:1px solid var(--line);margin-left:6px;vertical-align:2px}
+
+@media (max-width:1080px){ .sec-key .box{grid-template-columns:1fr} }
+@media (max-width:860px){
+ #navtoggle{display:block}
+ nav{position:fixed;left:0;top:0;z-index:35;transform:translateX(-102%);
+  transition:transform .22s ease;box-shadow:2px 0 18px rgba(0,0,0,.16);width:86vw;max-width:320px;
+  flex-basis:auto}
+ body.navopen nav{transform:none}
+ .inner{padding:0 18px}
+ .chapterbar{padding:10px 18px}
+ h1{font-size:25px} h2{font-size:21px} .sec-core .box{font-size:16px}
+}
+@media print{
+ nav,#navtoggle,#totop,#themetoggle,#progress,.chapterbar{display:none!important}
+ main{padding:0} .inner{max-width:none;padding:0}
+ .sec,.sec > .box{box-shadow:none;break-inside:avoid}
+ a{color:inherit;text-decoration:none}
+}
+</style>
+<link rel="stylesheet" href="../katex/katex.min.css">
+<script src="../katex/katex.min.js"></script>
+<script src="../katex/contrib/auto-render.min.js"></script>
+<script src="../mermaid.min.js"></script>
+<script>try{var t=localStorage.getItem('dsh-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-prev="03-中值定理与导数应用.html" data-next="05-定积分与反常积分.html">
+<div id="progress"></div><button id="navtoggle" type="button">☰ 目录</button>
+<div id="wrap"><nav><div class="navhead"><h1>数学二速成资料</h1><a class="sitehome" href="../index.html">全科合集</a></div>
+<input id="q" placeholder="筛选章节（输入即过滤）">
+<div class="grp">高等数学（约 117 分 · 约 78%）</div>
+<a class="" href="../高等数学/01-函数极限与连续.html">函数、极限与连续 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/02-导数与微分.html">导数与微分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/03-中值定理与导数应用.html">中值定理与导数应用 <span class="tag">高频</span></a>
+<a class="cur" href="../高等数学/04-不定积分.html">不定积分</a>
+<div class="tocbox"><a class="toclink" href="#sec-freq">考频统计</a><a class="toclink" href="#sec-core">核心讲解</a><a class="toclink" href="#sec-key">关键结论速记</a><a class="toclink" href="#sec-fig">示意图</a><a class="toclink" href="#sec-err">易错点</a><a class="toclink" href="#sec-real">真题示例</a></div>
+<a class="" href="../高等数学/05-定积分与反常积分.html">定积分与反常积分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/06-定积分的几何与物理应用.html">定积分的几何与物理应用 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/07-微分方程.html">微分方程 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/08-数二高数综合与证明专题.html">数二高数综合与证明专题</a>
+<a class="" href="../高等数学/09-多元函数微积分学.html">多元函数微积分学 <span class="tag">高频</span></a>
+<div class="grp">线性代数（约 33 分 · 约 22%）</div>
+<a class="" href="../线性代数/01-行列式.html">行列式</a>
+<a class="" href="../线性代数/02-矩阵.html">矩阵 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/03-向量与向量组.html">向量与向量组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/04-线性方程组.html">线性方程组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/05-特征值与特征向量.html">特征值与特征向量 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/06-二次型.html">二次型 <span class="tag">高频</span></a></nav><main><div class="chapterbar"><a class="cb-home" href="../index.html">高等数学</a><span class="cb-sub">第 不定积分 章 · 8 分 · 常规</span><span class="cb-spacer"></span><a class="cb-btn" href="03-中值定理与导数应用.html" title="键盘 ← 或 k">← 中值定理与导数应用</a><a class="cb-btn" href="05-定积分与反常积分.html" title="键盘 → 或 j">定积分与反常积分 →</a></div><div class="inner">
+<header class="chaphead"><h1>不定积分</h1><div class="badges"><span class="badge">常规考点</span><span class="badge">高等数学</span><span class="badge">建议 8 分</span></div></header>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 考频待补充；涉及年份：见下方说明；分数占比约 7%；主要题型：少单独命题，多为定积分与微分方程解答题的中间步骤。</p>
+<blockquote>
+<p><strong>考频说明</strong>：本章在 2023—2024 年样本中未单独命题：官方从不公布考频，本资料亦无法核实其独立考察次数，故标注「考频待补充」。但基本积分表、换元法与分部积分法是定积分、微分方程与二重积分计算的<strong>必备前置</strong>，不可跳过。</p>
+</blockquote>
+</div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h2 class="tt">核心讲解</h2><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
+<h3>【原函数与基本积分表】</h3>
+<ul>
+<li><strong>原函数的定义</strong>：若 $F'(x)=f(x)$ 在区间 $I$ 上<strong>处处成立</strong>，则称 $F$ 是 $f$ 在 $I$ 上的一个原函数。</li>
+<li><strong>原函数存在定理</strong>给出的是<strong>充分条件</strong>：$f$ 在区间 $I$ 上<strong>连续</strong>时必有原函数。</li>
+<li>此时<strong>变限积分</strong>就是一个原函数，同一被积函数的任意两个原函数只相差一个常数。</li>
+<li>所以不定积分表示的是<strong>函数族</strong>，结果必须写成 $F(x)+C$。</li>
+<li>不定积分的计算完全建立在<strong>基本积分表</strong>上，基本公式必须背到条件反射。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>间断点类型</th>
+<th>是否有原函数</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>连续</strong>（无间断点）</td>
+<td><strong>必有</strong>原函数</td>
+<td>变限积分即为一个原函数</td>
+</tr>
+<tr>
+<td><strong>第一类间断点</strong>（可去、跳跃）</td>
+<td><strong>没有</strong>原函数</td>
+<td>导数不可能出现第一类间断点</td>
+</tr>
+<tr>
+<td><strong>无穷间断点</strong>（第二类）</td>
+<td><strong>没有</strong>原函数</td>
+<td>原函数在该点附近无界，与可导矛盾</td>
+</tr>
+<tr>
+<td><strong>振荡间断点</strong>（第二类）</td>
+<td><strong>可能有</strong>原函数</td>
+<td>振荡不影响原函数的存在性</td>
+</tr>
+</tbody>
+</table>
+<p>【核心公式】</p>
+<p>$$ \int f(x)\,\mathrm{d}x=F(x)+C,\qquad F'(x)=f(x) $$</p>
+<p>$$ \int x^{\mu}\,\mathrm{d}x=\frac{x^{\mu+1}}{\mu+1}+C\ (\mu\neq-1),\qquad \int\frac{\mathrm{d}x}{x}=\ln|x|+C $$</p>
+<p>$$ \int e^x\,\mathrm{d}x=e^x+C,\qquad \int\frac{\mathrm{d}x}{1+x^2}=\arctan x+C,\qquad \int\frac{\mathrm{d}x}{\sqrt{1-x^2}}=\arcsin x+C $$</p>
+<p>$$ y=\frac{x^2}{2}+C\ \text{是}\ f(x)=x\ \text{的原函数族}:\quad C=-1,0,1\ \text{三条曲线在}\ x=1\ \text{处的切线斜率都等于}\ f(1)=1 $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>$F'(x)=f(x)$ 要在区间 $I$ 上<strong>处处成立</strong>；</li>
+<li>求不定积分时被积函数应在区间上<strong>连续</strong>，以保证原函数存在；</li>
+<li>含<strong>第一类间断点或无穷间断点</strong>的函数，在含该点的区间上<strong>没有</strong>原函数。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：漏写任意常数 $C$，或把两个不同的常数写成同一个。不定积分是<strong>函数族</strong>而不是单个函数；分段函数求原函数时，两段的常数不能取成同一个，要由分段点处原函数<strong>连续</strong>解出两段常数之差。</p>
+</blockquote>
+<h3>【换元积分法】</h3>
+<ul>
+<li>**第一类换元法（凑微分）**的依据是复合函数求导公式的逆用。</li>
+<li>操作上就是把被积表达式整体凑成<strong>复合函数与微分的乘积</strong>。</li>
+<li><strong>线性代换</strong>是最常用的一条，结果中<strong>不要漏掉系数</strong>。</li>
+<li><strong>第二类换元法</strong>用来<strong>消去根式</strong>，算完必须把 $t$ <strong>回代</strong>为 $x$。</li>
+<li>三角代换有固定对应：平方差用<strong>正弦</strong>、平方和用<strong>正切</strong>、被减平方用<strong>正割</strong>。</li>
+<li>选路原则：能把微分凑进去就用第一类，凑不进去就作第二类代换。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>换元方法</th>
+<th>适用情形</th>
+<th>关键要求</th>
+<th>典型形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>第一类换元（凑微分）</strong></td>
+<td>被积式能整体凑成复合函数与微分的乘积</td>
+<td>$\varphi(x)$ <strong>可导</strong>，$f$ <strong>有原函数</strong></td>
+<td>把被积式凑成 $f(\varphi(x))\,\mathrm{d}\varphi(x)$</td>
+</tr>
+<tr>
+<td><strong>第二类换元（三角代换）</strong></td>
+<td>被积函数含 $\sqrt{a^2-x^2}$、$\sqrt{a^2+x^2}$、$\sqrt{x^2-a^2}$ 三类根式</td>
+<td>代换 $x=\psi(t)$ <strong>单调可导</strong>且 $\psi'(t)$ <strong>不为 0</strong></td>
+<td>分别令 $x=a\sin t$、$x=a\tan t$、$x=a\sec t$</td>
+</tr>
+<tr>
+<td><strong>第二类换元（根式代换）</strong></td>
+<td>被积函数含 $\sqrt[n]{ax+b}$ 一类的整根式</td>
+<td>代换后必须能<strong>回代</strong>为 $x$</td>
+<td>令 $t=\sqrt[n]{ax+b}$，把根式化为有理式</td>
+</tr>
+</tbody>
+</table>
+<p>【核心公式】</p>
+<p>$$ \int f(\varphi(x))\varphi'(x)\,\mathrm{d}x=\int f(u)\,\mathrm{d}u=F(u)+C=F(\varphi(x))+C $$</p>
+<p>$$ \int f(ax+b)\,\mathrm{d}x=\frac1aF(ax+b)+C $$</p>
+<p>$$ \sqrt{a^2-x^2}\ \to\ x=a\sin t,\qquad \sqrt{a^2+x^2}\ \to\ x=a\tan t,\qquad \sqrt{x^2-a^2}\ \to\ x=a\sec t $$</p>
+<p>$$ \int\frac{\mathrm{d}x}{x(1+\ln x)}=\ln|1+\ln x|+C,\qquad \int xe^{x^2}\,\mathrm{d}x=\frac12e^{x^2}+C $$</p>
+<p>$$ \int\sqrt{4-x^2}\,\mathrm{d}x=\frac x2\sqrt{4-x^2}+2\arcsin\frac x2+C $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>第一类换元要求 $\varphi(x)$ <strong>可导</strong>且 $f$ <strong>有原函数</strong>；</li>
+<li>线性代换中 $a$ <strong>不为 0</strong>，结果必须带因子 $\frac1a$；</li>
+<li>第二类换元要求 $x=\psi(t)$ <strong>单调可导</strong>且 $\psi'(t)$ <strong>不为 0</strong>；</li>
+<li>算完必须用反函数把 $t$ <strong>回代</strong>为 $x$，结果可以直接<strong>求导自检</strong>。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：凑微分时把 $\int f(ax+b)\,\mathrm{d}x$ 写成 $F(ax+b)+C$。正确结果是 $\frac1aF(ax+b)+C$，例如 $\int e^{2x}\,\mathrm{d}x=\frac12e^{2x}+C$ 而不是 $e^{2x}+C$。</p>
+</blockquote>
+<h3>【分部积分与有理函数积分】</h3>
+<ul>
+<li><strong>分部积分</strong>处理的是<strong>两类不同函数相乘</strong>的被积函数。</li>
+<li>选 $u$ 的次序为“<strong>反三角、对数、幂函数、指数、三角</strong>”，谁排在前面谁作 $u$。</li>
+<li>选 $u$ 的原则是：<strong>求导后变简单的作 $u$</strong>，容易积分的作 $\mathrm{d}v$。</li>
+<li><strong>有理函数</strong>有固定路线：假分式先做<strong>多项式除法</strong>拆出整式。</li>
+<li>真分式按分母的<strong>因式分解</strong>拆成<strong>部分分式</strong>，再逐项积分。</li>
+<li>因此有理函数的不定积分<strong>一定可以用初等函数表出</strong>。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ \int u\,\mathrm{d}v=uv-\int v\,\mathrm{d}u $$</p>
+<p>$$ \int(x+1)\cos x\,\mathrm{d}x=(x+1)\sin x+\cos x+C,\qquad \int\ln x\,\mathrm{d}x=x\ln x-x+C $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>被积函数是<strong>两类不同函数</strong>的乘积；</li>
+<li>$u$ 与 $v$ 都<strong>可导</strong>，且 $\int v\,\mathrm{d}u$ 要比原积分更容易算；</li>
+<li>有理函数拆分前必须先把<strong>假分式</strong>化为整式与真分式之和。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>秒杀技</strong>：按“反、对、幂、指、三”的次序选 $u$。例如 $\int\ln x\,\mathrm{d}x$ 必须把 $\ln x$ 当作 $u$，否则会绕回原积分。</p>
+</blockquote>
+</div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h2 class="tt">关键结论速记</h2><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
+<ul>
+<li>$\int f(ax+b)\,\mathrm{d}x=\frac1aF(ax+b)+C$ —— 线性代换只差常数因子 $\frac1a$，是最常见的凑微分。</li>
+<li>$\int u\,\mathrm{d}v=uv-\int v\,\mathrm{d}u$ —— 选 $u$ 按“反、对、幂、指、三”，排在前面的一律放进 $u$。</li>
+<li>$\int\frac{\mathrm{d}x}{x^2+a^2}=\frac1a\arctan\frac xa+C$，$\int\frac{\mathrm{d}x}{\sqrt{x^2\pm a^2}}=\ln\left|x+\sqrt{x^2\pm a^2}\right|+C$ —— 比基本积分表更常用的两条补充公式。</li>
+<li>$\int\sqrt{a^2-x^2}\,\mathrm{d}x=\frac x2\sqrt{a^2-x^2}+\frac{a^2}{2}\arcsin\frac xa+C$ —— 三角代换的标准产物，结果同时含根式与反正弦。</li>
+<li>连续函数必有原函数，含第一类或无穷间断点的函数无原函数 —— 判断原函数是否存在，只看间断点的类型。</li>
+<li>分段函数的原函数必须在分段点连续 —— 各段分别积分后，用分段点的连续性定出两段常数之差，两段只允许相差一个常数。</li>
+<li>初等函数在其定义区间上连续因而有原函数，但原函数未必是初等函数 —— 如 $\int e^{-x^2}\,\mathrm{d}x$、$\int\frac{\sin x}{x}\,\mathrm{d}x$ 都不能用初等函数表出。</li>
+</ul>
+</div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h2 class="tt">示意图</h2><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
+<p><img alt="函数图像：被积函数 f(x)=x 的三条积分曲线 y=x^2/2+C（C 取 -1、0、1），三条曲线分别过点 （0,-1）、（0,0）、（0,1），在 x=1 处画出三条互相平行的切线，切点纵坐标分别为 -0.5、0.5、1.5，切线斜率均为 f(1)=1" src="../assets/gaoshu-04-fig1.png" /></p>
+<p><img alt="解题流程：不定积分的选路流程，从查基本积分表出发，依次判断凑微分、三角代换、分部积分与有理函数部分分式" src="../assets/gaoshu-04-fig2.png" /></p>
+<div class="mermaid">flowchart TD
+    A[&quot;被积函数 f 与积分变量 x&quot;] --&gt; B{&quot;能否查基本积分表&quot;}
+    B --&gt;|&quot;能&quot;| C[&quot;直接写出原函数并加任意常数 C&quot;]
+    B --&gt;|&quot;不能&quot;| D{&quot;能否整体凑成复合函数与微分的乘积&quot;}
+    D --&gt;|&quot;能&quot;| E[&quot;第一类换元：凑微分&quot;]
+    D --&gt;|&quot;不能&quot;| F{&quot;是否含根式&quot;}
+    F --&gt;|&quot;含 a 方减 x 方等根式&quot;| G[&quot;第二类换元：三角代换后回代&quot;]
+    F --&gt;|&quot;不含根式&quot;| H{&quot;是否为两类函数相乘&quot;}
+    H --&gt;|&quot;是&quot;| I[&quot;分部积分：按反对幂指三选 u&quot;]
+    H --&gt;|&quot;否&quot;| J[&quot;有理函数：拆部分分式后逐项积分&quot;]
+    C --&gt; K[&quot;求导自检，结果补上任意常数 C&quot;]
+    E --&gt; K
+    G --&gt; K
+    I --&gt; K
+    J --&gt; K
+</div><details><summary>查看该图源码</summary><pre><code>flowchart TD
+    A[&quot;被积函数 f 与积分变量 x&quot;] --&gt; B{&quot;能否查基本积分表&quot;}
+    B --&gt;|&quot;能&quot;| C[&quot;直接写出原函数并加任意常数 C&quot;]
+    B --&gt;|&quot;不能&quot;| D{&quot;能否整体凑成复合函数与微分的乘积&quot;}
+    D --&gt;|&quot;能&quot;| E[&quot;第一类换元：凑微分&quot;]
+    D --&gt;|&quot;不能&quot;| F{&quot;是否含根式&quot;}
+    F --&gt;|&quot;含 a 方减 x 方等根式&quot;| G[&quot;第二类换元：三角代换后回代&quot;]
+    F --&gt;|&quot;不含根式&quot;| H{&quot;是否为两类函数相乘&quot;}
+    H --&gt;|&quot;是&quot;| I[&quot;分部积分：按反对幂指三选 u&quot;]
+    H --&gt;|&quot;否&quot;| J[&quot;有理函数：拆部分分式后逐项积分&quot;]
+    C --&gt; K[&quot;求导自检，结果补上任意常数 C&quot;]
+    E --&gt; K
+    G --&gt; K
+    I --&gt; K
+    J --&gt; K
+</code></pre></details>
+</div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
+<ul>
+<li>漏写任意常数 $C$，或把两个不同的常数写成同一个。 错在把不定积分当成一个函数：$\int f(x)\,\mathrm{d}x$ 是函数族，必须写 $+C$；分段函数求原函数时，两段的常数不能取成同一个，要由分段点处原函数连续解出两段常数之差。</li>
+<li>凑微分时把 $\int f(ax+b)\,\mathrm{d}x$ 写成 $F(ax+b)+C$。 正确结果是 $\frac1aF(ax+b)+C$，因为 $\mathrm{d}(ax+b)=a\,\mathrm{d}x$，例如 $\int e^{2x}\,\mathrm{d}x=\frac12e^{2x}+C$ 而不是 $e^{2x}+C$。</li>
+<li>第二类换元后忘记把 $t$ 回代为 $x$，或忽略代换必须单调可导。 正确做法是算完立即用 $t=\arcsin\frac xa$ 等反函数回代，并在作代换时说明 $t$ 的取值范围，保证 $x=\psi(t)$ 单调、$\psi'(t)\neq0$。</li>
+<li>认为分段函数的原函数就是把两段分别积分。 错在忽略了原函数必须可导、从而必须连续：分别在两段上积分后要补一个常数修正，使左右极限相等，例如右支积出 $(x+1)\sin x+\cos x+C_2$（在 $x=0$ 处值为 $1+C_2$）时，左支的常数必须是 $C_1=1+C_2$，否则原函数在 $x=0$ 处间断。</li>
+</ul>
+</div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
+<p><strong>2023 年数二第 2 题（选择题，5 分）</strong></p>
+<p>函数 $f(x)=\begin{cases}\dfrac{1}{\sqrt{1+x^2}},& x\leqslant 0,\\ (x+1)\cos x,& x>0\end{cases}$ 的一个原函数是（　）</p>
+<blockquote>
+<p>解析：
+1. 原函数 $F(x)$ 必须在 $(-\infty,+\infty)$ 上可导且 $F'(x)=f(x)$，可导必连续，所以先分段积分再在 $x=0$ 处拼接。
+2. $x\leqslant0$ 时 $\int\frac{\mathrm{d}x}{\sqrt{1+x^2}}=\ln\left(x+\sqrt{1+x^2}\right)+C_1$；$x>0$ 时 $\int(x+1)\cos x\,\mathrm{d}x=(x+1)\sin x+\cos x+C_2$。
+3. 由 $x=0$ 处连续得 $\ln 1+C_1=1+C_2$，即 $C_1=1+C_2$；取 $C_2=-1$，则 $F(0)=0$，此时
+$$F(x)=\begin{cases}\ln\left(x+\sqrt{1+x^2}\right),& x\leqslant 0,\\ (x+1)\sin x+\cos x-1,& x>0.\end{cases}$$
+4. 检验可导：$F'_{-}(0)=\left.\frac{1}{\sqrt{1+x^2}}\right|_{x=0}=1$，$F'_{+}(0)=(0+1)\cos 0=1$，两段在 $x=0$ 处光滑拼接，故 $F(x)$ 确为 $f(x)$ 的一个原函数（$F(1)=2\sin1+\cos1-1\approx1.2232$）。
+结论：原函数在分段点必须连续，正确选项就是上面这段 $F(x)$。</p>
+</blockquote>
+<hr /></div></section></div></main></div>
+<button id="totop" type="button">↑ 回到当前小节</button>
+<button id="themetoggle" type="button" title="切换深色/浅色">◐ 主题</button>
+<script>
+document.getElementById('q')?.addEventListener('input',e=>{
+  const v=e.target.value.trim().toLowerCase();
+  document.querySelectorAll('nav a').forEach(a=>{
+    a.style.display = !v || a.textContent.toLowerCase().includes(v) ? '' : 'none';});
+});
+</script>
+<script>
+(function () {
+  var main = document.querySelector('main');
+  // 1) 侧栏高亮当前小节（滚动位置驱动）
+  var links = [].slice.call(document.querySelectorAll('nav a.toclink'));
+  var targets = links.map(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    return document.getElementById(id);
+  });
+  function sync() {
+    var y = window.scrollY + 120, best = -1;
+    targets.forEach(function (t, i) { if (t && t.offsetTop <= y) best = i; });
+    links.forEach(function (a, i) { a.classList.toggle('cur', i === best); });
+  }
+  if (links.length) {
+    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  }
+  // 2) 键盘：j/k 或 ←/→ 翻章
+  var prev = document.body.getAttribute('data-prev');
+  var next = document.body.getAttribute('data-next');
+  document.addEventListener('keydown', function (e) {
+    if (e.target.matches('input, textarea')) return;
+    if (e.key === 'ArrowLeft' || e.key === 'k') { if (prev) location.href = prev; }
+    if (e.key === 'ArrowRight' || e.key === 'j') { if (next) location.href = next; }
+  });
+  // 3) 移动端侧栏抽屉 + 回到顶部
+  var t = document.getElementById('navtoggle');
+  if (t) t.addEventListener('click', function () { document.body.classList.toggle('navopen'); });
+  // 4) 阅读进度条
+  var bar = document.getElementById('progress');
+  if (bar) {
+    var upd = function () {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd); upd();
+  }
+  // 5) 主题切换（记忆到 localStorage）
+  var tb = document.getElementById('themetoggle');
+  if (tb) tb.addEventListener('click', function () {
+    var cur = document.documentElement.dataset.theme;
+    if (cur === 'auto') cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var nx = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = nx;
+    try { localStorage.setItem('dsh-theme', nx); } catch (e) {}
+  });
+  var top = document.getElementById('totop');
+  if (top) {
+    top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    window.addEventListener('scroll', function () {
+      top.style.display = window.scrollY > 500 ? 'block' : 'none';
+    }, { passive: true });
+  }
+})();
+</script>
+<script>
+(function () {
+  if (!window.renderMathInElement) {
+    // 公式渲染器没加载到：明确提示，而不是留一堆 $...$ 让读者困惑
+    var has = /\$[^$]+\$/.test(document.body.innerText || '');
+    if (has) {
+      var p = document.createElement('p');
+      p.className = 'missing';
+      p.textContent = '未加载到公式渲染器（katex/），页面里的 LaTeX 公式以源码显示。'
+        + '请确认 数学二/katex/ 目录存在。';
+      document.querySelector('main').insertBefore(p, document.querySelector('main').firstChild);
+    }
+    return;
+  }
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '$', right: '$', display: false }
+    ],
+    throwOnError: false,
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  });
+})();
+</script>
+<script>
+(function () {
+  var nodes = document.querySelectorAll('.mermaid');
+  if (!nodes.length) return;
+  if (!window.mermaid) {
+    nodes.forEach(function (el) {
+      el.insertAdjacentHTML('beforebegin',
+        '<p class="missing">未加载到 mermaid 运行时（mermaid.min.js 不在预期位置），' +
+        '下图暂以源码显示，可复制到任意 mermaid 编辑器查看。</p>');
+      var pre = document.createElement('pre');
+      var code = document.createElement('code');
+      code.textContent = el.textContent;
+      pre.appendChild(code); el.innerHTML = ''; el.appendChild(pre);
+    });
+    return;
+  }
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: 'neutral',
+    flowchart: { useMaxWidth: true }, state: { useMaxWidth: true } });
+  nodes.forEach(function (el, i) {
+    mermaid.render('mmd-' + i, el.textContent.trim()).then(function (r) {
+      el.innerHTML = r.svg;
+    }).catch(function (e) {
+      el.innerHTML = '<p class="missing">该图渲染失败：' + e.message + '</p>';
+    });
+  });
+})();
+</script></body></html>

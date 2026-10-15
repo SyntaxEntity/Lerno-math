@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>高等数学 · 微分方程</title><style>
+:root{
+ --bg:#f7f7f5; --paper:#ffffff; --fg:#1f2328; --fg2:#3d444d; --mut:#6b7280;
+ --line:#e3e6ea; --line2:#eef1f4; --acc:#1d4ed8; --acc2:#0b3d91;
+ --codebg:#f5f7fa; --hi:#fff6d6; --warnbg:#fff8ec; --warnbd:#f0d9a8;
+ --realbg:#f1f8f2; --realbd:#bcdcc2; --chip:#eef2f7;
+ --sh:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.05);
+ --serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",Georgia,"Times New Roman",serif;
+ --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+}
+html[data-theme="dark"]{
+ --bg:#0d1117; --paper:#161b22; --fg:#e6edf3; --fg2:#c9d1d9; --mut:#8b949e;
+ --line:#2b3138; --line2:#22272e; --acc:#6ea8fe; --acc2:#9ec5fe;
+ --codebg:#1b2129; --hi:#3a2f10; --warnbg:#2c2415; --warnbd:#5c4a1e;
+ --realbg:#14251a; --realbd:#2f5c3c; --chip:#1f2630;
+ --sh:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
+ font-size:16.5px;line-height:1.82;-webkit-font-smoothing:antialiased}
+#wrap{display:flex;min-height:100vh}
+
+/* ---------- 侧栏 ---------- */
+nav{width:302px;flex:0 0 302px;background:var(--paper);border-right:1px solid var(--line);
+ position:sticky;top:0;height:100vh;overflow:auto;padding:18px 14px 40px}
+nav .navhead{display:flex;align-items:center;justify-content:space-between;
+ gap:8px;margin:0 6px 12px}
+nav .navhead h1{font-size:14.5px;margin:0;font-weight:700;letter-spacing:.02em}
+nav .sitehome{font-size:12px;color:var(--acc);text-decoration:none;
+ border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap}
+nav .sitehome:hover{border-color:var(--acc)}
+nav input{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:9px;
+ background:var(--bg);color:var(--fg);margin-bottom:12px;font-size:13px;font-family:var(--sans)}
+nav input:focus{outline:2px solid var(--acc);outline-offset:-1px;border-color:transparent}
+nav a{display:block;padding:6px 10px;color:var(--fg2);text-decoration:none;
+ font-size:13.5px;border-radius:8px;line-height:1.5}
+nav a:hover{background:var(--codebg);color:var(--fg)}
+nav .grp{margin:16px 6px 6px;font-size:11.5px;color:var(--mut);
+ font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+nav a.cur{background:var(--chip);color:var(--acc);font-weight:700}
+nav .tocbox{margin:2px 0 10px 16px;padding-left:10px;border-left:2px solid var(--line)}
+nav .tocbox a{font-size:12.5px;color:var(--mut);padding:3px 8px}
+nav .tocbox a.cur{color:var(--acc);font-weight:600;background:none}
+
+/* ---------- 主区 ---------- */
+main{flex:1;min-width:0;padding:0 0 100px}
+.inner{max-width:880px;margin:0 auto;padding:0 46px}
+.chapterbar{position:sticky;top:0;z-index:20;background:var(--paper);
+ border-bottom:1px solid var(--line);
+ padding:12px 46px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+@supports (backdrop-filter:blur(1px)){
+ .chapterbar{background:color-mix(in srgb,var(--paper) 86%,transparent);
+  backdrop-filter:saturate(1.6) blur(10px)}
+}
+.chapterbar .cb-title{font-weight:750;font-size:15px;font-family:var(--serif)}
+.chapterbar .cb-sub{color:var(--mut);font-size:12.5px}
+.chapterbar .cb-spacer{flex:1}
+.chapterbar a.cb-btn{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;
+ padding:6px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);text-decoration:none;white-space:nowrap;transition:.15s}
+.chapterbar a.cb-btn:hover{border-color:var(--acc);color:var(--acc);transform:translateY(-1px)}
+.chapterbar a.cb-btn.off{opacity:.32;pointer-events:none}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--acc),#7c3aed);
+ width:0;z-index:50;transition:width .1s linear}
+#totop{position:fixed;right:22px;bottom:24px;z-index:30;display:none;
+ padding:9px 15px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+#totop:hover{border-color:var(--acc);color:var(--acc)}
+#themetoggle{position:fixed;right:22px;bottom:70px;z-index:30;
+ padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+
+/* ---------- 标题 ---------- */
+h1{font-family:var(--serif);font-size:30px;line-height:1.35;font-weight:700;
+ margin:34px 0 18px;letter-spacing:.01em}
+h2{font-family:var(--serif);font-size:25px;margin:42px 0 8px;font-weight:700;
+ line-height:1.4;scroll-margin-top:80px}
+h3{font-size:18px;margin:26px 0 10px;font-weight:700}
+p{margin:1em 0}
+strong{font-weight:700}
+
+/* ---------- 章节头（知识点标题 + 高频标签） ---------- */
+.chaphead{margin:10px 0 26px;padding-bottom:16px;border-bottom:2px solid var(--line)}
+h2.bookmark{margin:60px 0 0;padding:14px 18px;font-size:24px;font-weight:800;
+ color:#fff;background:linear-gradient(100deg,var(--acc2),var(--acc));
+ border-radius:12px;box-shadow:var(--sh);letter-spacing:.01em}
+h2.bookmark .badge{background:rgba(255,255,255,.22);color:#fff;border-color:transparent;
+ font-weight:700;margin-left:8px;vertical-align:3px}
+h2.bookmark + .sec, h2.bookmark ~ .sec:first-of-type{margin-top:18px}
+.bookhead{margin:34px 0 10px;padding-bottom:14px;border-bottom:2px solid var(--line)}
+.bookhead h1{margin:0 0 8px}
+.bookhead .lede{margin:0;color:var(--mut);font-size:14.5px;line-height:1.7}
+/* ===== 第 1 层：部分（高等数学 / 线性代数）===== */
+h2.parthead{margin:64px 0 10px;padding:18px 24px;font-size:29px;font-weight:800;
+ color:#fff;letter-spacing:.02em;border-radius:14px;box-shadow:var(--sh);
+ background:linear-gradient(100deg,#111827,#374151)}
+html[data-theme="dark"] h2.parthead{background:linear-gradient(100deg,#1f2937,#374151)}
+h2.parthead .tag{background:rgba(255,255,255,.18);color:#fff;border-color:transparent;
+ font-weight:700;font-size:13px;margin-left:10px;vertical-align:4px}
+h2.parthead:first-of-type{margin-top:26px}
+.partoverview{margin:0 0 8px;padding:2px 0 2px 20px;color:var(--fg2)}
+.partoverview h3{font-size:17px;margin:22px 0 8px;border:0;color:var(--mut);
+ font-family:var(--sans);font-weight:700;letter-spacing:.02em}
+.partoverview table{max-width:100%}
+.anchor{scroll-margin-top:16px}
+.backtop{margin:22px 0 0;font-size:13px}
+.backtop a{color:var(--mut);text-decoration:none}
+.backtop a:hover{color:var(--acc)}
+.chapterbar .cb-home{font-weight:700;font-size:14px;color:var(--acc);
+ text-decoration:none;font-family:var(--serif)}
+.chaphead h2{margin:0 0 10px;border:0}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{font-size:12px;padding:3px 11px;border-radius:999px;background:var(--chip);
+ color:var(--fg2);border:1px solid var(--line)}
+.badge.hot{background:linear-gradient(135deg,#fff1c9,#ffe0a3);color:#7a4b00;
+ border-color:#f0cf8a;font-weight:700}
+html[data-theme="dark"] .badge.hot{background:#3a2f10;color:#ffd479;border-color:#5c4a1e}
+
+/* ---------- 模板六段式 ---------- */
+.sec{margin:30px 0}
+/* ===== 字段层级：整块卡片 + 明显的标题条 ===== */
+.sec{margin:34px 0;background:var(--paper);border:1px solid var(--line);
+ border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.sec > .sec-h{display:flex;align-items:center;gap:11px;margin:0;
+ padding:13px 20px;background:linear-gradient(90deg,var(--codebg),transparent);
+ border-bottom:1px solid var(--line);border-left:5px solid var(--acc)}
+.sec > .sec-h .ic{width:30px;height:30px;flex:0 0 30px;border-radius:9px;
+ display:grid;place-items:center;font-size:16px;background:var(--chip)}
+.sec > .sec-h .tt{font-family:var(--serif);font-size:20px;font-weight:800;
+ margin:0;padding:0;border:0;line-height:1.35;color:var(--fg)}
+.sec > .sec-h .hint{font-size:12.5px;color:var(--mut);margin-left:auto;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sec > .box{padding:18px 22px}
+/* 每个字段给一条自己的主色，帮助扫读时快速定位 */
+.sec-freq > .sec-h{border-left-color:#0ea5e9}
+.sec-core > .sec-h{border-left-color:var(--acc)}
+.sec-key  > .sec-h{border-left-color:#7c3aed}
+.sec-fig  > .sec-h{border-left-color:#0891b2}
+.sec-err  > .sec-h{border-left-color:#d97706}
+.sec-real > .sec-h{border-left-color:#16a34a}
+
+.sec-freq .box{font-size:15.5px;font-weight:600}
+.sec-freq .box blockquote{margin:0 0 4px;background:var(--codebg);border-left:3px solid var(--acc);
+ border-radius:0 8px 8px 0;padding:9px 13px;font-size:14.6px;color:var(--fg2)}
+.sec-freq .box > p:first-child{margin-top:0}
+/* ===== 模块层级：核心讲解里的 【模块名】 ===== */
+.sec-core .box h3, .sec-core .box h4, .sec-core .box h5{
+ margin:30px 0 12px;padding:9px 0 9px 15px;font-size:18.5px;font-weight:800;
+ font-family:var(--serif);color:var(--acc2);letter-spacing:.01em;
+ border-left:6px solid var(--acc);border-radius:0 8px 8px 0;
+ background:linear-gradient(90deg,var(--codebg),transparent)}
+.sec-core .box > h3:first-child, .sec-core .box > h4:first-child,
+.sec-core .box > h5:first-child{margin-top:2px}
+.sec-core .box h4{font-size:17px;border-left-width:4px}
+/* 【核心公式】【适用条件】这类次级标记 */
+.sec-core .box p > strong:only-child{color:var(--acc);letter-spacing:.02em}
+.sec-core .box{font-size:16.8px;line-height:1.95}
+.sec-core .box p{margin:1.05em 0}
+.sec-core .box p:first-child{margin-top:0}
+.sec-core .box p:first-child::first-letter{font-size:1.02em}
+
+/* 关键结论速记：卡片网格 */
+.sec-key .box{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sec-key ul{display:contents;margin:0;padding:0;list-style:none}
+.sec-key li{margin:0;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;padding:13px 15px;font-size:14.8px;line-height:1.72;
+ position:relative;overflow:hidden}
+.sec-key li::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+ background:linear-gradient(180deg,var(--acc),#7c3aed);opacity:.85}
+.sec-key li strong:first-child,.sec-key li em:first-child{color:var(--acc2)}
+
+/* 示意图 */
+.sec-fig .box{background:var(--bg);border-radius:10px}
+.sec-fig img{display:block;width:100%;height:auto;margin:12px 0;border-radius:10px;
+ border:1px solid var(--line2);background:#fff}
+.sec-fig .mermaid{margin:14px 0;padding:14px;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;overflow:auto;text-align:center}
+.sec-fig details{margin:6px 0 0}
+.sec-fig .ascii{background:var(--bg);border:1px solid var(--line);border-radius:10px;
+ font-size:12.5px;line-height:1.5}
+
+/* 易错点：警示样式 */
+.sec-err .box{background:var(--warnbg)}
+.sec-err ul{margin:10px 0 0;padding:0;list-style:none}
+.sec-err li{margin:12px 0;padding-left:30px;position:relative;font-size:15.6px;line-height:1.85}
+.sec-err li::before{content:"⚠";position:absolute;left:0;top:0;color:#d97706;font-size:15px}
+.sec-err li strong:first-child{color:#b45309}
+html[data-theme="dark"] .sec-err li strong:first-child{color:#fbbf24}
+
+/* 真题示例 */
+.sec-real .box{background:var(--realbg)}
+.sec-real .box > p:first-child{font-weight:700;color:#166534;font-size:16px;margin-top:0}
+html[data-theme="dark"] .sec-real .box > p:first-child{color:#86efac}
+.sec-real blockquote{margin:14px 0 6px;padding:12px 16px;background:var(--paper);
+ border-left:4px solid var(--realbd);border-radius:0 10px 10px 0;font-size:15.4px}
+.sec-real blockquote p{margin:.55em 0}
+.sec-real blockquote ol,.sec-real blockquote ul{margin:.5em 0;padding-left:1.35em}
+
+/* ---------- 通用元素 ---------- */
+blockquote{margin:1.1em 0;padding:12px 16px;background:var(--codebg);
+ border-left:4px solid var(--acc);border-radius:0 10px 10px 0;color:var(--fg2)}
+code{background:var(--codebg);padding:.16em .42em;border-radius:6px;
+ font:13.6px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;
+ border:1px solid var(--line2)}
+pre{background:var(--codebg);padding:14px 16px;border-radius:12px;overflow:auto;
+ border:1px solid var(--line)}
+pre code{background:none;padding:0;border:0;font-size:12.8px;line-height:1.62}
+img{max-width:100%;height:auto}
+hr{border:0;border-top:1px solid var(--line);margin:36px 0}
+ul,ol{padding-left:1.5em}
+li{margin:.34em 0}
+table{border-collapse:separate;border-spacing:0;margin:16px 0;width:100%;
+ display:block;overflow:auto;max-width:100%;font-size:14.6px;
+ background:var(--paper);border:1px solid var(--line);border-radius:12px}
+th,td{border-bottom:1px solid var(--line2);padding:9px 14px;text-align:left}
+th{background:var(--codebg);font-weight:700;font-size:13.6px;color:var(--fg2);
+ position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--codebg)}
+td:first-child,th:first-child{padding-left:16px}
+.katex{font-size:1.04em}
+.katex-display{margin:1.1em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.warn,.missing{background:var(--warnbg);border:1px solid var(--warnbd);padding:11px 15px;
+ border-radius:10px;font-size:14px;margin:14px 0}
+.missing{background:#fdecec;border-color:#f0b4b4}
+html[data-theme="dark"] .missing{background:#2c1616;border-color:#6b2b2b}
+#navtoggle{position:fixed;left:12px;top:12px;z-index:40;display:none;
+ padding:8px 13px;border:1px solid var(--line);border-radius:9px;background:var(--paper);
+ color:var(--fg);cursor:pointer;font-size:13.5px;box-shadow:var(--sh);font-family:var(--sans)}
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;
+ background:var(--hi);border:1px solid var(--line);margin-left:6px;vertical-align:2px}
+
+@media (max-width:1080px){ .sec-key .box{grid-template-columns:1fr} }
+@media (max-width:860px){
+ #navtoggle{display:block}
+ nav{position:fixed;left:0;top:0;z-index:35;transform:translateX(-102%);
+  transition:transform .22s ease;box-shadow:2px 0 18px rgba(0,0,0,.16);width:86vw;max-width:320px;
+  flex-basis:auto}
+ body.navopen nav{transform:none}
+ .inner{padding:0 18px}
+ .chapterbar{padding:10px 18px}
+ h1{font-size:25px} h2{font-size:21px} .sec-core .box{font-size:16px}
+}
+@media print{
+ nav,#navtoggle,#totop,#themetoggle,#progress,.chapterbar{display:none!important}
+ main{padding:0} .inner{max-width:none;padding:0}
+ .sec,.sec > .box{box-shadow:none;break-inside:avoid}
+ a{color:inherit;text-decoration:none}
+}
+</style>
+<link rel="stylesheet" href="../katex/katex.min.css">
+<script src="../katex/katex.min.js"></script>
+<script src="../katex/contrib/auto-render.min.js"></script>
+<script src="../mermaid.min.js"></script>
+<script>try{var t=localStorage.getItem('dsh-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-prev="06-定积分的几何与物理应用.html" data-next="08-数二高数综合与证明专题.html">
+<div id="progress"></div><button id="navtoggle" type="button">☰ 目录</button>
+<div id="wrap"><nav><div class="navhead"><h1>数学二速成资料</h1><a class="sitehome" href="../index.html">全科合集</a></div>
+<input id="q" placeholder="筛选章节（输入即过滤）">
+<div class="grp">高等数学（约 117 分 · 约 78%）</div>
+<a class="" href="../高等数学/01-函数极限与连续.html">函数、极限与连续 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/02-导数与微分.html">导数与微分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/03-中值定理与导数应用.html">中值定理与导数应用 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/04-不定积分.html">不定积分</a>
+<a class="" href="../高等数学/05-定积分与反常积分.html">定积分与反常积分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/06-定积分的几何与物理应用.html">定积分的几何与物理应用 <span class="tag">高频</span></a>
+<a class="cur" href="../高等数学/07-微分方程.html">微分方程 <span class="tag">高频</span></a>
+<div class="tocbox"><a class="toclink" href="#sec-freq">考频统计</a><a class="toclink" href="#sec-core">核心讲解</a><a class="toclink" href="#sec-key">关键结论速记</a><a class="toclink" href="#sec-fig">示意图</a><a class="toclink" href="#sec-err">易错点</a><a class="toclink" href="#sec-real">真题示例</a></div>
+<a class="" href="../高等数学/08-数二高数综合与证明专题.html">数二高数综合与证明专题</a>
+<a class="" href="../高等数学/09-多元函数微积分学.html">多元函数微积分学 <span class="tag">高频</span></a>
+<div class="grp">线性代数（约 33 分 · 约 22%）</div>
+<a class="" href="../线性代数/01-行列式.html">行列式</a>
+<a class="" href="../线性代数/02-矩阵.html">矩阵 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/03-向量与向量组.html">向量与向量组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/04-线性方程组.html">线性方程组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/05-特征值与特征向量.html">特征值与特征向量 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/06-二次型.html">二次型 <span class="tag">高频</span></a></nav><main><div class="chapterbar"><a class="cb-home" href="../index.html">高等数学</a><span class="cb-sub">第 微分方程 章 · 9 分 · 高频</span><span class="cb-spacer"></span><a class="cb-btn" href="06-定积分的几何与物理应用.html" title="键盘 ← 或 k">← 定积分的几何与物理应用</a><a class="cb-btn" href="08-数二高数综合与证明专题.html" title="键盘 → 或 j">数二高数综合与证明专题 →</a></div><div class="inner">
+<header class="chaphead"><h1>微分方程</h1><div class="badges"><span class="badge hot">高频考点</span><span class="badge">高等数学</span><span class="badge">建议 9 分</span></div></header>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 8%；主要题型：选择、填空、解答（一阶与二阶常系数、几何应用）。</p>
+</div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h2 class="tt">核心讲解</h2><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
+<h3>【一阶微分方程：三种类型与通解】</h3>
+<ul>
+<li><strong>可分离变量方程</strong>：形如 $\frac{dy}{dx}=f(x)g(y)$，把两个变量分到等号两侧后分别积分。</li>
+<li><strong>齐次方程</strong>：形如 $\frac{dy}{dx}=\varphi\left(\frac{y}{x}\right)$，令 $u=\frac{y}{x}$（即 $y=ux$、$y'=u+xu'$）后化为可分离变量方程。</li>
+<li><strong>一阶线性方程</strong>：形如 $y'+P(x)y=Q(x)$，通解由公式直接给出。</li>
+<li><strong>准齐次型</strong>：凡形如 $y'=f(ax+by+c)$ 的方程，令 $u=ax+by+c$ 即可化为可分离变量方程。</li>
+<li><strong>定常数</strong>：求出通解后必须用初始条件定出 $C$；初始条件里含 $y'$ 的要先求导再代入。</li>
+<li><strong>判类型优先</strong>：拿到方程先判类型再套公式，比硬凑积分快得多。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ y=e^{-\int P(x)\,dx}\left(\int Q(x)e^{\int P(x)\,dx}\,dx+C\right) $$</p>
+<p>$$ \frac{dy}{dx}=f(x)g(y)\ \Longrightarrow\ \frac{dy}{g(y)}=f(x)\,dx,\qquad \frac{dy}{dx}=\varphi\left(\frac{y}{x}\right)\ \xrightarrow{\ u=y/x\ }\ u+xu'=\varphi(u) $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>$P(x)$、$Q(x)$ 在求解区间上<strong>连续</strong>；</li>
+<li>方程已写成 $y'$ 的系数为 $1$ 的标准形 $y'+P(x)y=Q(x)$；</li>
+<li>可分离变量在分离前先检查 $g(y)=0$ 是否给出<strong>常数解</strong>；</li>
+<li>齐次方程要求右端只含 $\frac{y}{x}$ 的组合；</li>
+<li>求出通解后必须用初始条件定出 $C$。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：没化成标准形就套通解公式。例如 $xy'+y=x^2$ 必须先除以 $x$ 写成 $y'+\frac{1}{x}y=x$，此时 $P(x)=\frac{1}{x}$；直接用原式的系数当 $P$ 会取错，算 $\int P\,dx$ 时也只需在最后写一个常数 $C$。</p>
+</blockquote>
+<h3>【可降阶的高阶方程（三种标准形）】</h3>
+<ul>
+<li><strong>$y''=f(x)$ 型</strong>：右端只含 $x$，连续积分两次即可。</li>
+<li><strong>$y''=f(x,y')$ 型</strong>：方程中不出现 $y$，令 $p=y'$，化为关于 $p$ 的一阶方程 $p'=f(x,p)$。</li>
+<li><strong>$y''=f(y,y')$ 型</strong>：方程中不出现 $x$，仍令 $p=y'$，但必须把 $p$ 看成 $y$ 的函数。</li>
+<li><strong>关键替换</strong>：缺 $x$ 型要用 $y''=p\frac{dp}{dy}$ 代入，这一步写错整个方程就解不下去。</li>
+<li><strong>通解常数个数</strong>：二阶方程的通解含两个任意常数，缺一个就说明积分漏了一次。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ y''=f(x)\ \Longrightarrow\ y'=\int f(x)\,dx+C_1,\qquad y''=f(x,y')\ \xrightarrow{\ p=y'\ }\ p'=f(x,p),\qquad y''=f(y,y')\ \xrightarrow{\ p=y',\ y''=p\frac{dp}{dy}}\ p\frac{dp}{dy}=f(y,p) $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>只有上述三种标准形可以直接降阶，其它高阶方程先尝试别的办法；</li>
+<li>缺 $x$ 型必须把 $p$ 视为 $y$ 的函数，<strong>不能</strong>把 $y''$ 写成 $p'$；</li>
+<li>每积分一次补一个任意常数，二阶方程最后应有两个<strong>任意常数</strong>。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：解 $y''=f(y,y')$ 时把 $y''$ 写成 $p'$，等于凭空多出一个自变量 $x$，方程无法求解；正确写法是 $y''=p\frac{dp}{dy}$，其中 $p$ 是 $y$ 的函数。</p>
+</blockquote>
+<h3>【二阶常系数齐次线性方程：特征根三种情形】</h3>
+<ul>
+<li><strong>特征方程</strong>：由 $y''+py'+qy=0$ 写出 $\lambda^2+p\lambda+q=0$，解出两个特征根。</li>
+<li><strong>相异实根</strong>：通解由两个指数项相加。</li>
+<li><strong>二重实根</strong>：通解在指数项前乘一次多项式，即在 $e^{\lambda x}$ 之外补一个 $x$。</li>
+<li><strong>共轭复根</strong>：通解是指数因子 $e^{\alpha x}$ 乘三角函数的组合。</li>
+<li><strong>先看判别式</strong>：$p^2-4q$ 的符号直接决定走哪一支，写通解前先算它。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ \lambda^2+p\lambda+q=0 $$</p>
+<table>
+<thead>
+<tr>
+<th>特征根情形</th>
+<th>通解形式</th>
+<th>记忆要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>相异实根</strong> $\lambda_1\neq\lambda_2$</td>
+<td>$y=C_1e^{\lambda_1x}+C_2e^{\lambda_2x}$</td>
+<td>两个根各配一个指数项</td>
+</tr>
+<tr>
+<td><strong>二重实根</strong> $\lambda_1=\lambda_2=\lambda$</td>
+<td>$y=(C_1+C_2x)e^{\lambda x}$</td>
+<td>重根要补一个 $x$</td>
+</tr>
+<tr>
+<td><strong>共轭复根</strong> $\alpha\pm\beta i$</td>
+<td>$y=e^{\alpha x}(C_1\cos\beta x+C_2\sin\beta x)$</td>
+<td>实部进指数、虚部进三角</td>
+</tr>
+</tbody>
+</table>
+<p>【适用条件】</p>
+<ol>
+<li>方程必须是<strong>常系数</strong>且右端为 $0$ 的齐次线性方程；</li>
+<li>$p$、$q$ 为实常数，特征方程是二次方程，必有两个根（含重根）；</li>
+<li>复根情形中 $\alpha$ 是实部、$\beta$ 是虚部且 $\beta\neq0$；</li>
+<li>通解必须出现两个<strong>任意常数</strong> $C_1$、$C_2$，其中 $C_1,C_2$ 为任意常数。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：二重根情形写成 $C_1e^{\lambda x}+C_2e^{\lambda x}$ 等于只有一个任意常数，通解必须补上因子 $x$，写成 $(C_1+C_2x)e^{\lambda x}$。</p>
+</blockquote>
+<h3>【二阶常系数非齐次线性方程：特解设法】</h3>
+<ul>
+<li><strong>通解结构</strong>：$y''+py'+qy=f(x)$ 的通解是 $y=Y+y^*$，其中 $Y$ 是相应齐次方程的通解、$y^*$ 是原方程的一个特解。</li>
+<li><strong>自由项为指数型</strong>：$f(x)=P_m(x)e^{\lambda x}$ 时设 $y^*=x^{k}Q_m(x)e^{\lambda x}$，$Q_m$ 是与 $P_m$ 同次的多项式。</li>
+<li><strong>重数决定 $k$</strong>：$k$ 取 $\lambda$ 作为特征根的重数——不是特征根取 $k=0$，是单根取 $k=1$，是二重根取 $k=2$。</li>
+<li><strong>自由项为三角型</strong>：$f(x)=e^{\alpha x}\left[P_l(x)\cos\beta x+Q_n(x)\sin\beta x\right]$ 时设 $y^*=x^{k}e^{\alpha x}\left[R_m(x)\cos\beta x+S_m(x)\sin\beta x\right]$。</li>
+<li><strong>次数取大</strong>：三角型中 $m=\max\{l,n\}$，$R_m$ 与 $S_m$ 都是 $m$ 次多项式且系数待定。</li>
+<li><strong>叠加原理</strong>：自由项是几项之和时分别求特解再相加。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ y=Y+y^* $$</p>
+<p>$$ f(x)=P_m(x)e^{\lambda x}\ \Longrightarrow\ y^*=x^{k}Q_m(x)e^{\lambda x},\qquad f(x)=e^{\alpha x}\left[P_l(x)\cos\beta x+Q_n(x)\sin\beta x\right]\ \Longrightarrow\ y^*=x^{k}e^{\alpha x}\left[R_m(x)\cos\beta x+S_m(x)\sin\beta x\right] $$</p>
+<table>
+<thead>
+<tr>
+<th>自由项类型</th>
+<th>特解设法</th>
+<th>$k$ 的取法</th>
+<th>典型错误</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$P_m(x)e^{\lambda x}$</td>
+<td>$y^*=x^{k}Q_m(x)e^{\lambda x}$</td>
+<td>$\lambda$ 作为特征根的<strong>重数</strong>（$0,1,2$）</td>
+<td>$y''-y=e^{x}$ 中 $\lambda=1$ 是单根却设 $Ae^{x}$，应设 $Axe^{x}$</td>
+</tr>
+<tr>
+<td>$e^{\alpha x}\left[P_l\cos\beta x+Q_n\sin\beta x\right]$</td>
+<td>$y^*=x^{k}e^{\alpha x}\left[R_m\cos\beta x+S_m\sin\beta x\right]$</td>
+<td>$\alpha\pm\beta i$ 是特征根取 $k=1$，不是取 $k=0$</td>
+<td>只设 $\cos$ 项不设 $\sin$ 项，或误取 $m=\min\{l,n\}$</td>
+</tr>
+</tbody>
+</table>
+<p>【适用条件】</p>
+<ol>
+<li>$p$、$q$ 为实常数，右端 $f(x)$ 属于上表两种可设型；</li>
+<li>$Q_m(x)$ 与 $P_m(x)$ 同次，$R_m$、$S_m$ 的次数 $m=\max\{l,n\}$；</li>
+<li>指数型的 $k$ 由 $\lambda$ 与特征根的关系定，三角型的 $k$ 由 $\alpha\pm\beta i$ 是否为特征根决定；</li>
+<li>求出 $y^*$ 后必须代回原方程比较系数，定出全部待定系数；</li>
+<li>通解必须写全 $Y+y^*$，缺一项都不完整。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：非齐次方程只写 $Y$ 或只写 $y^*$ 都不对，通解必须是 $Y+y^*$；自由项的 $\lambda$ 恰是特征根时特解必须乘 $x^{k}$，例如 $y''-y=e^{x}$ 中 $\lambda=1$ 是<strong>单根</strong>，应设 $Axe^{x}$ 而不是 $Ae^{x}$。</p>
+</blockquote>
+<h3>【几何与物理应用：把题面翻译成方程】</h3>
+<ul>
+<li><strong>切线斜率</strong>：题面给出某点切线斜率就等价于给出 $y'$。</li>
+<li><strong>坐标轴截距</strong>：切线在 $y$ 轴上的截距是 $y-xy'$，在 $x$ 轴上的截距是 $x-\frac{y}{y'}$。</li>
+<li><strong>列式套路</strong>：设所求曲线为 $y=y(x)$，把题面中关于切线斜率、截距、面积、旋转体体积、速度的每一句话翻译成含 $y'$ 或含变限积分的等式，再化成微分方程求解。</li>
+<li><strong>变限积分条件</strong>：由 $\int_0^xf(t)\,dt=g(x)$ 定义的条件两边对 $x$ 求导即得 $f(x)=g'(x)$。</li>
+<li><strong>隐含初始条件</strong>：题中未直接给出的初始条件往往藏在积分下限处，即 $x=0$ 时 $g(0)=0$。</li>
+<li><strong>回代定常数</strong>：解出含 $C$ 的通解后必须代回定出 $C$，否则答案不唯一。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ b_y=y-xy',\qquad b_x=x-\frac{y}{y'},\qquad \int_0^xf(t)\,dt=g(x)\ \Longrightarrow\ f(x)=g'(x) $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>求截距时要求 $y'$ <strong>不为 0</strong>（切线不与坐标轴平行）；</li>
+<li>变限积分上限是<strong>变量</strong>，求导前先确认被积函数对 $t$ <strong>连续</strong>；</li>
+<li>列式前先设 $y=y(x)$，把题面每一句话都翻译成含 $y'$ 或含变限积分的等式；</li>
+<li>曲线过某点、某时刻的位移与速度都是<strong>初始条件</strong>，最后必须代回定出 $C$。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>秒杀技</strong>：几何应用题的翻译只需抓住两句话——截距就是"切线方程里令另一个坐标为 $0$"，条件里有变限积分就两边对 $x$ 求导。翻译成等式之后再判类型，比边翻译边解方程稳。</p>
+</blockquote>
+</div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h2 class="tt">关键结论速记</h2><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
+<ul>
+<li><code>一阶线性通解</code> —— $y=e^{-\int P\,dx}\left(\int Qe^{\int P\,dx}dx+C\right)$。使用前必须把 $y'$ 的系数化成 $1$，否则 $P$ 会取错。</li>
+<li><code>可分离变量</code> —— $\frac{dy}{dx}=f(x)g(y)$ 分离为 $\frac{dy}{g(y)}=f(x)\,dx$ 后两边积分；积分前先单独检查 $g(y)=0$ 是否给出被丢掉的常数解。</li>
+<li><code>齐次方程</code> —— $\frac{dy}{dx}=\varphi\left(\frac{y}{x}\right)$ 令 $u=\frac{y}{x}$，得 $u+xu'=\varphi(u)$，分离变量解出 $u$ 后回代。</li>
+<li><code>特征方程</code> —— $\lambda^2+p\lambda+q=0$。相异实根 $\Rightarrow C_1e^{\lambda_1x}+C_2e^{\lambda_2x}$；二重根 $\Rightarrow (C_1+C_2x)e^{\lambda x}$；共轭复根 $\alpha\pm\beta i\Rightarrow e^{\alpha x}(C_1\cos\beta x+C_2\sin\beta x)$。</li>
+<li><code>非齐次通解</code> —— $y=Y+y^*$。特解形式必须乘 $x^{k}$，$k$ 等于自由项中的 $\lambda$（或 $\alpha\pm\beta i$）作为特征根的重数。</li>
+<li><code>缺 x 型降阶</code> —— $y''=f(y,y')$ 令 $p=y'$，并用 $y''=p\frac{dp}{dy}$；若写成 $y''=p'$ 就凭空多出一个自变量，方程无法求解。</li>
+<li><code>几何应用</code> —— 切线在 $y$ 轴上的截距是 $y-xy'$，在 $x$ 轴上的截距是 $x-\frac{y}{y'}$；把题给的等量关系写成这类式子即可列出方程。</li>
+</ul>
+</div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h2 class="tt">示意图</h2><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
+<p>图 1 画的是方程 $y'+y=x$ 的解曲线族 $y=x-1+Ce^{-x}$：四条曲线分别取 $C=-1,0,1,2$，其中 $C=1$ 的那条是过点 $(0,0)$ 的特解，它在 $x=1$ 处取值为 $e^{-1}\approx0.3679$；直线 $y=x-1$（图中虚线，即 $C=0$ 的解）是全部解曲线的斜渐近线，任何一条解曲线与它的竖直距离都是 $Ce^{-x}$，当 $x\to+\infty$ 时趋于 $0$ 但永不等于 $0$。</p>
+<p><img alt="函数图像：一阶线性方程的解曲线族与斜渐近线" src="../assets/gaoshu-07-fig1.png" /></p>
+<p>图 2 是拿到方程后判定类型、选择解法的流程。</p>
+<p><img alt="解题流程：微分方程类型判定与解法选择" src="../assets/gaoshu-07-fig2.png" /></p>
+<div class="mermaid">flowchart TD
+    A[&quot;给出一个微分方程&quot;] --&gt; B{&quot;能把 y 与 x 分到等号两边吗&quot;}
+    B --&gt;|&quot;能&quot;| C[&quot;可分离变量 两边积分并检查常数解&quot;]
+    B --&gt;|&quot;不能&quot;| D{&quot;右端只含 y 比 x 的组合吗&quot;}
+    D --&gt;|&quot;能&quot;| E[&quot;齐次方程 令 u = y 比 x&quot;]
+    D --&gt;|&quot;不能&quot;| F{&quot;能写成 y&#x27; + P(x)y = Q(x) 吗&quot;}
+    F --&gt;|&quot;能&quot;| G[&quot;一阶线性 套通解公式&quot;]
+    F --&gt;|&quot;不能&quot;| H{&quot;是二阶常系数吗&quot;}
+    H --&gt;|&quot;是&quot;| I[&quot;写特征方程 定通解&quot;]
+    H --&gt;|&quot;否&quot;| J[&quot;看能否降阶 令 p = y&#x27;&quot;]
+</div><details><summary>查看该图源码</summary><pre><code>flowchart TD
+    A[&quot;给出一个微分方程&quot;] --&gt; B{&quot;能把 y 与 x 分到等号两边吗&quot;}
+    B --&gt;|&quot;能&quot;| C[&quot;可分离变量 两边积分并检查常数解&quot;]
+    B --&gt;|&quot;不能&quot;| D{&quot;右端只含 y 比 x 的组合吗&quot;}
+    D --&gt;|&quot;能&quot;| E[&quot;齐次方程 令 u = y 比 x&quot;]
+    D --&gt;|&quot;不能&quot;| F{&quot;能写成 y&#x27; + P(x)y = Q(x) 吗&quot;}
+    F --&gt;|&quot;能&quot;| G[&quot;一阶线性 套通解公式&quot;]
+    F --&gt;|&quot;不能&quot;| H{&quot;是二阶常系数吗&quot;}
+    H --&gt;|&quot;是&quot;| I[&quot;写特征方程 定通解&quot;]
+    H --&gt;|&quot;否&quot;| J[&quot;看能否降阶 令 p = y&#x27;&quot;]
+</code></pre></details>
+</div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
+<ul>
+<li><strong>错在解可分离变量方程时直接除以 $g(y)$，漏掉常数解。</strong> 正确做法是先检查 $g(y)=0$：若 $g(y_0)=0$，则 $y\equiv y_0$ 也是解，它常常在通解中取不到（因为解出通解时除以了 $g(y)$）。</li>
+<li><strong>错在没把方程化成标准形就用通解公式。</strong> 例如 $xy'+y=x^2$ 必须先除以 $x$ 写成 $y'+\frac{1}{x}y=x$，此时 $P=\frac{1}{x}$；若直接用原式的 $P$ 就取错了。另外算 $\int P\,dx$ 时不要漏掉积分常数以外的化简，$C$ 只需在最后写一个。</li>
+<li><strong>错在非齐次方程只写 $Y$ 或只写 $y^*$。</strong> 通解必须是 $Y+y^*$；当自由项的 $\lambda$ 恰是特征根时，特解必须乘 $x^{k}$——例如 $y''-y=e^{x}$ 中 $\lambda=1$ 是单根，应设 $Axe^{x}$ 而不是 $Ae^{x}$。</li>
+<li><strong>错在几何应用题里丢掉初始条件或单位。</strong> 曲线过某点、某时刻的位移与速度都是初始条件，列式时先设 $y=y(x)$ 再翻译题面；解出含 $C$ 的通解后必须代回定出 $C$，否则答案不唯一。</li>
+</ul>
+</div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
+<p><strong>2024 年数二第 13 题（填空题，5 分）</strong></p>
+<p>微分方程 $y'=\dfrac{1}{(x+y)^2}$ 满足 $y(1)=0$ 的解为 ______。</p>
+<blockquote>
+<p>解析：</p>
+<ol>
+<li>方程右端只依赖 $x+y$，属 $y'=f(ax+by+c)$ 型，令 $u=x+y$，则 $y=u-x$、$y'=u'-1$，方程化为 $u'-1=\frac{1}{u^2}$，即 $\frac{du}{dx}=\frac{u^2+1}{u^2}$。</li>
+<li>分离变量得 $\frac{u^2}{u^2+1}\,du=dx$，两边积分（左边拆项为 $1-\frac{1}{u^2+1}$）得 $u-\arctan u=x+C$。</li>
+<li>回代 $u=x+y$，得隐式通解 $y=\arctan(x+y)+C$；代入 $x=1,y=0$（此时 $u=1$）得 $1-\frac{\pi}{4}=1+C$，故 $C=-\frac{\pi}{4}$。</li>
+<li>结论：所求特解为 $\displaystyle y=\arctan(x+y)-\frac{\pi}{4}$（隐式解），也可写成等价形式 $\tan\left(y+\frac{\pi}{4}\right)=x+y$。</li>
+</ol>
+<p>验证：对 $y=\arctan(x+y)-\frac{\pi}{4}$ 两边求导得 $y'=\frac{1+y'}{1+(x+y)^2}$，整理即 $y'=\frac{1}{(x+y)^2}$；且 $x=1,y=0$ 时 $\arctan(1)-\frac{\pi}{4}=0$，初始条件成立。</p>
+</blockquote>
+<hr /></div></section></div></main></div>
+<button id="totop" type="button">↑ 回到当前小节</button>
+<button id="themetoggle" type="button" title="切换深色/浅色">◐ 主题</button>
+<script>
+document.getElementById('q')?.addEventListener('input',e=>{
+  const v=e.target.value.trim().toLowerCase();
+  document.querySelectorAll('nav a').forEach(a=>{
+    a.style.display = !v || a.textContent.toLowerCase().includes(v) ? '' : 'none';});
+});
+</script>
+<script>
+(function () {
+  var main = document.querySelector('main');
+  // 1) 侧栏高亮当前小节（滚动位置驱动）
+  var links = [].slice.call(document.querySelectorAll('nav a.toclink'));
+  var targets = links.map(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    return document.getElementById(id);
+  });
+  function sync() {
+    var y = window.scrollY + 120, best = -1;
+    targets.forEach(function (t, i) { if (t && t.offsetTop <= y) best = i; });
+    links.forEach(function (a, i) { a.classList.toggle('cur', i === best); });
+  }
+  if (links.length) {
+    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  }
+  // 2) 键盘：j/k 或 ←/→ 翻章
+  var prev = document.body.getAttribute('data-prev');
+  var next = document.body.getAttribute('data-next');
+  document.addEventListener('keydown', function (e) {
+    if (e.target.matches('input, textarea')) return;
+    if (e.key === 'ArrowLeft' || e.key === 'k') { if (prev) location.href = prev; }
+    if (e.key === 'ArrowRight' || e.key === 'j') { if (next) location.href = next; }
+  });
+  // 3) 移动端侧栏抽屉 + 回到顶部
+  var t = document.getElementById('navtoggle');
+  if (t) t.addEventListener('click', function () { document.body.classList.toggle('navopen'); });
+  // 4) 阅读进度条
+  var bar = document.getElementById('progress');
+  if (bar) {
+    var upd = function () {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd); upd();
+  }
+  // 5) 主题切换（记忆到 localStorage）
+  var tb = document.getElementById('themetoggle');
+  if (tb) tb.addEventListener('click', function () {
+    var cur = document.documentElement.dataset.theme;
+    if (cur === 'auto') cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var nx = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = nx;
+    try { localStorage.setItem('dsh-theme', nx); } catch (e) {}
+  });
+  var top = document.getElementById('totop');
+  if (top) {
+    top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    window.addEventListener('scroll', function () {
+      top.style.display = window.scrollY > 500 ? 'block' : 'none';
+    }, { passive: true });
+  }
+})();
+</script>
+<script>
+(function () {
+  if (!window.renderMathInElement) {
+    // 公式渲染器没加载到：明确提示，而不是留一堆 $...$ 让读者困惑
+    var has = /\$[^$]+\$/.test(document.body.innerText || '');
+    if (has) {
+      var p = document.createElement('p');
+      p.className = 'missing';
+      p.textContent = '未加载到公式渲染器（katex/），页面里的 LaTeX 公式以源码显示。'
+        + '请确认 数学二/katex/ 目录存在。';
+      document.querySelector('main').insertBefore(p, document.querySelector('main').firstChild);
+    }
+    return;
+  }
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '$', right: '$', display: false }
+    ],
+    throwOnError: false,
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  });
+})();
+</script>
+<script>
+(function () {
+  var nodes = document.querySelectorAll('.mermaid');
+  if (!nodes.length) return;
+  if (!window.mermaid) {
+    nodes.forEach(function (el) {
+      el.insertAdjacentHTML('beforebegin',
+        '<p class="missing">未加载到 mermaid 运行时（mermaid.min.js 不在预期位置），' +
+        '下图暂以源码显示，可复制到任意 mermaid 编辑器查看。</p>');
+      var pre = document.createElement('pre');
+      var code = document.createElement('code');
+      code.textContent = el.textContent;
+      pre.appendChild(code); el.innerHTML = ''; el.appendChild(pre);
+    });
+    return;
+  }
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: 'neutral',
+    flowchart: { useMaxWidth: true }, state: { useMaxWidth: true } });
+  nodes.forEach(function (el, i) {
+    mermaid.render('mmd-' + i, el.textContent.trim()).then(function (r) {
+      el.innerHTML = r.svg;
+    }).catch(function (e) {
+      el.innerHTML = '<p class="missing">该图渲染失败：' + e.message + '</p>';
+    });
+  });
+})();
+</script></body></html>

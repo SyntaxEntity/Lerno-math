@@ -1,0 +1,11 @@
+{
+ "crit_point": [
+  1.0,
+  1.0
+ ],
+ "endpoints_y": [
+  1.0,
+  1.0
+ ],
+ "secant_slope": 0.0
+}

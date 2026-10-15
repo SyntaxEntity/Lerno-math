@@ -1,0 +1,7 @@
+{
+ "max_point": [
+  1.0,
+  0.36787944117144233
+ ],
+ "particular_solution": "y=(x)e^{-x}"
+}

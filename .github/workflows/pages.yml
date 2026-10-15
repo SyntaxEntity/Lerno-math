@@ -1,0 +1,74 @@
+# 发布 math2-site 到 GitHub Pages。
+#
+# 仓库根 = 本目录（数学二/ + parts/ + 工具链）；站点是**构建产物**，
+# 由 pack_site.py 在 CI 里生成后上传，不入库（见 .gitignore）。
+# 这样部署的站点永远等于当前源码，也不会让每次改内容都产生一堆 HTML 差异。
+#
+# 为什么用工作流而不是「Deploy from a branch」：
+#   1. 发布前跑一遍 数学二/scripts/validate.py（F1—F18，含 F3 真实 mermaid 解析），
+#      校验不过就不部署——分支部署没有任何地方能挂这道门禁。
+#   2. 自定义工作流不占用「每小时 10 次构建」的软性限制。
+name: Deploy static site to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # validate.py 只需要 markdown；matplotlib / sympy 只在重跑绘图的生成路径上，
+      # 本站点不重新生成内容，因此 CI 不装它们。
+      - name: 安装 Python 校验依赖
+        run: python3 -m pip install --quiet 'Markdown==3.11.1'
+
+      # F3 用官方 mermaid 解析器逐块真解析（正则查不出「标签含圆括号未加引号」
+      # 这类直接解析失败的写法）。版本必须与站点内置运行时一致，
+      # 否则校验的语法和线上渲染的不是同一个版本。
+      - name: 安装 Node 校验依赖（F3 真实 mermaid 解析）
+        run: >-
+          npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund
+          mermaid@12.1.0 katex@0.16.47 jsdom@30.1.2
+
+      # 门禁：模板字段、考频数字与 meta.py 逐字一致、图语法、ASCII 对齐、
+      # 真题年份、链接可达、sympy 断言之外的交付物完整性。有 error 即中止部署。
+      - name: 发布前校验（F1—F18）
+        run: python3 数学二/scripts/validate.py
+
+      # pack_site.py 只用标准库（os/re/shutil/sys）。
+      # 输出目录不含 .git/.github，因此不会触发它的 VCS 保护。
+      - name: 打包站点
+        run: python3 数学二/scripts/pack_site.py math2-site
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: math2-site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

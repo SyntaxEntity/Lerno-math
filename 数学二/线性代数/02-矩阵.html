@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>线性代数 · 矩阵</title><style>
+:root{
+ --bg:#f7f7f5; --paper:#ffffff; --fg:#1f2328; --fg2:#3d444d; --mut:#6b7280;
+ --line:#e3e6ea; --line2:#eef1f4; --acc:#1d4ed8; --acc2:#0b3d91;
+ --codebg:#f5f7fa; --hi:#fff6d6; --warnbg:#fff8ec; --warnbd:#f0d9a8;
+ --realbg:#f1f8f2; --realbd:#bcdcc2; --chip:#eef2f7;
+ --sh:0 1px 2px rgba(16,24,40,.04),0 4px 16px rgba(16,24,40,.05);
+ --serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",Georgia,"Times New Roman",serif;
+ --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+}
+html[data-theme="dark"]{
+ --bg:#0d1117; --paper:#161b22; --fg:#e6edf3; --fg2:#c9d1d9; --mut:#8b949e;
+ --line:#2b3138; --line2:#22272e; --acc:#6ea8fe; --acc2:#9ec5fe;
+ --codebg:#1b2129; --hi:#3a2f10; --warnbg:#2c2415; --warnbd:#5c4a1e;
+ --realbg:#14251a; --realbd:#2f5c3c; --chip:#1f2630;
+ --sh:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
+ font-size:16.5px;line-height:1.82;-webkit-font-smoothing:antialiased}
+#wrap{display:flex;min-height:100vh}
+
+/* ---------- 侧栏 ---------- */
+nav{width:302px;flex:0 0 302px;background:var(--paper);border-right:1px solid var(--line);
+ position:sticky;top:0;height:100vh;overflow:auto;padding:18px 14px 40px}
+nav .navhead{display:flex;align-items:center;justify-content:space-between;
+ gap:8px;margin:0 6px 12px}
+nav .navhead h1{font-size:14.5px;margin:0;font-weight:700;letter-spacing:.02em}
+nav .sitehome{font-size:12px;color:var(--acc);text-decoration:none;
+ border:1px solid var(--line);border-radius:999px;padding:2px 9px;white-space:nowrap}
+nav .sitehome:hover{border-color:var(--acc)}
+nav input{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:9px;
+ background:var(--bg);color:var(--fg);margin-bottom:12px;font-size:13px;font-family:var(--sans)}
+nav input:focus{outline:2px solid var(--acc);outline-offset:-1px;border-color:transparent}
+nav a{display:block;padding:6px 10px;color:var(--fg2);text-decoration:none;
+ font-size:13.5px;border-radius:8px;line-height:1.5}
+nav a:hover{background:var(--codebg);color:var(--fg)}
+nav .grp{margin:16px 6px 6px;font-size:11.5px;color:var(--mut);
+ font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+nav a.cur{background:var(--chip);color:var(--acc);font-weight:700}
+nav .tocbox{margin:2px 0 10px 16px;padding-left:10px;border-left:2px solid var(--line)}
+nav .tocbox a{font-size:12.5px;color:var(--mut);padding:3px 8px}
+nav .tocbox a.cur{color:var(--acc);font-weight:600;background:none}
+
+/* ---------- 主区 ---------- */
+main{flex:1;min-width:0;padding:0 0 100px}
+.inner{max-width:880px;margin:0 auto;padding:0 46px}
+.chapterbar{position:sticky;top:0;z-index:20;background:var(--paper);
+ border-bottom:1px solid var(--line);
+ padding:12px 46px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+@supports (backdrop-filter:blur(1px)){
+ .chapterbar{background:color-mix(in srgb,var(--paper) 86%,transparent);
+  backdrop-filter:saturate(1.6) blur(10px)}
+}
+.chapterbar .cb-title{font-weight:750;font-size:15px;font-family:var(--serif)}
+.chapterbar .cb-sub{color:var(--mut);font-size:12.5px}
+.chapterbar .cb-spacer{flex:1}
+.chapterbar a.cb-btn{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;
+ padding:6px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);text-decoration:none;white-space:nowrap;transition:.15s}
+.chapterbar a.cb-btn:hover{border-color:var(--acc);color:var(--acc);transform:translateY(-1px)}
+.chapterbar a.cb-btn.off{opacity:.32;pointer-events:none}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--acc),#7c3aed);
+ width:0;z-index:50;transition:width .1s linear}
+#totop{position:fixed;right:22px;bottom:24px;z-index:30;display:none;
+ padding:9px 15px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+#totop:hover{border-color:var(--acc);color:var(--acc)}
+#themetoggle{position:fixed;right:22px;bottom:70px;z-index:30;
+ padding:9px 13px;border:1px solid var(--line);border-radius:999px;background:var(--paper);
+ color:var(--fg2);cursor:pointer;font-size:12.5px;box-shadow:var(--sh);font-family:var(--sans)}
+
+/* ---------- 标题 ---------- */
+h1{font-family:var(--serif);font-size:30px;line-height:1.35;font-weight:700;
+ margin:34px 0 18px;letter-spacing:.01em}
+h2{font-family:var(--serif);font-size:25px;margin:42px 0 8px;font-weight:700;
+ line-height:1.4;scroll-margin-top:80px}
+h3{font-size:18px;margin:26px 0 10px;font-weight:700}
+p{margin:1em 0}
+strong{font-weight:700}
+
+/* ---------- 章节头（知识点标题 + 高频标签） ---------- */
+.chaphead{margin:10px 0 26px;padding-bottom:16px;border-bottom:2px solid var(--line)}
+h2.bookmark{margin:60px 0 0;padding:14px 18px;font-size:24px;font-weight:800;
+ color:#fff;background:linear-gradient(100deg,var(--acc2),var(--acc));
+ border-radius:12px;box-shadow:var(--sh);letter-spacing:.01em}
+h2.bookmark .badge{background:rgba(255,255,255,.22);color:#fff;border-color:transparent;
+ font-weight:700;margin-left:8px;vertical-align:3px}
+h2.bookmark + .sec, h2.bookmark ~ .sec:first-of-type{margin-top:18px}
+.bookhead{margin:34px 0 10px;padding-bottom:14px;border-bottom:2px solid var(--line)}
+.bookhead h1{margin:0 0 8px}
+.bookhead .lede{margin:0;color:var(--mut);font-size:14.5px;line-height:1.7}
+/* ===== 第 1 层：部分（高等数学 / 线性代数）===== */
+h2.parthead{margin:64px 0 10px;padding:18px 24px;font-size:29px;font-weight:800;
+ color:#fff;letter-spacing:.02em;border-radius:14px;box-shadow:var(--sh);
+ background:linear-gradient(100deg,#111827,#374151)}
+html[data-theme="dark"] h2.parthead{background:linear-gradient(100deg,#1f2937,#374151)}
+h2.parthead .tag{background:rgba(255,255,255,.18);color:#fff;border-color:transparent;
+ font-weight:700;font-size:13px;margin-left:10px;vertical-align:4px}
+h2.parthead:first-of-type{margin-top:26px}
+.partoverview{margin:0 0 8px;padding:2px 0 2px 20px;color:var(--fg2)}
+.partoverview h3{font-size:17px;margin:22px 0 8px;border:0;color:var(--mut);
+ font-family:var(--sans);font-weight:700;letter-spacing:.02em}
+.partoverview table{max-width:100%}
+.anchor{scroll-margin-top:16px}
+.backtop{margin:22px 0 0;font-size:13px}
+.backtop a{color:var(--mut);text-decoration:none}
+.backtop a:hover{color:var(--acc)}
+.chapterbar .cb-home{font-weight:700;font-size:14px;color:var(--acc);
+ text-decoration:none;font-family:var(--serif)}
+.chaphead h2{margin:0 0 10px;border:0}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{font-size:12px;padding:3px 11px;border-radius:999px;background:var(--chip);
+ color:var(--fg2);border:1px solid var(--line)}
+.badge.hot{background:linear-gradient(135deg,#fff1c9,#ffe0a3);color:#7a4b00;
+ border-color:#f0cf8a;font-weight:700}
+html[data-theme="dark"] .badge.hot{background:#3a2f10;color:#ffd479;border-color:#5c4a1e}
+
+/* ---------- 模板六段式 ---------- */
+.sec{margin:30px 0}
+/* ===== 字段层级：整块卡片 + 明显的标题条 ===== */
+.sec{margin:34px 0;background:var(--paper);border:1px solid var(--line);
+ border-radius:14px;box-shadow:var(--sh);overflow:hidden}
+.sec > .sec-h{display:flex;align-items:center;gap:11px;margin:0;
+ padding:13px 20px;background:linear-gradient(90deg,var(--codebg),transparent);
+ border-bottom:1px solid var(--line);border-left:5px solid var(--acc)}
+.sec > .sec-h .ic{width:30px;height:30px;flex:0 0 30px;border-radius:9px;
+ display:grid;place-items:center;font-size:16px;background:var(--chip)}
+.sec > .sec-h .tt{font-family:var(--serif);font-size:20px;font-weight:800;
+ margin:0;padding:0;border:0;line-height:1.35;color:var(--fg)}
+.sec > .sec-h .hint{font-size:12.5px;color:var(--mut);margin-left:auto;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sec > .box{padding:18px 22px}
+/* 每个字段给一条自己的主色，帮助扫读时快速定位 */
+.sec-freq > .sec-h{border-left-color:#0ea5e9}
+.sec-core > .sec-h{border-left-color:var(--acc)}
+.sec-key  > .sec-h{border-left-color:#7c3aed}
+.sec-fig  > .sec-h{border-left-color:#0891b2}
+.sec-err  > .sec-h{border-left-color:#d97706}
+.sec-real > .sec-h{border-left-color:#16a34a}
+
+.sec-freq .box{font-size:15.5px;font-weight:600}
+.sec-freq .box blockquote{margin:0 0 4px;background:var(--codebg);border-left:3px solid var(--acc);
+ border-radius:0 8px 8px 0;padding:9px 13px;font-size:14.6px;color:var(--fg2)}
+.sec-freq .box > p:first-child{margin-top:0}
+/* ===== 模块层级：核心讲解里的 【模块名】 ===== */
+.sec-core .box h3, .sec-core .box h4, .sec-core .box h5{
+ margin:30px 0 12px;padding:9px 0 9px 15px;font-size:18.5px;font-weight:800;
+ font-family:var(--serif);color:var(--acc2);letter-spacing:.01em;
+ border-left:6px solid var(--acc);border-radius:0 8px 8px 0;
+ background:linear-gradient(90deg,var(--codebg),transparent)}
+.sec-core .box > h3:first-child, .sec-core .box > h4:first-child,
+.sec-core .box > h5:first-child{margin-top:2px}
+.sec-core .box h4{font-size:17px;border-left-width:4px}
+/* 【核心公式】【适用条件】这类次级标记 */
+.sec-core .box p > strong:only-child{color:var(--acc);letter-spacing:.02em}
+.sec-core .box{font-size:16.8px;line-height:1.95}
+.sec-core .box p{margin:1.05em 0}
+.sec-core .box p:first-child{margin-top:0}
+.sec-core .box p:first-child::first-letter{font-size:1.02em}
+
+/* 关键结论速记：卡片网格 */
+.sec-key .box{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.sec-key ul{display:contents;margin:0;padding:0;list-style:none}
+.sec-key li{margin:0;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;padding:13px 15px;font-size:14.8px;line-height:1.72;
+ position:relative;overflow:hidden}
+.sec-key li::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+ background:linear-gradient(180deg,var(--acc),#7c3aed);opacity:.85}
+.sec-key li strong:first-child,.sec-key li em:first-child{color:var(--acc2)}
+
+/* 示意图 */
+.sec-fig .box{background:var(--bg);border-radius:10px}
+.sec-fig img{display:block;width:100%;height:auto;margin:12px 0;border-radius:10px;
+ border:1px solid var(--line2);background:#fff}
+.sec-fig .mermaid{margin:14px 0;padding:14px;background:var(--bg);border:1px solid var(--line);
+ border-radius:12px;overflow:auto;text-align:center}
+.sec-fig details{margin:6px 0 0}
+.sec-fig .ascii{background:var(--bg);border:1px solid var(--line);border-radius:10px;
+ font-size:12.5px;line-height:1.5}
+
+/* 易错点：警示样式 */
+.sec-err .box{background:var(--warnbg)}
+.sec-err ul{margin:10px 0 0;padding:0;list-style:none}
+.sec-err li{margin:12px 0;padding-left:30px;position:relative;font-size:15.6px;line-height:1.85}
+.sec-err li::before{content:"⚠";position:absolute;left:0;top:0;color:#d97706;font-size:15px}
+.sec-err li strong:first-child{color:#b45309}
+html[data-theme="dark"] .sec-err li strong:first-child{color:#fbbf24}
+
+/* 真题示例 */
+.sec-real .box{background:var(--realbg)}
+.sec-real .box > p:first-child{font-weight:700;color:#166534;font-size:16px;margin-top:0}
+html[data-theme="dark"] .sec-real .box > p:first-child{color:#86efac}
+.sec-real blockquote{margin:14px 0 6px;padding:12px 16px;background:var(--paper);
+ border-left:4px solid var(--realbd);border-radius:0 10px 10px 0;font-size:15.4px}
+.sec-real blockquote p{margin:.55em 0}
+.sec-real blockquote ol,.sec-real blockquote ul{margin:.5em 0;padding-left:1.35em}
+
+/* ---------- 通用元素 ---------- */
+blockquote{margin:1.1em 0;padding:12px 16px;background:var(--codebg);
+ border-left:4px solid var(--acc);border-radius:0 10px 10px 0;color:var(--fg2)}
+code{background:var(--codebg);padding:.16em .42em;border-radius:6px;
+ font:13.6px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;
+ border:1px solid var(--line2)}
+pre{background:var(--codebg);padding:14px 16px;border-radius:12px;overflow:auto;
+ border:1px solid var(--line)}
+pre code{background:none;padding:0;border:0;font-size:12.8px;line-height:1.62}
+img{max-width:100%;height:auto}
+hr{border:0;border-top:1px solid var(--line);margin:36px 0}
+ul,ol{padding-left:1.5em}
+li{margin:.34em 0}
+table{border-collapse:separate;border-spacing:0;margin:16px 0;width:100%;
+ display:block;overflow:auto;max-width:100%;font-size:14.6px;
+ background:var(--paper);border:1px solid var(--line);border-radius:12px}
+th,td{border-bottom:1px solid var(--line2);padding:9px 14px;text-align:left}
+th{background:var(--codebg);font-weight:700;font-size:13.6px;color:var(--fg2);
+ position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--codebg)}
+td:first-child,th:first-child{padding-left:16px}
+.katex{font-size:1.04em}
+.katex-display{margin:1.1em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.warn,.missing{background:var(--warnbg);border:1px solid var(--warnbd);padding:11px 15px;
+ border-radius:10px;font-size:14px;margin:14px 0}
+.missing{background:#fdecec;border-color:#f0b4b4}
+html[data-theme="dark"] .missing{background:#2c1616;border-color:#6b2b2b}
+#navtoggle{position:fixed;left:12px;top:12px;z-index:40;display:none;
+ padding:8px 13px;border:1px solid var(--line);border-radius:9px;background:var(--paper);
+ color:var(--fg);cursor:pointer;font-size:13.5px;box-shadow:var(--sh);font-family:var(--sans)}
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;
+ background:var(--hi);border:1px solid var(--line);margin-left:6px;vertical-align:2px}
+
+@media (max-width:1080px){ .sec-key .box{grid-template-columns:1fr} }
+@media (max-width:860px){
+ #navtoggle{display:block}
+ nav{position:fixed;left:0;top:0;z-index:35;transform:translateX(-102%);
+  transition:transform .22s ease;box-shadow:2px 0 18px rgba(0,0,0,.16);width:86vw;max-width:320px;
+  flex-basis:auto}
+ body.navopen nav{transform:none}
+ .inner{padding:0 18px}
+ .chapterbar{padding:10px 18px}
+ h1{font-size:25px} h2{font-size:21px} .sec-core .box{font-size:16px}
+}
+@media print{
+ nav,#navtoggle,#totop,#themetoggle,#progress,.chapterbar{display:none!important}
+ main{padding:0} .inner{max-width:none;padding:0}
+ .sec,.sec > .box{box-shadow:none;break-inside:avoid}
+ a{color:inherit;text-decoration:none}
+}
+</style>
+<link rel="stylesheet" href="../katex/katex.min.css">
+<script src="../katex/katex.min.js"></script>
+<script src="../katex/contrib/auto-render.min.js"></script>
+<script src="../mermaid.min.js"></script>
+<script>try{var t=localStorage.getItem('dsh-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body data-prev="01-行列式.html" data-next="03-向量与向量组.html">
+<div id="progress"></div><button id="navtoggle" type="button">☰ 目录</button>
+<div id="wrap"><nav><div class="navhead"><h1>数学二速成资料</h1><a class="sitehome" href="../index.html">全科合集</a></div>
+<input id="q" placeholder="筛选章节（输入即过滤）">
+<div class="grp">高等数学（约 117 分 · 约 78%）</div>
+<a class="" href="../高等数学/01-函数极限与连续.html">函数、极限与连续 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/02-导数与微分.html">导数与微分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/03-中值定理与导数应用.html">中值定理与导数应用 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/04-不定积分.html">不定积分</a>
+<a class="" href="../高等数学/05-定积分与反常积分.html">定积分与反常积分 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/06-定积分的几何与物理应用.html">定积分的几何与物理应用 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/07-微分方程.html">微分方程 <span class="tag">高频</span></a>
+<a class="" href="../高等数学/08-数二高数综合与证明专题.html">数二高数综合与证明专题</a>
+<a class="" href="../高等数学/09-多元函数微积分学.html">多元函数微积分学 <span class="tag">高频</span></a>
+<div class="grp">线性代数（约 33 分 · 约 22%）</div>
+<a class="" href="../线性代数/01-行列式.html">行列式</a>
+<a class="cur" href="../线性代数/02-矩阵.html">矩阵 <span class="tag">高频</span></a>
+<div class="tocbox"><a class="toclink" href="#sec-freq">考频统计</a><a class="toclink" href="#sec-core">核心讲解</a><a class="toclink" href="#sec-key">关键结论速记</a><a class="toclink" href="#sec-fig">示意图</a><a class="toclink" href="#sec-err">易错点</a><a class="toclink" href="#sec-real">真题示例</a></div>
+<a class="" href="../线性代数/03-向量与向量组.html">向量与向量组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/04-线性方程组.html">线性方程组 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/05-特征值与特征向量.html">特征值与特征向量 <span class="tag">高频</span></a>
+<a class="" href="../线性代数/06-二次型.html">二次型 <span class="tag">高频</span></a></nav><main><div class="chapterbar"><a class="cb-home" href="../index.html">线性代数</a><span class="cb-sub">第 矩阵 章 · 8 分 · 高频</span><span class="cb-spacer"></span><a class="cb-btn" href="01-行列式.html" title="键盘 ← 或 k">← 行列式</a><a class="cb-btn" href="03-向量与向量组.html" title="键盘 → 或 j">向量与向量组 →</a></div><div class="inner">
+<header class="chaphead"><h1>矩阵</h1><div class="badges"><span class="badge hot">高频考点</span><span class="badge">线性代数</span><span class="badge">建议 8 分</span></div></header>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 24%；主要题型：选择、填空（伴随矩阵、秩、初等变换、可逆判定）。</p>
+</div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h2 class="tt">核心讲解</h2><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
+<h3>【矩阵运算】</h3>
+<ul>
+<li><strong>结合律成立</strong>：$(AB)C=A(BC)$，多个矩阵连乘时可按方便的顺序结合。</li>
+<li><strong>分配律成立</strong>：$A(B+C)=AB+AC$，$(A+B)C=AC+BC$。</li>
+<li><strong>交换律不成立</strong>：一般 $AB\neq BA$，一切「先左乘还是先右乘」的区别都源于此。</li>
+<li><strong>转置反序</strong>：$(AB)^{T}=B^{T}A^{T}$，转置后两个因子的顺序必须交换。</li>
+<li><strong>求逆反序</strong>：$(AB)^{-1}=B^{-1}A^{-1}$，前提是 $A$、$B$ 都 <strong>可逆</strong>。</li>
+<li><strong>零因子现象</strong>：$AB=O$ 推不出 $A=O$ 或 $B=O$，这是后面秩不等式与 $AB=O$ 型结论的出发点。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ (AB)C=A(BC),\qquad (AB)^{T}=B^{T}A^{T},\qquad (AB)^{-1}=B^{-1}A^{-1} $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>乘法要求左矩阵的 <strong>列数</strong> 等于右矩阵的 <strong>行数</strong>；</li>
+<li>转置公式对任意可乘矩阵成立；</li>
+<li>求逆公式要求 $A$ 与 $B$ 均 <strong>可逆</strong>（同阶方阵）；</li>
+<li>使用「$AB=O\Rightarrow$ 秩不等式」时，必须补上三者的阶数关系。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：把 $(AB)^{T}$ 写成 $A^{T}B^{T}$ 是最常见的符号错误。只要记住「转置和求逆都让因子<strong>反序</strong>」，两个公式一起记就不会混。</p>
+</blockquote>
+<h3>【逆矩阵与伴随矩阵】</h3>
+<ul>
+<li><strong>伴随矩阵定义</strong>：$A^{*}=(A_{ji})$，即把每个元素换成它的 <strong>代数余子式</strong> 之后再 <strong>转置</strong>。</li>
+<li><strong>母公式</strong>：$AA^{*}=A^{*}A=|A|E$，关于伴随的一切结论都由它推出。</li>
+<li><strong>求逆公式</strong>：$|A|\neq 0$ 时 $A^{-1}=\frac{1}{|A|}A^{*}$。</li>
+<li><strong>行列式结论</strong>：$|A^{*}|=|A|^{n-1}$。</li>
+<li><strong>可逆的判据群</strong>：见下表，解题时按题目条件挑最好用的一条。</li>
+<li><strong>参数题与秩题的分工</strong>：算参数通常用 $|A|\neq 0$，讨论秩通常用 $r(A)=n$。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ AA^{*}=A^{*}A=|A|E,\qquad A^{-1}=\frac{1}{|A|}A^{*},\qquad |A^{*}|=|A|^{n-1} $$</p>
+<p><strong>可逆的等价条件</strong>（$A$ 为 $n$ 阶方阵）：</p>
+<table>
+<thead>
+<tr>
+<th>等价说法</th>
+<th>表达形式</th>
+<th>最适用的题型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>行列式 <strong>不为 0</strong></td>
+<td>$\lvert A\rvert\neq 0$</td>
+<td>含参数的方阵求参数范围</td>
+</tr>
+<tr>
+<td>满秩</td>
+<td>$r(A)=n$</td>
+<td>抽象矩阵、秩的讨论</td>
+</tr>
+<tr>
+<td>初等矩阵之积</td>
+<td>$A=P_1P_2\cdots P_s$</td>
+<td>初等变换与等价标准形</td>
+</tr>
+<tr>
+<td>齐次方程组只有零解</td>
+<td>$Ax=0$ 仅有 $x=0$</td>
+<td>解的结构、基础解系</td>
+</tr>
+<tr>
+<td>列（行）向量组 <strong>线性无关</strong></td>
+<td>$r(\alpha_1,\dots,\alpha_n)=n$</td>
+<td>向量组相关性判定</td>
+</tr>
+<tr>
+<td>与单位阵等价</td>
+<td>$A\cong E$</td>
+<td>初等变换化简</td>
+</tr>
+<tr>
+<td>特征值全 <strong>不为 0</strong></td>
+<td>$\lambda_i\neq 0$</td>
+<td>相似、特征值综合题</td>
+</tr>
+</tbody>
+</table>
+<p><strong>伴随矩阵的秩</strong>（$A$ 为 $n$ 阶方阵，$n\ge 2$）：</p>
+<table>
+<thead>
+<tr>
+<th>$r(A)$ 的情形</th>
+<th>$r(A^{*})$</th>
+<th>关键理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$r(A)=n$（$A$ <strong>可逆</strong>）</td>
+<td>$r(A^{*})=n$</td>
+<td>$\lvert A^{*}\rvert=\lvert A\rvert^{n-1}\neq 0$</td>
+</tr>
+<tr>
+<td>$r(A)=n-1$</td>
+<td>$r(A^{*})=1$</td>
+<td>$A^{*}\neq O$ 但 $A^{*}A=\lvert A\rvert E=O$</td>
+</tr>
+<tr>
+<td>$r(A)\le n-2$</td>
+<td>$r(A^{*})=0$，即 $A^{*}=O$</td>
+<td>所有 $n-1$ 阶子式全为 $0$</td>
+</tr>
+</tbody>
+</table>
+<p>【适用条件】</p>
+<ol>
+<li>定义 $A^{*}=(A_{ji})$ 中 <strong>转置</strong> 这一步不能漏，漏掉就全盘出错；</li>
+<li>$A^{-1}=\frac{1}{|A|}A^{*}$ 要求 $|A|\neq 0$，即 $A$ <strong>可逆</strong>；</li>
+<li>$|A^{*}|=|A|^{n-1}$ 与 $r(A^{*})$ 的三段结论都要求 $A$ 是 <strong>$n$ 阶方阵</strong>；</li>
+<li>$r(A)=n-1$ 时 $A^{*}\neq O$ 且 $r(A^{*})=1$，此时 $A^{*}$ 的每一行都是 $A^{*}A=O$ 所对应方程组的解。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：把「$|A|=0$」直接当成「$A^{*}=O$」。正确说法是 $r(A)=n-1$ 时 $r(A^{*})=1$，只有 $r(A)\le n-2$ 时才有 $A^{*}=O$——三段情形必须分清楚。</p>
+</blockquote>
+<h3>【初等变换与秩】</h3>
+<ul>
+<li><strong>秩的定义</strong>：$r(A)$ 是 $A$ 中 <strong>非零子式</strong> 的最高阶数。</li>
+<li><strong>秩的算法</strong>：$r(A)$ 等于行阶梯形中 <strong>非零行的行数</strong>。</li>
+<li><strong>行秩等于列秩</strong>：$r(A)$ 同时等于行向量组的秩与列向量组的秩。</li>
+<li><strong>初等变换不变秩</strong>：$P$、$Q$ <strong>可逆</strong> 时 $r(PAQ)=r(A)$，这是「初等变换不改变秩」的一般形式。</li>
+<li><strong>三条件用</strong>：求秩、求逆、求极大无关组，都可以通过初等行变换一次完成。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ r(PAQ)=r(A)\quad(P,Q\ \text{可逆}) $$</p>
+<p>$$ r(A+B)\le r(A)+r(B),\qquad r(AB)\le\min\{r(A),\,r(B)\} $$</p>
+<p>$$ AB=O\ \Longrightarrow\ r(A)+r(B)\le n\quad(A\ \text{为}\ m\times n,\ B\ \text{为}\ n\times s) $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>$r(PAQ)=r(A)$ 要求 $P$、$Q$ 都 <strong>可逆</strong>；</li>
+<li>$r(A+B)\le r(A)+r(B)$ 对同型矩阵成立，等号一般不取；</li>
+<li>$r(AB)\le\min\{r(A),r(B)\}$ 对任意可乘矩阵成立；</li>
+<li>$AB=O$ 型不等式中的 $n$ 是 <strong>中间维数</strong>（$A$ 的列数、$B$ 的行数），不是 $A$ 或 $B$ 的阶数。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>秒杀技</strong>：见到 $AB=O$ 立刻写 $r(A)+r(B)\le n$；见到 $A^{*}\neq O$ 立刻把 $r(A)$ 锁定在 $n-1$。这两条能把抽象秩的填空题压缩成一步。</p>
+</blockquote>
+<h3>【分块矩阵】</h3>
+<ul>
+<li><strong>分块乘法</strong>：把大矩阵按相容的方式分块后，乘法规则与小矩阵完全一致。</li>
+<li><strong>分块转置</strong>：转置的同时 <strong>交换块的位置</strong>，即把 $A$、$B$、$C$、$D$ 四块按 $\begin{pmatrix}A&B\\ C&D\end{pmatrix}^{T}=\begin{pmatrix}A^{T}&C^{T}\\ B^{T}&D^{T}\end{pmatrix}$ 重排。</li>
+<li><strong>分块对角求逆</strong>：主对角块各自求逆，副对角块照抄位置。</li>
+<li><strong>分块对角行列式</strong>：等于各主对角块行列式之连乘。</li>
+<li><strong>适用场景</strong>：矩阵阶数较高、出现明显零块或重复结构时，分块能把高阶运算降成低阶运算。</li>
+</ul>
+<p>【核心公式】</p>
+<p>$$ \begin{pmatrix} A & O \\ O & B \end{pmatrix}^{-1}=\begin{pmatrix} A^{-1} & O \\ O & B^{-1} \end{pmatrix},\qquad \begin{vmatrix} A & O \\ O & B \end{vmatrix}=|A|\cdot|B| $$</p>
+<p>$$ \begin{pmatrix} A & C \\ O & B \end{pmatrix}^{-1}=\begin{pmatrix} A^{-1} & -A^{-1}CB^{-1} \\ O & B^{-1} \end{pmatrix} $$</p>
+<p>【适用条件】</p>
+<ol>
+<li>分块乘法要求相应块的 <strong>阶数相容</strong>；</li>
+<li>分块求逆要求每个对角块都 <strong>可逆</strong>；</li>
+<li>分块行列式的干净结论只在 <strong>分块三角或分块对角</strong> 时成立；</li>
+<li>副对角块情形要先通过换行换列把零块挪到正确位置，换一次记一个符号。</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>易错点</strong>：把分块行列式一律写成 $|A||B|-|C||D|$，等于把二阶行列式展开式硬套到分块矩阵上。一般情形必须回到拉普拉斯展开或先消去一角。</p>
+</blockquote>
+</div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h2 class="tt">关键结论速记</h2><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
+<ul>
+<li>$(AB)^{-1}=B^{-1}A^{-1}$，$(AB)^{T}=B^{T}A^{T}$ —— 一律反序，逆与转置混合时要先转置后取逆再反序</li>
+<li>$A$ 可逆 $\iff |A|\neq0 \iff r(A)=n \iff Ax=0$ 仅有零解 —— 可逆判定的四个同义说法</li>
+<li>$AA^{}=A^{}A=|A|E$，$|A^{}|=|A|^{n-1}$，$|A|\neq0$ 时 $A^{-1}=\frac{1}{|A|}A^{}$ —— 伴随矩阵的两条母公式</li>
+<li>$r(A^{})=n\ (r(A)=n)$，$=1\ (r(A)=n-1)$，$=0\ (r(A)\le n-2)$ —— 伴随矩阵秩的三段公式，$|A|=0$ 并不等于 $A^{}=O$</li>
+<li>$r(A+B)\le r(A)+r(B)$，$r(AB)\le\min{r(A),r(B)}$ —— 和与积的秩只能变小</li>
+<li>$AB=O \Rightarrow r(A)+r(B)\le n$ —— 零乘积给出的秩约束，$n$ 是 $A$ 的列数（即 $B$ 的行数）</li>
+<li>$P^{T}AP$ 与 $A$ 同秩 —— 可逆阵左乘右乘不改变秩，是初等变换不改变秩的一般形式</li>
+</ul>
+</div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h2 class="tt">示意图</h2><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
+<p><img alt="结构图：矩阵的等价标准形与按秩分段的伴随矩阵" src="../assets/xiandai-02-fig1.png" /></p>
+<pre class="ascii"><code>      n columns                        r(A) = n   -&gt;  r(A*) = n
+ +-------------------+                 r(A) = n-1 -&gt;  r(A*) = 1
+ |  Er   |     O     |   r rows        r(A) &lt;= n-2 -&gt;  A* = O
+ |-------+-----------|
+ |  O    |     O     |                 det(A) != 0  =&gt;  A* = det(A) * inv(A)
+ +-------------------+                 det(A)  = 0  and  A* != O  is possible
+      rank = r
+  equivalent normal form
+</code></pre>
+<p>图左是 $m\times n$ 矩阵经初等变换得到的等价标准形，其中 $r=r(A)$；图右列出伴随矩阵的秩随 $r(A)$ 变化的三段结论。</p>
+<pre class="ascii"><code>+---------+---------+---------+---------+
+|  A11    |  A21    |  A31    |  A41    |   &lt;- row 1 of adj(A)
++---------+---------+---------+---------+
+|  A12    |  A22    |  A32    |  A42    |   Aij = (-1)^(i+j) * Mij
++---------+---------+---------+---------+
+|  A13    |  A23    |  A33    |  A43    |   adj(A) = transpose of
++---------+---------+---------+---------+            the cofactor matrix
+|  A14    |  A24    |  A34    |  A44    |
++---------+---------+---------+---------+
+</code></pre>
+<div class="mermaid">flowchart TD
+    A[&quot;n 阶矩阵 A&quot;] --&gt; B{&quot;|A| = 0 ?&quot;}
+    B --&gt;|&quot;否&quot;| C[&quot;A 可逆, r(A) = n, r(A*) = n&quot;]
+    B --&gt;|&quot;是&quot;| D{&quot;r(A) 与 n-1 比较&quot;}
+    D --&gt;|&quot;r(A) = n-1&quot;| E[&quot;存在 n-1 阶非零子式, r(A*) = 1&quot;]
+    D --&gt;|&quot;r(A) &lt;= n-2&quot;| F[&quot;所有 n-1 阶子式全为零, A* = O&quot;]
+    C --&gt; G[&quot;用 A* = |A| * A^-1 求伴随&quot;]
+    E --&gt; H[&quot;用 A A* = O 求 A* 的列向量&quot;]
+    F --&gt; I[&quot;伴随矩阵为零矩阵&quot;]
+</div><details><summary>查看该图源码</summary><pre><code>flowchart TD
+    A[&quot;n 阶矩阵 A&quot;] --&gt; B{&quot;|A| = 0 ?&quot;}
+    B --&gt;|&quot;否&quot;| C[&quot;A 可逆, r(A) = n, r(A*) = n&quot;]
+    B --&gt;|&quot;是&quot;| D{&quot;r(A) 与 n-1 比较&quot;}
+    D --&gt;|&quot;r(A) = n-1&quot;| E[&quot;存在 n-1 阶非零子式, r(A*) = 1&quot;]
+    D --&gt;|&quot;r(A) &lt;= n-2&quot;| F[&quot;所有 n-1 阶子式全为零, A* = O&quot;]
+    C --&gt; G[&quot;用 A* = |A| * A^-1 求伴随&quot;]
+    E --&gt; H[&quot;用 A A* = O 求 A* 的列向量&quot;]
+    F --&gt; I[&quot;伴随矩阵为零矩阵&quot;]
+</code></pre></details>
+</div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
+<ul>
+<li>由 $AB=O$ 直接推出 $A=O$ 或 $B=O$。 错在把数的乘法性质搬到矩阵上。正确结论只有秩的约束 $r(A)+r(B)\le n$。例如 $A=\begin{pmatrix}1&0\0&0\end{pmatrix}$、$B=\begin{pmatrix}0&0\0&1\end{pmatrix}$ 时 $AB=O$ 而两者都非零；进一步，若还知道 $A\neq O$ 且 $B\neq O$，只能推出 $r(A)<n$ 与 $r(B)<n$。</li>
+<li>把 $A^{*}$ 写成代数余子式矩阵本身，漏掉转置。 错在记成 $A^{}=(A_{ij})$。正确的是 $A^{}=(A_{ji})$；相应地 $(A^{T})^{}=(A^{})^{T}$，而 $(kA)^{}=k^{n-1}A^{}$，指数是 $n-1$ 不是 $n$。</li>
+<li>认为 $|A|=0$ 时一定有 $A^{*}=O$。 错在把行列式为零与伴随为零等同。正确的是 $r(A)=n-1$ 时 $A^{}\neq O$（此时 $r(A^{})=1$），只有 $r(A)\le n-2$ 才有 $A^{*}=O$。</li>
+<li>求逆或转置时顺序写错。 错在写 $(AB)^{-1}=A^{-1}B^{-1}$ 或 $(AB)^{T}=A^{T}B^{T}$。正确是一律反序：$(AB)^{-1}=B^{-1}A^{-1}$，$(AB)^{T}=B^{T}A^{T}$。</li>
+</ul>
+</div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
+<p><strong>2024 年数二第 9 题（单项选择题，5 分）</strong></p>
+<p>设 $A$ 为四阶矩阵，$A^{*}$ 为 $A$ 的伴随矩阵，若 $A(A-A^{*})=O$，且 $A\neq A^{*}$，则 $r(A)$ 的可能取值为（　）</p>
+<p>A. 0 或 1　　B. 1 或 3　　C. 2 或 3　　D. 1 或 2</p>
+<blockquote>
+<p>解析：第一步，化简条件。由 $AA^{*}=|A|E$：若 $|A|\neq0$，则 $A$ 可逆，在 $A(A-A^{*})=O$ 两边左乘 $A^{-1}$ 得 $A=A^{*}$，与 $A\neq A^{*}$ 矛盾，故 $|A|=0$，于是 $AA^{*}=O$，题设条件化为 $A^{2}=O$。</p>
+<p>第二步，定出 $r(A)$ 的上界。设 $A^{2}=O$，把 $A$ 按列分块为 $A=(\alpha_1,\alpha_2,\alpha_3,\alpha_4)$，则每个 $\alpha_j$ 都满足 $A\alpha_j=0$，即 $\operatorname{Col}(A)\subseteq\operatorname{Null}(A)$，取维数得 $r(A)\le 4-r(A)$，故 $r(A)\le 2$。这一步同时排除了 $r(A)=4$（此时 $A$ 可逆，与 $|A|=0$ 矛盾）与 $r(A)=3$：秩 3 时 $\operatorname{Null}(A)$ 只有一维，而 $\operatorname{Col}(A)$ 有三维，包含关系要求 $3\le 1$，不可能。</p>
+<p>第三步，验证 $r(A)=1$ 与 $r(A)=2$ 都能取到。取 $A=\operatorname{diag}(1,0,0,0)$，sympy 复算 $A^{*}=O$、$A^{2}=O$、$A\neq A^{*}$，此时 $r(A)=1$；取 $A=\begin{pmatrix}0&1&0&0\\0&0&0&0\\0&0&0&1\\0&0&0&0\end{pmatrix}$，sympy 复算同样有 $|A|=0$、$A^{*}=O$、$A^{2}=O$、$A\neq A^{*}$，而 $r(A)=2$。综上 $r(A)$ 的可能取值为 $1$ 或 $2$，选 D。</p>
+</blockquote>
+<hr /></div></section></div></main></div>
+<button id="totop" type="button">↑ 回到当前小节</button>
+<button id="themetoggle" type="button" title="切换深色/浅色">◐ 主题</button>
+<script>
+document.getElementById('q')?.addEventListener('input',e=>{
+  const v=e.target.value.trim().toLowerCase();
+  document.querySelectorAll('nav a').forEach(a=>{
+    a.style.display = !v || a.textContent.toLowerCase().includes(v) ? '' : 'none';});
+});
+</script>
+<script>
+(function () {
+  var main = document.querySelector('main');
+  // 1) 侧栏高亮当前小节（滚动位置驱动）
+  var links = [].slice.call(document.querySelectorAll('nav a.toclink'));
+  var targets = links.map(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    return document.getElementById(id);
+  });
+  function sync() {
+    var y = window.scrollY + 120, best = -1;
+    targets.forEach(function (t, i) { if (t && t.offsetTop <= y) best = i; });
+    links.forEach(function (a, i) { a.classList.toggle('cur', i === best); });
+  }
+  if (links.length) {
+    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  }
+  // 2) 键盘：j/k 或 ←/→ 翻章
+  var prev = document.body.getAttribute('data-prev');
+  var next = document.body.getAttribute('data-next');
+  document.addEventListener('keydown', function (e) {
+    if (e.target.matches('input, textarea')) return;
+    if (e.key === 'ArrowLeft' || e.key === 'k') { if (prev) location.href = prev; }
+    if (e.key === 'ArrowRight' || e.key === 'j') { if (next) location.href = next; }
+  });
+  // 3) 移动端侧栏抽屉 + 回到顶部
+  var t = document.getElementById('navtoggle');
+  if (t) t.addEventListener('click', function () { document.body.classList.toggle('navopen'); });
+  // 4) 阅读进度条
+  var bar = document.getElementById('progress');
+  if (bar) {
+    var upd = function () {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+    };
+    window.addEventListener('scroll', upd, { passive: true });
+    window.addEventListener('resize', upd); upd();
+  }
+  // 5) 主题切换（记忆到 localStorage）
+  var tb = document.getElementById('themetoggle');
+  if (tb) tb.addEventListener('click', function () {
+    var cur = document.documentElement.dataset.theme;
+    if (cur === 'auto') cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var nx = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = nx;
+    try { localStorage.setItem('dsh-theme', nx); } catch (e) {}
+  });
+  var top = document.getElementById('totop');
+  if (top) {
+    top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    window.addEventListener('scroll', function () {
+      top.style.display = window.scrollY > 500 ? 'block' : 'none';
+    }, { passive: true });
+  }
+})();
+</script>
+<script>
+(function () {
+  if (!window.renderMathInElement) {
+    // 公式渲染器没加载到：明确提示，而不是留一堆 $...$ 让读者困惑
+    var has = /\$[^$]+\$/.test(document.body.innerText || '');
+    if (has) {
+      var p = document.createElement('p');
+      p.className = 'missing';
+      p.textContent = '未加载到公式渲染器（katex/），页面里的 LaTeX 公式以源码显示。'
+        + '请确认 数学二/katex/ 目录存在。';
+      document.querySelector('main').insertBefore(p, document.querySelector('main').firstChild);
+    }
+    return;
+  }
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: '$$', right: '$$', display: true },
+      { left: '$', right: '$', display: false }
+    ],
+    throwOnError: false,
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  });
+})();
+</script>
+<script>
+(function () {
+  var nodes = document.querySelectorAll('.mermaid');
+  if (!nodes.length) return;
+  if (!window.mermaid) {
+    nodes.forEach(function (el) {
+      el.insertAdjacentHTML('beforebegin',
+        '<p class="missing">未加载到 mermaid 运行时（mermaid.min.js 不在预期位置），' +
+        '下图暂以源码显示，可复制到任意 mermaid 编辑器查看。</p>');
+      var pre = document.createElement('pre');
+      var code = document.createElement('code');
+      code.textContent = el.textContent;
+      pre.appendChild(code); el.innerHTML = ''; el.appendChild(pre);
+    });
+    return;
+  }
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'loose', theme: 'neutral',
+    flowchart: { useMaxWidth: true }, state: { useMaxWidth: true } });
+  nodes.forEach(function (el, i) {
+    mermaid.render('mmd-' + i, el.textContent.trim()).then(function (r) {
+      el.innerHTML = r.svg;
+    }).catch(function (e) {
+      el.innerHTML = '<p class="missing">该图渲染失败：' + e.message + '</p>';
+    });
+  });
+})();
+</script></body></html>
