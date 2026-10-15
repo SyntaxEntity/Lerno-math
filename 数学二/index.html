@@ -26,7 +26,7 @@
 <h3 class="bookmark">函数、极限与连续 <span class="badge hot">高频</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 7 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 15%；主要题型：选择、填空、解答均有，解答题常为极限计算或数列极限。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 7 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 15%；主要题型：选择、填空、解答均有，解答题常为极限计算或数列极限。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【连续与间断点分类】</h5>
 <ul>
@@ -194,7 +194,7 @@
 <p>⚠️ <strong>秒杀技</strong>：先算前几项定出单调方向与界，再用数学归纳法证明，最后令 $n\to\infty$ 解方程。<strong>不要</strong>跳过存在性直接解方程 —— 那样解出的根未必是极限。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$\lim_{x\to 0}\frac{\sin x}{x}=1$ —— 第一个重要极限，也是 $\sin x\sim x$ 的来源，$x$ 可换成任何趋于零的因式。</li>
 <li>$\lim_{x\to\infty}\left(1+\frac1x\right)^x=e$ —— 第二个重要极限，$1^{\infty}$ 型先取对数或凑成它的形式。</li>
 <li>$1-\cos x\sim\frac{x^2}{2}$，$x-\sin x\sim\frac{x^3}{6}$，$\tan x-x\sim\frac{x^3}{3}$ —— 二阶与三阶等价无穷小，加减相消时必须升阶。</li>
@@ -204,8 +204,8 @@
 <li>闭区间上连续 $\Rightarrow$ 有界、取到最值、介值、零点存在 —— 证明方程有根优先用零点定理。</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="函数图像：左图是 y 等于 sin x 比 x 在 x 趋于 0 时趋于 1 的补定义示意，右图是 f 等于 x 的 1 比 1 减 x 乘 x 减 2 次幂在 x 等于 1 处可去间断、在 x 等于 0 与 x 等于 2 处无穷间断" src="assets/gaoshu-01-fig1.png" /></p>
-<p><img alt="解题流程：求极限时在等价无穷小、洛必达、泰勒展开之间选择方法的流程图，以及间断点分类判定流程" src="assets/gaoshu-01-fig2.png" /></p>
+<p class="fig"><img alt="函数图像：左图是 y 等于 sin x 比 x 在 x 趋于 0 时趋于 1 的补定义示意，右图是 f 等于 x 的 1 比 1 减 x 乘 x 减 2 次幂在 x 等于 1 处可去间断、在 x 等于 0 与 x 等于 2 处无穷间断" src="assets/gaoshu-01-fig1.png" /></p>
+<p class="fig"><img alt="解题流程：求极限时在等价无穷小、洛必达、泰勒展开之间选择方法的流程图，以及间断点分类判定流程" src="assets/gaoshu-01-fig2.png" /></p>
 <div class="mermaid">flowchart TD
     S[&quot;求极限&quot;] --&gt; T{&quot;先判断未定式类型&quot;}
     T --&gt;|&quot;0/0 型或无穷比无穷型&quot;| L{&quot;洛必达三条前提是否都满足&quot;}
@@ -230,20 +230,20 @@
     P --&gt;|&quot;至少有一侧不存在&quot;| B[&quot;第二类 无穷或振荡&quot;]
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li><strong>错在见到 $\frac00$ 型就直接洛必达，忘记核对前提</strong>。正确做法是先验证去心邻域内 $f$ 与 $g$ 可导、$g'(x)\neq 0$、导数之比的极限存在；若 $\lim\frac{f'}{g'}$ 振荡不存在，只能换方法，不能断言原极限不存在，例如 $\lim_{x\to\infty}\frac{x+\sin x}{x}=1$。</li>
 <li><strong>错在加减法中随手用等价无穷小替换，把 $\frac{\tan x-\sin x}{x^3}$ 里的两项都换成 $x$ 而算出极限 0</strong>。正确结果是 $\frac12$，因为替换后发生了同阶相消，此时必须升到三阶用 $\tan x-\sin x\sim\frac{x^3}{2}$。</li>
 <li><strong>错在认为极限存在必须要求函数在该点有定义</strong>。正确结论是极限只与去心邻域有关，$f(x_0)$ 是否存在、等于多少都不影响 $\lim_{x\to x_0}f(x)$，这正是可去间断点的来源。</li>
 <li><strong>错在只算一侧极限就把间断点归入第一类</strong>。正确做法是两侧都要算：只要有一侧极限为无穷大或振荡不存在，该点就是第二类间断点。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 1 题（选择题，5 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 1 题（选择题，5 分）</strong></p><div class="q-stem">
 <p>函数 $f(x)=|x|^{\frac{1}{(1-x)(x-2)}}$ 的第一类间断点的个数为（ ）</p>
 <p>A. 3</p>
 <p>B. 2</p>
 <p>C. 1</p>
 <p>D. 0</p>
-<blockquote>
+</div><blockquote>
 <p>解析：间断点只可能出现在 $x=0,1,2$ 三处（$x=0$ 使幂函数失去意义，$x=1,2$ 使指数没有定义）。</p>
 <p>$x\to 0$ 时</p>
 <p>$$\frac{\ln|x|}{(1-x)(x-2)}\to+\infty$$</p>
@@ -261,7 +261,7 @@
 <h3 class="bookmark">导数与微分 <span class="badge hot">高频</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 4 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 15%；主要题型：选择、填空为主（高阶导数、参数方程求导、曲率）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 4 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 15%；主要题型：选择、填空为主（高阶导数、参数方程求导、曲率）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【导数的定义与可导性判定】</h5>
 <ul>
@@ -397,7 +397,7 @@
 <p>⚠️ <strong>易错点</strong>：把<strong>曲率</strong>与<strong>曲率半径</strong>混用，或忘记分母是 $(1+y'^2)^{3/2}$。正确关系是 $R=\frac1K$；$y^2=x$ 在原点处 $K=2$、$R=\frac12$，圆心在凹向一侧的法线上，即 $\left(\frac12,0\right)$。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$(x^{\mu})'=\mu x^{\mu-1}$，$(e^x)'=e^x$，$(\ln x)'=\frac1x$ —— 最常用的基本导数，一切求导最终都归结到基本导数表。</li>
 <li>参数方程：$\frac{dy}{dx}=\frac{y'(t)}{x'(t)}$，$\frac{d^2y}{dx^2}=\frac{x'y''-y'x''}{(x')^3}$ —— 二阶导必须再对 $t$ 求导后除以 $x'(t)$，不能上下分别求二阶导。</li>
 <li>$(uv)^{(n)}=\sum_{k=0}^{n}C_n^k u^{(k)}v^{(n-k)}$ —— 莱布尼茨公式，含多项式因子时只有前几项非零。</li>
@@ -407,8 +407,8 @@
 <li>$K=\frac{|y''|}{(1+y'^2)^{3/2}}$，$R=\frac1K$ —— 曲率与曲率半径，如 $y^2=x$ 在原点 $K=2$、$R=\frac12$，曲率圆为 $x^2+y^2=x$。</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="函数图像：曲线 y 的平方等于 x 与它在原点处的曲率圆 x 的平方加 y 的平方等于 x 相切，圆心在二分之一零处、半径为二分之一，同时标出原点处的竖直切线" src="assets/gaoshu-02-fig1.png" /></p>
-<p><img alt="解题流程：判断函数在一点是否可导的流程图，以及显函数、隐函数、参数方程、幂指函数四种形式求导方法的选择" src="assets/gaoshu-02-fig2.png" /></p>
+<p class="fig"><img alt="函数图像：曲线 y 的平方等于 x 与它在原点处的曲率圆 x 的平方加 y 的平方等于 x 相切，圆心在二分之一零处、半径为二分之一，同时标出原点处的竖直切线" src="assets/gaoshu-02-fig1.png" /></p>
+<p class="fig"><img alt="解题流程：判断函数在一点是否可导的流程图，以及显函数、隐函数、参数方程、幂指函数四种形式求导方法的选择" src="assets/gaoshu-02-fig2.png" /></p>
 <div class="mermaid">flowchart TD
     S[&quot;求 f 在 x0 处的导数&quot;] --&gt; Q1{&quot;函数是否由分段式或绝对值给出&quot;}
     Q1 --&gt;|&quot;是 且 x0 是分界点&quot;| D1[&quot;用定义算左导数与右导数&quot;]
@@ -433,16 +433,16 @@
     R --&gt;|&quot;不等或至少一侧不存在&quot;| N[&quot;不可导&quot;]
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li><strong>错在把连续当成可导的充分条件</strong>。正确结论是可导必连续、连续不一定可导，例如 $|x|$ 在 $x=0$ 处连续但左右导数分别为 $-1$ 与 $1$，不可导。</li>
 <li><strong>错在分段函数在分界点处先分段求导再代入</strong>。正确做法是分界点必须用定义算左右导数（或验证 $f'$ 在该点的左右极限与定义值是否一致），因为分段的求导公式只在各自的开区间内成立。</li>
 <li><strong>错在参数方程的二阶导写成 $\frac{y''(t)}{x''(t)}$</strong>。正确公式是 $\frac{d^2y}{dx^2}=\frac{x'y''-y'x''}{(x')^3}$，例如 $x=t^2$、$y=t^3$ 在 $t=1$ 处 $\frac{dy}{dx}=\frac32$、$\frac{d^2y}{dx^2}=\frac34$。</li>
 <li><strong>错在曲率与曲率半径混用，或忘记分母是 $(1+y'^2)^{3/2}$</strong>。正确关系是 $R=\frac1K$，如 $y^2=x$ 在原点 $K=2$、$R=\frac12$，圆心在凹向一侧的法线上，即 $\left(\frac12,0\right)$。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 14 题（填空题，5 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 14 题（填空题，5 分）</strong></p><div class="q-stem">
 <p>已知函数 $f(x)=(e^x+1)x^2$，则 $f^{(5)}(1)=$ ______。</p>
-<blockquote>
+</div><blockquote>
 <p>解析：</p>
 <p>$x^2$ 的三阶及以上导数恒为零，故 $f^{(5)}(x)=(x^2e^x)^{(5)}+0$。</p>
 <p>对 $u=x^2$、$v=e^x$ 用莱布尼茨公式，利用 $v^{(k)}=e^x$ 得</p>
@@ -456,7 +456,7 @@
 <h3 class="bookmark">中值定理与导数应用 <span class="badge hot">高频</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 4 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 13%；主要题型：选择、解答（证明题常出于此）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 4 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 13%；主要题型：选择、解答（证明题常出于此）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【三大中值定理】</h5>
 <ul>
@@ -631,7 +631,7 @@
 <p>⚠️ <strong>易错点</strong>：证明题中两个不同的中值点共用一个字母。正确做法是先得 $\xi_1\in(0,a)$、$\xi_2\in(-a,0)$，再在 $(\xi_2,\xi_1)$ 内用介值定理。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>罗尔定理：闭区间连续 + 开区间可导 + $f(a)=f(b)$ $\Rightarrow$ 存在 $\xi\in(a,b)$ 使 $f'(\xi)=0$ —— 三个条件缺一不可，端点处只要求连续。</li>
 <li>拉格朗日：$f(b)-f(a)=f'(\xi)(b-a)$ —— 见到两端函数值之差就用它，$f(x)=|x|$ 在 $[-1,1]$ 上当反例。</li>
 <li>柯西：$\frac{f(b)-f(a)}{g(b)-g(a)}=\frac{f'(\xi)}{g'(\xi)}$ —— 两个函数增量之比，前提是 $g'(x)\neq 0$。</li>
@@ -641,8 +641,8 @@
 <li>构造辅助函数：要证 $f'(\xi)+\lambda f(\xi)=0$ 就取 $F(x)=e^{\lambda x}f(x)$ —— 原函数法，$F$ 的端点值相等即可用罗尔定理。</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="函数图像：左图是罗尔定理在抛物线 y 等于 4x 减 x 的平方上取闭区间 0 到 4 时的水平割线与 x 等于 2 处的水平切线，右图是拉格朗日中值定理在 y 等于 x 的平方上取闭区间 0 到 2 时的割线 y 等于 2x 与 x 等于 1 处的平行切线 y 等于 2x 减 1" src="assets/gaoshu-03-fig1.png" /></p>
-<p><img alt="解题流程：中值定理证明题中根据结论形式在罗尔、拉格朗日、柯西、泰勒之间选择定理并构造辅助函数的判定流程" src="assets/gaoshu-03-fig2.png" /></p>
+<p class="fig"><img alt="函数图像：左图是罗尔定理在抛物线 y 等于 4x 减 x 的平方上取闭区间 0 到 4 时的水平割线与 x 等于 2 处的水平切线，右图是拉格朗日中值定理在 y 等于 x 的平方上取闭区间 0 到 2 时的割线 y 等于 2x 与 x 等于 1 处的平行切线 y 等于 2x 减 1" src="assets/gaoshu-03-fig1.png" /></p>
+<p class="fig"><img alt="解题流程：中值定理证明题中根据结论形式在罗尔、拉格朗日、柯西、泰勒之间选择定理并构造辅助函数的判定流程" src="assets/gaoshu-03-fig2.png" /></p>
 <div class="mermaid">flowchart TD
     S[&quot;中值定理证明题&quot;] --&gt; Q1{&quot;结论中是否出现 f 在区间内取极值&quot;}
     Q1 --&gt;|&quot;是&quot;| F1[&quot;先用费马引理 极值点处一阶导为零&quot;]
@@ -677,18 +677,18 @@
     C1 --&gt; Z1
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li><strong>错在不验证条件就套用中值定理，例如对 $f(x)=|x|$ 在 $[-1,1]$ 上使用拉格朗日中值定理</strong>。正确做法是先核对闭区间上连续与开区间内可导，此处 $x=0$ 处不可导，定理失效（事实上 $\frac{f(1)-f(-1)}{2}=0$ 却不存在使 $f'(\xi)=0$ 的点）。</li>
 <li><strong>错在由 $f'(x_0)=0$ 直接断言 $x_0$ 是极值点，例如 $y=x^3$ 在 $x=0$ 处 $f'(0)=0$ 但不是极值点</strong>。正确做法是看 $f'$ 在 $x_0$ 两侧是否变号，或验证 $f''(x_0)\neq 0$。</li>
 <li><strong>错在由 $f''(x_0)=0$ 直接断言 $x_0$ 是拐点，例如 $y=x^4$ 在 $x=0$ 处 $f''(0)=0$ 而 $f''=12x^2$ 在两侧同号</strong>。正确做法是验证 $f''$ 在 $x_0$ 两侧变号，或者验证 $f'''$ 存在且 $f'''(x_0)\neq 0$。</li>
 <li><strong>错在证明题中两个不同的中值点共用一个字母</strong>。正确做法是分区间使用时分别记为 $\xi$ 与 $\eta$，并写清各自所在的开区间，例如先得 $\xi_1\in(0,a)$、$\xi_2\in(-a,0)$，再在 $(\xi_2,\xi_1)$ 内用介值定理。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2023 年数二第 21 题（解答题，12 分）</strong></p>
+<p class="q-src"><strong>2023 年数二第 21 题（解答题，12 分）</strong></p><div class="q-stem">
 <p>设函数 $f(x)$ 在 $[-a,a]$ 上具有 2 阶连续导数，证明：</p>
 <p>（I）若 $f(0)=0$，则存在 $\xi\in(-a,a)$，使得 $f''(\xi)=\frac{1}{a^2}[f(a)+f(-a)]$；</p>
 <p>（II）若 $f(x)$ 在 $(-a,a)$ 内取得极值，则存在 $\eta\in(-a,a)$，使得 $|f''(\eta)|\ge\frac{1}{2a^2}|f(a)-f(-a)|$。</p>
-<blockquote>
+</div><blockquote>
 <p>解析：</p>
 <p><strong>（I）</strong> 由 $f''$ 连续，对 $f$ 用带拉格朗日余项的泰勒公式：</p>
 <p>在 $x=0$ 处展开，分别取 $x=a$ 与 $x=-a$，得</p>
@@ -712,7 +712,7 @@
 <h3 class="bookmark">不定积分 <span class="badge">常规</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 考频待补充；涉及年份：见下方说明；分数占比约 7%；主要题型：少单独命题，多为定积分与微分方程解答题的中间步骤。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 考频待补充；涉及年份：见下方说明；分数占比约 7%；主要题型：少单独命题，多为定积分与微分方程解答题的中间步骤。</p>
 <blockquote>
 <p><strong>考频说明</strong>：本章在 2023—2024 年样本中未单独命题：官方从不公布考频，本资料亦无法核实其独立考察次数，故标注「考频待补充」。但基本积分表、换元法与分部积分法是定积分、微分方程与二重积分计算的<strong>必备前置</strong>，不可跳过。</p>
 </blockquote>
@@ -847,7 +847,7 @@
 <p>⚠️ <strong>秒杀技</strong>：按“反、对、幂、指、三”的次序选 $u$。例如 $\int\ln x\,\mathrm{d}x$ 必须把 $\ln x$ 当作 $u$，否则会绕回原积分。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$\int f(ax+b)\,\mathrm{d}x=\frac1aF(ax+b)+C$ —— 线性代换只差常数因子 $\frac1a$，是最常见的凑微分。</li>
 <li>$\int u\,\mathrm{d}v=uv-\int v\,\mathrm{d}u$ —— 选 $u$ 按“反、对、幂、指、三”，排在前面的一律放进 $u$。</li>
 <li>$\int\frac{\mathrm{d}x}{x^2+a^2}=\frac1a\arctan\frac xa+C$，$\int\frac{\mathrm{d}x}{\sqrt{x^2\pm a^2}}=\ln\left|x+\sqrt{x^2\pm a^2}\right|+C$ —— 比基本积分表更常用的两条补充公式。</li>
@@ -857,8 +857,8 @@
 <li>初等函数在其定义区间上连续因而有原函数，但原函数未必是初等函数 —— 如 $\int e^{-x^2}\,\mathrm{d}x$、$\int\frac{\sin x}{x}\,\mathrm{d}x$ 都不能用初等函数表出。</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="函数图像：被积函数 f(x)=x 的三条积分曲线 y=x^2/2+C（C 取 -1、0、1），三条曲线分别过点 （0,-1）、（0,0）、（0,1），在 x=1 处画出三条互相平行的切线，切点纵坐标分别为 -0.5、0.5、1.5，切线斜率均为 f(1)=1" src="assets/gaoshu-04-fig1.png" /></p>
-<p><img alt="解题流程：不定积分的选路流程，从查基本积分表出发，依次判断凑微分、三角代换、分部积分与有理函数部分分式" src="assets/gaoshu-04-fig2.png" /></p>
+<p class="fig"><img alt="函数图像：被积函数 f(x)=x 的三条积分曲线 y=x^2/2+C（C 取 -1、0、1），三条曲线分别过点 （0,-1）、（0,0）、（0,1），在 x=1 处画出三条互相平行的切线，切点纵坐标分别为 -0.5、0.5、1.5，切线斜率均为 f(1)=1" src="assets/gaoshu-04-fig1.png" /></p>
+<p class="fig"><img alt="解题流程：不定积分的选路流程，从查基本积分表出发，依次判断凑微分、三角代换、分部积分与有理函数部分分式" src="assets/gaoshu-04-fig2.png" /></p>
 <div class="mermaid">flowchart TD
     A[&quot;被积函数 f 与积分变量 x&quot;] --&gt; B{&quot;能否查基本积分表&quot;}
     B --&gt;|&quot;能&quot;| C[&quot;直接写出原函数并加任意常数 C&quot;]
@@ -891,16 +891,16 @@
     J --&gt; K
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li>漏写任意常数 $C$，或把两个不同的常数写成同一个。 错在把不定积分当成一个函数：$\int f(x)\,\mathrm{d}x$ 是函数族，必须写 $+C$；分段函数求原函数时，两段的常数不能取成同一个，要由分段点处原函数连续解出两段常数之差。</li>
 <li>凑微分时把 $\int f(ax+b)\,\mathrm{d}x$ 写成 $F(ax+b)+C$。 正确结果是 $\frac1aF(ax+b)+C$，因为 $\mathrm{d}(ax+b)=a\,\mathrm{d}x$，例如 $\int e^{2x}\,\mathrm{d}x=\frac12e^{2x}+C$ 而不是 $e^{2x}+C$。</li>
 <li>第二类换元后忘记把 $t$ 回代为 $x$，或忽略代换必须单调可导。 正确做法是算完立即用 $t=\arcsin\frac xa$ 等反函数回代，并在作代换时说明 $t$ 的取值范围，保证 $x=\psi(t)$ 单调、$\psi'(t)\neq0$。</li>
 <li>认为分段函数的原函数就是把两段分别积分。 错在忽略了原函数必须可导、从而必须连续：分别在两段上积分后要补一个常数修正，使左右极限相等，例如右支积出 $(x+1)\sin x+\cos x+C_2$（在 $x=0$ 处值为 $1+C_2$）时，左支的常数必须是 $C_1=1+C_2$，否则原函数在 $x=0$ 处间断。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2023 年数二第 2 题（选择题，5 分）</strong></p>
+<p class="q-src"><strong>2023 年数二第 2 题（选择题，5 分）</strong></p><div class="q-stem">
 <p>函数 $f(x)=\begin{cases}\dfrac{1}{\sqrt{1+x^2}},& x\leqslant 0,\\ (x+1)\cos x,& x>0\end{cases}$ 的一个原函数是（　）</p>
-<blockquote>
+</div><blockquote>
 <p>解析：</p>
 <ol>
 <li>原函数 $F(x)$ 必须在 $(-\infty,+\infty)$ 上可导且 $F'(x)=f(x)$。</li>
@@ -931,7 +931,7 @@
 <h3 class="bookmark">定积分与反常积分 <span class="badge hot">高频</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 5 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 21%；主要题型：选择、填空、解答（反常积分敛散性、变限积分）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 5 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 21%；主要题型：选择、填空、解答（反常积分敛散性、变限积分）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【定积分的定义与可积条件】</h5>
 <ul>
@@ -1039,7 +1039,7 @@
 <p>⚠️ <strong>秒杀技</strong>：判断敛散先找<strong>主导阶</strong>。把被积函数在瑕点或无穷远处等价成 $x^{-p}$，直接套 $p$ 积分结论，不必列比较判别法的完整不等式。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$\int_1^{+\infty}\frac{\mathrm{d}x}{x^p}$ 收敛当且仅当 $p>1$，值为 $\frac1{p-1}$ —— 无穷限情形的比较基准。</li>
 <li>$\int_0^1\frac{\mathrm{d}x}{x^p}$ 收敛当且仅当 $p<1$，值为 $\frac1{1-p}$ —— 瑕点在端点时的比较基准，与上式条件相反。</li>
 <li>$\int_2^{+\infty}\frac{\mathrm{d}x}{x(\ln x)^p}$ 收敛当且仅当 $p>1$ —— 出现对数因子时的基准，如 $\int_2^{+\infty}\frac{\mathrm{d}x}{x(\ln x)^2}=\frac1{\ln2}\approx1.443$。</li>
@@ -1050,8 +1050,8 @@
 <li>偶函数在对称区间上积分为 $2\int_0^af$，奇函数积分为 $0$ —— 前提是 $f$ 在 $[-a,a]$ 上可积，先化简再计算。</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="函数图像：左子图为 x 从 1 到 10 的横轴区间上 y=1/x 与 y=1/x^2 的尾部区域，两曲线交于点 （1,1），阴影标出到 x=10 的积分面积，标注 1/x^2 的面积为 1 减去 1/10 等于 0.9 且随上限增大趋于 1，1/x 的面积为 ln10 约等于 2.303 且随上限增大无界；右子图为 x 从 0 到 1 的瑕积分区域，曲线为 y=1/sqrt(x)，标注积分值等于 2" src="assets/gaoshu-05-fig1.png" /></p>
-<p><img alt="解题流程：反常积分敛散性与值的判定流程，先分无穷限与瑕积分，再用 p 积分基准和比较判别法" src="assets/gaoshu-05-fig2.png" /></p>
+<p class="fig"><img alt="函数图像：左子图为 x 从 1 到 10 的横轴区间上 y=1/x 与 y=1/x^2 的尾部区域，两曲线交于点 （1,1），阴影标出到 x=10 的积分面积，标注 1/x^2 的面积为 1 减去 1/10 等于 0.9 且随上限增大趋于 1，1/x 的面积为 ln10 约等于 2.303 且随上限增大无界；右子图为 x 从 0 到 1 的瑕积分区域，曲线为 y=1/sqrt(x)，标注积分值等于 2" src="assets/gaoshu-05-fig1.png" /></p>
+<p class="fig"><img alt="解题流程：反常积分敛散性与值的判定流程，先分无穷限与瑕积分，再用 p 积分基准和比较判别法" src="assets/gaoshu-05-fig2.png" /></p>
 <div class="mermaid">flowchart TD
     A[&quot;被积函数与积分区间&quot;] --&gt; B{&quot;区间是否为无穷区间&quot;}
     B --&gt;|&quot;是&quot;| C[&quot;无穷限反常积分：先求原函数，再令积分上限趋于无穷&quot;]
@@ -1082,21 +1082,21 @@
     I --&gt; M[&quot;绝对收敛则原积分收敛&quot;]
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li>把两个 $p$ 积分的条件记混。 错在认为“$p$ 大就收敛”：无穷远处要 $p>1$ 才收敛，而瑕点处要 $p<1$ 才收敛（$x\to0^+$ 时 $\frac1{x^p}$ 增长得更慢才可积），例如 $\int_1^{+\infty}\frac{\mathrm{d}x}{x^{0.5}}$ 发散而 $\int_0^1\frac{\mathrm{d}x}{x^{0.5}}=2$ 收敛。</li>
 <li>对含瑕点的积分直接用牛顿-莱布尼茨公式。 错在把 $\int_{-1}^1\frac{\mathrm{d}x}{x^2}$ 算成 $\left[-\frac1x\right]{-1}^{1}=-2$：$x=0$ 是瑕点，必须拆成 $\int{-1}^0$ 与 $\int_0^1$ 两个极限，二者都发散，所以原积分发散，绝不能代端点相减。</li>
 <li>用比较判别法时漏掉“非负”或“区间上处处成立”的条件。 正确用法是：只对 $f(x)\geqslant0$ 的积分作比较，不等式 $f\leqslant g$ 要在 $[a,+\infty)$（或某个 $[X,+\infty)$）上成立；变号函数先看 $\int|f|$，绝对收敛才能断言原积分收敛。</li>
 <li>用定积分中值定理时不写全条件。 错在直接对含变号的 $g$ 使用 $\int fg=f(\xi)\int g$：推广形式要求 $f$ 在 $[a,b]$ 上连续、$g$ 在 $[a,b]$ 上可积且不变号，少一个条件结论就可能不成立。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 7 题（选择题，5 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 7 题（选择题，5 分）</strong></p><div class="q-stem">
 <p>设非负函数 $f(x)$ 在 $[0,+\infty)$ 上连续，给定以下三个命题：</p>
 <p>（1）若 $\int_0^{+\infty}f^2(x)\,\mathrm{d}x$ 收敛，则 $\int_0^{+\infty}f(x)\,\mathrm{d}x$ 收敛；</p>
 <p>（2）若存在 $p>1$，使极限 $\lim_{x\to+\infty}x^pf(x)$ 存在，则 $\int_0^{+\infty}f(x)\,\mathrm{d}x$ 收敛；</p>
 <p>（3）若 $\int_0^{+\infty}f(x)\,\mathrm{d}x$ 收敛，则存在 $p>1$，使极限 $\lim_{x\to+\infty}x^pf(x)$ 存在。</p>
 <p>其中正确的个数为（　）</p>
 <p>A. 0　　B. 1　　C. 2　　D. 3</p>
-<blockquote>
+</div><blockquote>
 <p>解析：</p>
 <ol>
 <li>命题（1）错：取 $f(x)=\frac{1}{x+1}$（在 $[0,+\infty)$ 上非负连续），则</li>
@@ -1129,7 +1129,7 @@
 <h3 class="bookmark">定积分的几何与物理应用 <span class="badge hot">高频</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 2 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 9%；主要题型：选择、填空、解答（面积、体积、弧长、平均值、物理量）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 2 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 9%；主要题型：选择、填空、解答（面积、体积、弧长、平均值、物理量）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【微元法：四步框架与定限】</h5>
 <ul>
@@ -1292,7 +1292,7 @@
 <p>⚠️ <strong>易错点</strong>：水压力公式里 $y$ 是<strong>水深</strong>而不是坐标值，水深一律从水面量起；宽度函数 $w(y)$ 写错（例如把三角形斜边当成竖直边）会让结果整体差一个系数，列式前先在图上标出 $y$ 与 $w(y)$ 的关系。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$A=\int_a^b[f(x)-g(x)]\,\mathrm{d}x$（$f\geqslant g$ 于 $[a,b]$） —— 面积永远“上减下”，与 $x$ 轴的位置无关。</li>
 <li>$V_x=\pi\int_a^b[f^2(x)-g^2(x)]\,\mathrm{d}x$ —— 绕 $x$ 轴旋转用圆盘法，微元是圆环面积 $\pi(f^2-g^2)\,\mathrm{d}x$。</li>
 <li>$V_y=2\pi\int_a^bxf(x)\,\mathrm{d}x$ —— 绕 $y$ 轴旋转用柱壳法，$2\pi x$ 是壳的周长，$f(x)$ 是高，$\mathrm{d}x$ 是厚度。</li>
@@ -1302,8 +1302,8 @@
 <li>$W=\int_a^bF(x)\,\mathrm{d}x$ —— 变力做功；$F(x)$ 与位移方向相反时取负号。</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="函数图像：左子图为由 y=sqrt(x) 与 y=x^2 围成的平面区域，交点标注为 （0,0） 与 （1,1），面积等于 1/3；右子图为该区域绕 x 轴旋转所得的旋转体轮廓，内外半径分别为 x^2 与 sqrt(x)，体积等于 3π/10 约等于 0.9425" src="assets/gaoshu-06-fig1.png" /></p>
-<p><img alt="解题流程：定积分几何与物理应用的微元法流程，依次为画图定界、按所求量选微元、定限、计算" src="assets/gaoshu-06-fig2.png" /></p>
+<p class="fig"><img alt="函数图像：左子图为由 y=sqrt(x) 与 y=x^2 围成的平面区域，交点标注为 （0,0） 与 （1,1），面积等于 1/3；右子图为该区域绕 x 轴旋转所得的旋转体轮廓，内外半径分别为 x^2 与 sqrt(x)，体积等于 3π/10 约等于 0.9425" src="assets/gaoshu-06-fig1.png" /></p>
+<p class="fig"><img alt="解题流程：定积分几何与物理应用的微元法流程，依次为画图定界、按所求量选微元、定限、计算" src="assets/gaoshu-06-fig2.png" /></p>
 <div class="mermaid">flowchart TD
     A[&quot;几何或物理应用问题&quot;] --&gt; B[&quot;画图：求交点，确定区域与边界&quot;]
     B --&gt; C{&quot;所求的是什么量&quot;}
@@ -1334,16 +1334,16 @@
     I --&gt; J[&quot;算出结果，检验量纲与对称性&quot;]
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li>求面积时不先求交点、不判断上下关系。 错在把两条曲线围成的面积写成 $\int_a^b[f(x)+g(x)]\,\mathrm{d}x$，或全程只用同一个“上减下”；正确做法是先解 $f(x)=g(x)$ 定出积分限，再逐段确认谁在上，用 $\int(\text{上}-\text{下})\,\mathrm{d}x$。</li>
 <li>把旋转体体积写成 $\pi\left(\int_a^bf(x)\,\mathrm{d}x\right)^2$，或漏掉内圈。 正确是 $V_x=\pi\int_a^bf^2(x)\,\mathrm{d}x$，先平方后积分；两条曲线围成的图形绕 $x$ 轴旋转时，微元是圆环面积 $\pi[f^2(x)-g^2(x)]\,\mathrm{d}x$。</li>
 <li>用柱壳法求 $V_y$ 时漏掉因子 $x$。 正确是 $V_y=2\pi\int_a^bxf(x)\,\mathrm{d}x$：$2\pi x$ 是壳的周长、$f(x)$ 是壳的高、$\mathrm{d}x$ 是厚度，三项缺一不可。</li>
 <li>把平均值当成两端点的算术平均。 正确是 $\bar y=\frac1{b-a}\int_a^bf(x)\,\mathrm{d}x$，例如 $v(t)=t+k\sin\pi t$ 在 $[0,3]$ 上的平均速度是 $\frac13\int_0^3v(t)\,\mathrm{d}t$，而不是 $\frac{v(0)+v(3)}{2}$。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 15 题（填空题，5 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 15 题（填空题，5 分）</strong></p><div class="q-stem">
 <p>某物体以速度 $v(t)=t+k\sin\pi t$ 做直线运动，若它从 $t=0$ 到 $t=3$ 的时间段内平均速度是 $\frac52$，则 $k=$ ________。</p>
-<blockquote>
+</div><blockquote>
 <p>解析：</p>
 <ol>
 <li>
@@ -1364,7 +1364,7 @@
 <h3 class="bookmark">微分方程 <span class="badge hot">高频</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 8%；主要题型：选择、填空、解答（一阶与二阶常系数、几何应用）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 8%；主要题型：选择、填空、解答（一阶与二阶常系数、几何应用）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【一阶微分方程：三种类型与通解】</h5>
 <ul>
@@ -1523,7 +1523,7 @@
 <p>⚠️ <strong>秒杀技</strong>：几何应用题的翻译只需抓住两句话——截距就是"切线方程里令另一个坐标为 $0$"，条件里有变限积分就两边对 $x$ 求导。翻译成等式之后再判类型，比边翻译边解方程稳。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li><code>一阶线性通解</code> —— $y=e^{-\int P\,dx}\left(\int Qe^{\int P\,dx}dx+C\right)$。使用前必须把 $y'$ 的系数化成 $1$，否则 $P$ 会取错。</li>
 <li><code>可分离变量</code> —— $\frac{dy}{dx}=f(x)g(y)$ 分离为 $\frac{dy}{g(y)}=f(x)\,dx$ 后两边积分；积分前先单独检查 $g(y)=0$ 是否给出被丢掉的常数解。</li>
 <li><code>齐次方程</code> —— $\frac{dy}{dx}=\varphi\left(\frac{y}{x}\right)$ 令 $u=\frac{y}{x}$，得 $u+xu'=\varphi(u)$，分离变量解出 $u$ 后回代。</li>
@@ -1534,9 +1534,9 @@
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
 <p>图 1 画的是方程 $y'+y=x$ 的解曲线族 $y=x-1+Ce^{-x}$：四条曲线分别取 $C=-1,0,1,2$，其中 $C=1$ 的那条是过点 $(0,0)$ 的特解，它在 $x=1$ 处取值为 $e^{-1}\approx0.3679$；直线 $y=x-1$（图中虚线，即 $C=0$ 的解）是全部解曲线的斜渐近线，任何一条解曲线与它的竖直距离都是 $Ce^{-x}$，当 $x\to+\infty$ 时趋于 $0$ 但永不等于 $0$。</p>
-<p><img alt="函数图像：一阶线性方程的解曲线族与斜渐近线" src="assets/gaoshu-07-fig1.png" /></p>
+<p class="fig"><img alt="函数图像：一阶线性方程的解曲线族与斜渐近线" src="assets/gaoshu-07-fig1.png" /></p>
 <p>图 2 是拿到方程后判定类型、选择解法的流程。</p>
-<p><img alt="解题流程：微分方程类型判定与解法选择" src="assets/gaoshu-07-fig2.png" /></p>
+<p class="fig"><img alt="解题流程：微分方程类型判定与解法选择" src="assets/gaoshu-07-fig2.png" /></p>
 <div class="mermaid">flowchart TD
     A[&quot;给出一个微分方程&quot;] --&gt; B{&quot;能把 y 与 x 分到等号两边吗&quot;}
     B --&gt;|&quot;能&quot;| C[&quot;可分离变量 两边积分并检查常数解&quot;]
@@ -1559,16 +1559,16 @@
     H --&gt;|&quot;否&quot;| J[&quot;看能否降阶 令 p = y&#x27;&quot;]
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li><strong>错在解可分离变量方程时直接除以 $g(y)$，漏掉常数解。</strong> 正确做法是先检查 $g(y)=0$：若 $g(y_0)=0$，则 $y\equiv y_0$ 也是解，它常常在通解中取不到（因为解出通解时除以了 $g(y)$）。</li>
 <li><strong>错在没把方程化成标准形就用通解公式。</strong> 例如 $xy'+y=x^2$ 必须先除以 $x$ 写成 $y'+\frac{1}{x}y=x$，此时 $P=\frac{1}{x}$；若直接用原式的 $P$ 就取错了。另外算 $\int P\,dx$ 时不要漏掉积分常数以外的化简，$C$ 只需在最后写一个。</li>
 <li><strong>错在非齐次方程只写 $Y$ 或只写 $y^*$。</strong> 通解必须是 $Y+y^*$；当自由项的 $\lambda$ 恰是特征根时，特解必须乘 $x^{k}$——例如 $y''-y=e^{x}$ 中 $\lambda=1$ 是单根，应设 $Axe^{x}$ 而不是 $Ae^{x}$。</li>
 <li><strong>错在几何应用题里丢掉初始条件或单位。</strong> 曲线过某点、某时刻的位移与速度都是初始条件，列式时先设 $y=y(x)$ 再翻译题面；解出含 $C$ 的通解后必须代回定出 $C$，否则答案不唯一。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 13 题（填空题，5 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 13 题（填空题，5 分）</strong></p><div class="q-stem">
 <p>微分方程 $y'=\dfrac{1}{(x+y)^2}$ 满足 $y(1)=0$ 的解为 ______。</p>
-<blockquote>
+</div><blockquote>
 <p>解析：</p>
 <ol>
 <li>方程右端只依赖 $x+y$，属 $y'=f(ax+by+c)$ 型。</li>
@@ -1603,7 +1603,7 @@
 <h3 class="bookmark">数二高数综合与证明专题 <span class="badge">常规</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 考频待补充；涉及年份：综合性专题，不单独命题；分数占比约 0%；主要题型：跨章综合题与中值定理证明题的解题框架。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 考频待补充；涉及年份：综合性专题，不单独命题；分数占比约 0%；主要题型：跨章综合题与中值定理证明题的解题框架。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【综合题的三步框架】</h5>
 <ul>
@@ -1769,7 +1769,7 @@
 <p>⚠️ <strong>秒杀技</strong>：见到 $|f''(x)|\le M$、$f'(0)=f'(1)$ 这类整体界或对称条件，标准做法是在两个端点各写一次带拉格朗日余项的泰勒展开，再用 $(1-x)$ 与 $x$ 加权相加，含未知 $f'$ 的项自动抵消，剩下的项直接用界放大即可。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li><code>罗尔定理</code> —— 条件为闭区间连续、开区间可导、两端点函数值相等，结论是存在 $\xi\in(a,b)$ 使 $f'(\xi)=0$；三个条件缺一不可，端点相等常常要靠辅助函数自己凑。</li>
 <li><code>拉格朗日中值定理</code> —— $f(b)-f(a)=f'(\xi)(b-a)$，$\xi\in(a,b)$。它是"把函数差换成导数"的桥梁，证明不等式时最常用。</li>
 <li><code>柯西中值定理</code> —— $\frac{f(b)-f(a)}{g(b)-g(a)}=\frac{f'(\xi)}{g'(\xi)}$；结论里出现 $\xi^2$、$e^{\xi}$ 等因子时选它。</li>
@@ -1780,9 +1780,9 @@
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
 <p>图 1 是拉格朗日中值定理的几何示意，取 $f(x)=x^3-3x+1$、区间 $[0,2]$：两端点为 $(0,1)$ 与 $(2,3)$，弦是直线 $y=x+1$，弦的斜率为 $1$；令 $f'(x)=3x^2-3=1$ 解得 $[0,2]$ 内的中值点 $\xi=\frac{2\sqrt{3}}{3}\approx1.1547$，对应切点 $\left(\frac{2\sqrt{3}}{3},\ 1-\frac{10\sqrt{3}}{9}\right)\approx(1.1547,-0.9245)$，该点处的切线 $y=x+1-\frac{16\sqrt{3}}{9}$ 与弦平行。</p>
-<p><img alt="函数图像：拉格朗日中值定理的弦与平行切线" src="assets/gaoshu-08-fig1.png" /></p>
+<p class="fig"><img alt="函数图像：拉格朗日中值定理的弦与平行切线" src="assets/gaoshu-08-fig1.png" /></p>
 <p>图 2 是证明题的辅助函数选择与定理匹配流程。</p>
-<p><img alt="解题流程：证明题辅助函数与中值定理选择" src="assets/gaoshu-08-fig2.png" /></p>
+<p class="fig"><img alt="解题流程：证明题辅助函数与中值定理选择" src="assets/gaoshu-08-fig2.png" /></p>
 <div class="mermaid">flowchart TD
     A[&quot;读待证结论&quot;] --&gt; B{&quot;结论能整理成 F 的导数为 0 吗&quot;}
     B --&gt;|&quot;能&quot;| C[&quot;凑出 F 的两个等值点 用罗尔定理&quot;]
@@ -1815,18 +1815,18 @@
     J --&gt; K
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li><strong>错在硬套罗尔定理而不检查端点条件。</strong> 罗尔定理要求 $f(a)=f(b)$，而题给条件往往不是这个（例如只给了 $f(b)-f(a)$）。正确做法是先构造辅助函数把端点值拉平，例如令 $F(x)=f(x)-f(a)-\frac{f(b)-f(a)}{b-a}(x-a)$，此时 $F(a)=F(b)=0$，再对 $F$ 用罗尔定理。</li>
 <li><strong>错在构造辅助函数时漏掉指数因子。</strong> 结论含 $f'(\xi)+g(\xi)f(\xi)=0$ 时必须乘 $e^{\int g\,dx}$，直接取 $F=f$ 得不到要证的形式；这个因子恒正，不改变零点位置，但少了它就推不出结论。</li>
 <li><strong>错在用泰勒公式时展开点与余项写法不匹配。</strong> 已知 $|f''(x)|\le M$ 时应在端点或区间中点展开，并明确写出余项中的 $\eta$ 落在哪两个数之间；余项项数写错、或把 $\eta$ 当成与 $x$ 无关的常数，都会导致放缩失效。</li>
 <li><strong>错在把 $\xi$ 的取值范围写宽或写窄。</strong> 中值定理保证的 $\xi$ 在<strong>开区间</strong> $(a,b)$ 内（积分中值定理给的是闭区间 $[a,b]$）；后续放缩常常依赖这个范围，写错就得不到正确的界。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 21 题（解答题，12 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 21 题（解答题，12 分）</strong></p><div class="q-stem">
 <p>设函数 $f(x)$ 具有 2 阶导数，$f'(0)=f'(1)$，$|f''(x)|\le 1$。</p>
 <p>（1）当 $x\in(0,1)$ 时，$\left|f(x)-f(0)(1-x)-f(1)x\right|\le\dfrac{x(1-x)}{2}$；</p>
 <p>（2）$\left|\displaystyle\int_0^1 f(x)\,dx-\dfrac{f(0)+f(1)}{2}\right|\le\dfrac{1}{12}$。</p>
-<blockquote>
+</div><blockquote>
 <p>解析：</p>
 <ol>
 <li>在左端点写带拉格朗日余项的泰勒公式：</li>
@@ -1860,7 +1860,7 @@
 <h3 class="bookmark">多元函数微积分学 <span class="badge hot">高频</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 7 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 14%；主要题型：选择、填空、解答（偏导数、全微分、极值、二重积分）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 7 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 14%；主要题型：选择、填空、解答（偏导数、全微分、极值、二重积分）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【二元函数的极限与连续】</h5>
 <ul>
@@ -2016,7 +2016,7 @@
 <p>⚠️ <strong>易错点</strong>：极坐标换元时漏掉雅可比因子 $r$。面积元素是 $dxdy=r\,drd\theta$ 而不是 $drd\theta$，漏掉 $r$ 会让结果整体差一个量级；另一个高频错误是交换积分次序时不重新定限。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li><code>二元极限</code> —— $\lim\limits_{(x,y)\to(x_0,y_0)}f(x,y)=A$ 要求沿<strong>任意路径</strong>极限都相同；找两条路径极限不同即可断定极限不存在（常用 $y=kx$）。</li>
 <li><code>可微的定义</code> —— $\Delta z=f_x\Delta x+f_y\Delta y+o(\rho)$，$\rho=\sqrt{\Delta x^2+\Delta y^2}$；判别链条是"偏导连续 $\Rightarrow$ 可微 $\Rightarrow$ 偏导存在且函数连续"，两个反向箭头都不成立。</li>
 <li><code>隐函数求导</code> —— 由 $F(x,y,z)=0$ 确定 $z=z(x,y)$ 时 $\frac{\partial z}{\partial x}=-\frac{F_x}{F_z}$、$\frac{\partial z}{\partial y}=-\frac{F_y}{F_z}$，条件是 $F_z\neq0$；分子的负号最易漏。</li>
@@ -2028,9 +2028,9 @@
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
 <p>图 1 是区域 $D=\left\{(x,y):\frac{1}{3}\le xy\le3,\ \frac{1}{3}\le\frac{y}{x}\le3,\ x>0,\ y>0\right\}$ 在第一象限的图像，四条边界曲线的交点为 $\left(\frac{1}{3},1\right)$、$\left(1,\frac{1}{3}\right)$、$(3,1)$、$(1,3)$：$\left(\frac{1}{3},1\right)$ 是 $xy=\frac{1}{3}$ 与 $y=3x$ 的交点，$\left(1,\frac{1}{3}\right)$ 是 $xy=\frac{1}{3}$ 与 $y=\frac{1}{3}x$ 的交点，$(3,1)$ 是 $xy=3$ 与 $y=\frac{1}{3}x$ 的交点，$(1,3)$ 是 $xy=3$ 与 $y=3x$ 的交点。图中同时画出 $u=xy$、$v=\frac{y}{x}$ 的等值线，这族双曲线与射线把 $D$ 映成 $uv$ 平面上以 $\frac{1}{3}$ 与 $3$ 为边的正方形。</p>
-<p><img alt="函数图像：二重积分的积分区域与双曲线坐标变换" src="assets/gaoshu-09-fig1.png" /></p>
+<p class="fig"><img alt="函数图像：二重积分的积分区域与双曲线坐标变换" src="assets/gaoshu-09-fig1.png" /></p>
 <p>图 2 是多元函数极值判定与二重积分计算的路线图。</p>
-<p><img alt="解题流程：多元极值判定与二重积分计算路线" src="assets/gaoshu-09-fig2.png" /></p>
+<p class="fig"><img alt="解题流程：多元极值判定与二重积分计算路线" src="assets/gaoshu-09-fig2.png" /></p>
 <div class="mermaid">flowchart TD
     A[&quot;多元函数问题&quot;] --&gt; B{&quot;是求极值还是算二重积分&quot;}
     B --&gt;|&quot;求极值&quot;| C[&quot;解 f 对 x 与 f 对 y 同时为零 得驻点&quot;]
@@ -2065,16 +2065,16 @@
     K --&gt; L
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li><strong>错在用一条路径的极限就断言二元极限存在。</strong> 一元函数只需两侧趋近，二元函数要沿任意路径；沿 $y=kx$ 算出 $\frac{xy}{x^2+y^2}\to\frac{k}{1+k^2}$ 随 $k$ 变化，就足以断定该极限不存在。</li>
 <li><strong>错在把"偏导存在"当成"可微"。</strong> 偏导存在只保证沿坐标轴方向的两条路径，可微要求所有方向；典型反例是 $f(x,y)=\frac{xy}{\sqrt{x^2+y^2}}$（补 $f(0,0)=0$），原点处两个偏导都为 $0$，但沿 $y=x$ 有 $\frac{\Delta z-f_x\Delta x-f_y\Delta y}{\rho}=\frac{1}{2}\not\to0$，故不可微。判别时可算 $\Delta z-f_x\Delta x-f_y\Delta y$ 是否为 $\rho$ 的高阶无穷小。</li>
 <li><strong>错在极坐标换元时漏掉雅可比因子 $r$。</strong> 面积元素是 $dxdy=r\,drd\theta$，不是 $drd\theta$；漏掉 $r$ 会让结果整体差一个量级。</li>
 <li><strong>错在交换积分次序时不重新定限。</strong> 必须重新用不等式描述同一区域再定新的上下限，不能把两个积分号连同上下限直接对调；画图是唯一可靠的办法，定限口诀是"外层常数限、内层函数限，内层上限减下限"。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 17 题（解答题，10 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 17 题（解答题，10 分）</strong></p><div class="q-stem">
 <p>设已知区域 $D$ 是第一象限内的有界区域，它由 $xy=\dfrac{1}{3}$、$xy=3$、$y=\dfrac{1}{3}x$、$y=3x$ 围成，计算 $\displaystyle\iint_D(1+x-y)\,dxdy$。</p>
-<blockquote>
+</div><blockquote>
 <p>解析：</p>
 <ol>
 <li>区域由两族双曲线 $xy=$ 常数与两族射线 $\frac{y}{x}=$ 常数围成。</li>
@@ -2117,7 +2117,7 @@
 <h3 class="bookmark">行列式 <span class="badge">常规</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 0 次；涉及年份：2023—2024 年未单独命题（2023—2024 年数二真题逐题定章统计）；分数占比约 12%；主要题型：多为矩阵与方程组计算的中间步骤（按行按列展开、范德蒙德）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 0 次；涉及年份：2023—2024 年未单独命题（2023—2024 年数二真题逐题定章统计）；分数占比约 12%；主要题型：多为矩阵与方程组计算的中间步骤（按行按列展开、范德蒙德）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【行列式定义与性质】</h5>
 <ul>
@@ -2226,7 +2226,7 @@
 <p>⚠️ <strong>易错点</strong>：$|A|=0$ 只能说明 $A$ <strong>不可逆</strong>，绝不能推出 $A^{*}=O$——当 $r(A)=n-1$ 时 $A^{*}\neq O$，这是伴随矩阵题目最容易丢分的分界点。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$|A|=0 \iff A$ 不可逆 $\iff r(A)<n \iff Ax=0$ 有非零解 —— 判定「行列式为零」必须换成秩或方程组语言，才接得上后续步骤</li>
 <li>$|AB|=|A|\cdot|B|$，$|kA|=k^{n}|A|$，$|A^{T}|=|A|$，$|A^{-1}|=|A|^{-1}$ —— 行列式与矩阵运算的换算表，注意 $|kA|$ 的 $k$ 要取 $n$ 次幂</li>
 <li>$\begin{vmatrix} A & C \ O & B \end{vmatrix}=|A|\cdot|B|$ —— 分块三角阵，无论 $C$ 是什么</li>
@@ -2235,8 +2235,8 @@
 <li>$|A|=a_{11}A_{11}+a_{12}A_{12}+\cdots+a_{1n}A_{1n}$ —— 按行展开的定义式，符号由位置 $(i,j)$ 的奇偶决定</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="结构图：3 阶行列式的代数余子式符号棋盘与分块三角行列式的降阶路径" src="assets/xiandai-01-fig1.png" /></p>
-<pre class="ascii"><code>+-------------------------------+     +-------------------------------+
+<p class="fig"><img alt="结构图：3 阶行列式的代数余子式符号棋盘与分块三角行列式的降阶路径" src="assets/xiandai-01-fig1.png" /></p>
+<div class="codebox ascii"><div class="bar">ASCII 示意图</div><pre><code>+-------------------------------+     +-------------------------------+
 |  +  |  -  |  +                |     |  a11  a12  a13  |  c11  c12   |
 |  -  |  +  |  -                |     |  a21  a22  a23  |  c21  c22   |
 |  +  |  -  |  +                |     |  ------+-------+------------- |
@@ -2244,13 +2244,13 @@
 |  sign of A(i,j) = (-1)^(i+j)  |     |                |  b21  b22   |
 +-------------------------------+     +-------------------------------+
         cofactor sign board              block triangular partition
-</code></pre>
+</code></pre></div>
 <p>图左是代数余子式的符号棋盘，位置 $(i,j)$ 的符号为 $(-1)^{i+j}$；图右是分块上三角阵，其行列式等于两个主对角块行列式之积。</p>
-<pre class="ascii"><code>Step 1   pick a row (or column) with the most zeros
+<div class="codebox ascii"><div class="bar">ASCII 示意图</div><pre><code>Step 1   pick a row (or column) with the most zeros
 Step 2   use  r_i &lt;- r_i + k*r_j  to create more zeros in it
 Step 3   expand along that row : D = sum a(i,j) * A(i,j)
 Step 4   repeat until 2x2 or triangular, then multiply the diagonal
-</code></pre>
+</code></pre></div>
 <div class="mermaid">flowchart TD
     A[&quot;n 阶行列式 D&quot;] --&gt; B{&quot;某行某列零元素多？&quot;}
     B --&gt;|&quot;是&quot;| C[&quot;按该行该列展开降阶&quot;]
@@ -2277,16 +2277,16 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
     H --&gt; I
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li>把「$|A|=0$」直接当成「$A$ 的所有子式全为零」。 错在混淆了行列式与秩。正确说法是 $|A|=0\iff r(A)\le n-1$；$A$ 完全可能有一个 $n-1$ 阶子式非零（此时 $r(A)=n-1$，$A^{*}\neq O$），这正是伴随矩阵相关题目的分界点。</li>
 <li>代数余子式与余子式的符号搞混，或按行展开时误用了别的行的元素。 错在漏掉 $(-1)^{i+j}$，或写出 $\sum_j a_{kj}A_{ij}$（$k\neq i$）这种不成立的式子。正确做法：$A_{ij}=(-1)^{i+j}M_{ij}$，且按第 $i$ 行展开时只有第 $i$ 行的元素参与相乘，乘的却是其他行元素构成的余子式。</li>
 <li>在行列式里做初等行变换时忘记倍加不改变值、换行要变号。 错在把矩阵的初等变换规则原样搬过来，或用「某行乘 $k$」后不把 $k$ 提出去。正确做法：倍加 $r_i+kr_j$ 不变值；交换两行提一个 $-1$；某行乘 $k$ 则必须在行列式外除以 $k$ 还原。</li>
 <li>分块行列式一律写成 $|A||B|-|C||D|$ 之类。 错在把二阶行列式的展开式硬套到分块矩阵上。正确做法：只有分块三角（或分块对角）时才有 $|A||B|$ 这种干净结论，一般情形必须回到拉普拉斯展开或先消去一角。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2020 年真题改编（填空题，4 分）</strong></p>
+<p class="q-src"><strong>2020 年真题改编（填空题，4 分）</strong></p><div class="q-stem">
 <p>计算行列式 $\begin{vmatrix} a & 0 & -1 & 1 \\ 0 & a & 1 & -1 \\ -1 & 1 & a & 0 \\ 1 & -1 & 0 & a \end{vmatrix}=$ ______。</p>
-<blockquote>
+</div><blockquote>
 <p>解析：第 1 行只有三个非零元，直接按第 1 行展开，$D=aA_{11}+(-1)A_{13}+1\cdot A_{14}$。</p>
 <p>三个三阶余子式都用「造零 + 展开」各降一阶，sympy 复算得 $M_{11}=a^{3}-2a$、$M_{13}=M_{14}=a^{2}$。</p>
 <p>代回并注意符号 $A_{13}=(-1)^{1+3}M_{13}=a^{2}$、$A_{14}=(-1)^{1+4}M_{14}=-a^{2}$：</p>
@@ -2300,7 +2300,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <h3 class="bookmark">矩阵 <span class="badge hot">高频</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 24%；主要题型：选择、填空（伴随矩阵、秩、初等变换、可逆判定）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 24%；主要题型：选择、填空（伴随矩阵、秩、初等变换、可逆判定）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【矩阵运算】</h5>
 <ul>
@@ -2462,7 +2462,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <p>⚠️ <strong>易错点</strong>：把分块行列式一律写成 $|A||B|-|C||D|$，等于把二阶行列式展开式硬套到分块矩阵上。一般情形必须回到拉普拉斯展开或先消去一角。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$(AB)^{-1}=B^{-1}A^{-1}$，$(AB)^{T}=B^{T}A^{T}$ —— 一律反序，逆与转置混合时要先转置后取逆再反序</li>
 <li>$A$ 可逆 $\iff |A|\neq0 \iff r(A)=n \iff Ax=0$ 仅有零解 —— 可逆判定的四个同义说法</li>
 <li>$AA^{}=A^{}A=|A|E$，$|A^{}|=|A|^{n-1}$，$|A|\neq0$ 时 $A^{-1}=\frac{1}{|A|}A^{}$ —— 伴随矩阵的两条母公式</li>
@@ -2472,8 +2472,8 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <li>$P^{T}AP$ 与 $A$ 同秩 —— 可逆阵左乘右乘不改变秩，是初等变换不改变秩的一般形式</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="结构图：矩阵的等价标准形与按秩分段的伴随矩阵" src="assets/xiandai-02-fig1.png" /></p>
-<pre class="ascii"><code>      n columns                        r(A) = n   -&gt;  r(A*) = n
+<p class="fig"><img alt="结构图：矩阵的等价标准形与按秩分段的伴随矩阵" src="assets/xiandai-02-fig1.png" /></p>
+<div class="codebox ascii"><div class="bar">ASCII 示意图</div><pre><code>      n columns                        r(A) = n   -&gt;  r(A*) = n
  +-------------------+                 r(A) = n-1 -&gt;  r(A*) = 1
  |  Er   |     O     |   r rows        r(A) &lt;= n-2 -&gt;  A* = O
  |-------+-----------|
@@ -2481,9 +2481,9 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
  +-------------------+                 det(A)  = 0  and  A* != O  is possible
       rank = r
   equivalent normal form
-</code></pre>
+</code></pre></div>
 <p>图左是 $m\times n$ 矩阵经初等变换得到的等价标准形，其中 $r=r(A)$；图右列出伴随矩阵的秩随 $r(A)$ 变化的三段结论。</p>
-<pre class="ascii"><code>+---------+---------+---------+---------+
+<div class="codebox ascii"><div class="bar">ASCII 示意图</div><pre><code>+---------+---------+---------+---------+
 |  A11    |  A21    |  A31    |  A41    |   &lt;- row 1 of adj(A)
 +---------+---------+---------+---------+
 |  A12    |  A22    |  A32    |  A42    |   Aij = (-1)^(i+j) * Mij
@@ -2492,7 +2492,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 +---------+---------+---------+---------+            the cofactor matrix
 |  A14    |  A24    |  A34    |  A44    |
 +---------+---------+---------+---------+
-</code></pre>
+</code></pre></div>
 <div class="mermaid">flowchart TD
     A[&quot;n 阶矩阵 A&quot;] --&gt; B{&quot;|A| = 0 ?&quot;}
     B --&gt;|&quot;否&quot;| C[&quot;A 可逆, r(A) = n, r(A*) = n&quot;]
@@ -2513,17 +2513,17 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
     F --&gt; I[&quot;伴随矩阵为零矩阵&quot;]
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li>由 $AB=O$ 直接推出 $A=O$ 或 $B=O$。 错在把数的乘法性质搬到矩阵上。正确结论只有秩的约束 $r(A)+r(B)\le n$。例如 $A=\begin{pmatrix}1&0\0&0\end{pmatrix}$、$B=\begin{pmatrix}0&0\0&1\end{pmatrix}$ 时 $AB=O$ 而两者都非零；进一步，若还知道 $A\neq O$ 且 $B\neq O$，只能推出 $r(A)<n$ 与 $r(B)<n$。</li>
 <li>把 $A^{*}$ 写成代数余子式矩阵本身，漏掉转置。 错在记成 $A^{}=(A_{ij})$。正确的是 $A^{}=(A_{ji})$；相应地 $(A^{T})^{}=(A^{})^{T}$，而 $(kA)^{}=k^{n-1}A^{}$，指数是 $n-1$ 不是 $n$。</li>
 <li>认为 $|A|=0$ 时一定有 $A^{*}=O$。 错在把行列式为零与伴随为零等同。正确的是 $r(A)=n-1$ 时 $A^{}\neq O$（此时 $r(A^{})=1$），只有 $r(A)\le n-2$ 才有 $A^{*}=O$。</li>
 <li>求逆或转置时顺序写错。 错在写 $(AB)^{-1}=A^{-1}B^{-1}$ 或 $(AB)^{T}=A^{T}B^{T}$。正确是一律反序：$(AB)^{-1}=B^{-1}A^{-1}$，$(AB)^{T}=B^{T}A^{T}$。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 9 题（单项选择题，5 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 9 题（单项选择题，5 分）</strong></p><div class="q-stem">
 <p>设 $A$ 为四阶矩阵，$A^{*}$ 为 $A$ 的伴随矩阵，若 $A(A-A^{*})=O$，且 $A\neq A^{*}$，则 $r(A)$ 的可能取值为（　）</p>
 <p>A. 0 或 1　　B. 1 或 3　　C. 2 或 3　　D. 1 或 2</p>
-<blockquote>
+</div><blockquote>
 <p>解析：第一步，化简条件。由 $AA^{*}=|A|E$：若 $|A|\neq0$，则 $A$ 可逆。</p>
 <p>在 $A(A-A^{*})=O$ 两边左乘 $A^{-1}$ 得 $A=A^{*}$。</p>
 <p>这与 $A\neq A^{*}$ 矛盾，故 $|A|=0$。</p>
@@ -2555,7 +2555,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <h3 class="bookmark">向量与向量组 <span class="badge hot">高频</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 2 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 12%；主要题型：选择、填空（线性相关性、极大无关组、秩）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 2 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 12%；主要题型：选择、填空（线性相关性、极大无关组、秩）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【线性相关性】</h5>
 <ul>
@@ -2672,7 +2672,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <p>⚠️ <strong>易错点</strong>：只做正交化而忘记 <strong>单位化</strong>，拼出的矩阵 $Q$ 不满足 $Q^{T}Q=E$，正交变换的前提立刻失效。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$\alpha_1,\dots,\alpha_s$ 线性相关 $\iff r(A)<s$，无关 $\iff r(A)=s$ —— $s$ 是向量个数，与向量维数 $n$ 无关</li>
 <li>$n$ 个 $n$ 维向量线性无关 $\iff |A|\neq 0$ —— 方阵情形才能用行列式判定</li>
 <li>$r(\alpha_1,\dots,\alpha_s)=r(\alpha_1,\dots,\alpha_s,\beta) \iff \beta$ 可由该组线性表示 —— 有解判定，判别「能否表示」只看向量组的秩变不变</li>
@@ -2682,8 +2682,8 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <li>$\alpha_1,\dots,\alpha_s$ 相关 $\iff$ 其中至少一个向量可由其余向量线性表示（$s\ge 2$）—— 通过「有没有多余向量」来理解相关性</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="结构图：向量组按列拼成矩阵后的行阶梯形与极大无关组的取法" src="assets/xiandai-03-fig1.png" /></p>
-<pre class="ascii"><code>       a1      a2      a3     ...     as         &lt;- s column vectors
+<p class="fig"><img alt="结构图：向量组按列拼成矩阵后的行阶梯形与极大无关组的取法" src="assets/xiandai-03-fig1.png" /></p>
+<div class="codebox ascii"><div class="bar">ASCII 示意图</div><pre><code>       a1      a2      a3     ...     as         &lt;- s column vectors
      +-------+-------+-------+-------+-------+
      |  *    |  *    |  *    |  ...  |  *    |   step 1: write vectors
      |  *    |  *    |  *    |  ...  |  *    |           as columns
@@ -2700,7 +2700,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
      |  0    |  0    |  0    |  ...  |  *    |   pivot columns give a
      |  0    |  0    |  0    |  ...  |  0    |   maximal independent set
      +-------+-------+-------+-------+-------+
-</code></pre>
+</code></pre></div>
 <p>主干元（方括号所在列）对应的<strong>原</strong>向量组构成极大线性无关组，其个数即该向量组的秩；非主元列对应的向量可由主元列向量线性表示。</p>
 <div class="mermaid">flowchart TD
     A[&quot;向量组 a1 ... as&quot;] --&gt; B[&quot;按列拼成矩阵 A&quot;]
@@ -2720,16 +2720,16 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
     D --&gt; H[&quot;主元列对应的原向量组成极大无关组&quot;]
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li>把「线性相关」与「任意一个向量都能由其余向量表示」等同。 错在忽略「至少一个」与「每一个」的区别。正确说法是：相关只保证存在一个向量可由其余向量表示；像 $\alpha_1=(1,0)$、$\alpha_2=(2,0)$、$\alpha_3=(0,1)$ 这组中，$\alpha_3$ 就不能由 $\alpha_1,\alpha_2$ 表示。</li>
 <li>用矩阵的初等列变换求极大无关组。 错在把行变换与列变换的效果混同。正确做法是只做初等行变换：行变换保持列向量之间的线性关系，主元列对应的原向量才是极大无关组；若对列做变换，列的位置被打乱，结论失效。</li>
 <li>判定线性相关性时把矩阵的秩与向量个数或维数搞错。 错在拿 $r(A)$ 与 $n$（维数）比较。正确是与 $s$（向量个数）比较：$r(A)=s$ 无关，$r(A)<s$ 相关。例如 3 个 4 维向量，$r(A)$ 最大是 3，若算出 $r(A)=3$ 就说明无关。</li>
 <li>由「两组向量秩相等」直接推出「两组等价」。 错在漏掉线性表示这一步。正确做法：先由 $r(A)=r(A,B)$ 或 $r(B)=r(A,B)$ 验证其中一组能由另一组表示，再断言等价；秩相等只是等价的必要条件。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 16 题（填空题，5 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 16 题（填空题，5 分）</strong></p><div class="q-stem">
 <p>设向量 $\alpha_1=\begin{pmatrix}a\\1\\-1\\1\end{pmatrix}$，$\alpha_2=\begin{pmatrix}1\\1\\b\\a\end{pmatrix}$，$\alpha_3=\begin{pmatrix}1\\a\\-1\\1\end{pmatrix}$，若 $\alpha_1,\alpha_2,\alpha_3$ 线性相关，且其中任意两个向量均线性无关，则 $ab=$ ______。</p>
-<blockquote>
+</div><blockquote>
 <p>解析：三个 4 维向量线性相关 $\iff$ 以它们为列的矩阵 $A$ 的全部三阶子式为零。</p>
 <p>其中四个三阶子式为 $-(a-1)(a+2)$、$-(a-1)(ab+b+2)$、$(a-1)(a+b)$（后两个各出现两次，仅在哪些行被取到上不同）。</p>
 <p>第一步，用其中两个最简单的子式定位参数：由 $-(a-1)^{2}(a+2)=0$ 得 $a=1$ 或 $a=-2$。</p>
@@ -2752,7 +2752,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <h3 class="bookmark">线性方程组 <span class="badge hot">高频</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 1 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 15%；主要题型：选择、填空、解答（解的结构、基础解系、含参数讨论）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 1 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 15%；主要题型：选择、填空、解答（解的结构、基础解系、含参数讨论）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【有解判定】</h5>
 <ul>
@@ -2869,7 +2869,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <p>⚠️ <strong>秒杀技</strong>：只问某一个未知量时用克拉默法则最快——分子只需算 $|A_j|$ 一个行列式，不必把整个方程组解出来。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$r(A)<r(A,b) \iff$ 无解；$r(A)=r(A,b)=n \iff$ 唯一解；$r(A)=r(A,b)<n \iff$ 无穷多解 —— 全部判定压缩成一句话</li>
 <li>齐次解空间维数 $=n-r(A)$ —— 基础解系中向量的个数，$n$ 是未知数个数</li>
 <li>$Ax=0$ 只有零解 $\iff r(A)=n$ —— 等价于 $A$ 的列向量组线性无关</li>
@@ -2879,8 +2879,8 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <li>$Ax=b$ 有解 $\iff r(A)=r(A,b) \iff b\in\operatorname{Col}(A)$ —— 有解的三种同义说法</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="结构图：增广矩阵的行最简形与基础解系的取法" src="assets/xiandai-04-fig1.png" /></p>
-<pre class="ascii"><code>   coefficient matrix A          augmented matrix (A | b)
+<p class="fig"><img alt="结构图：增广矩阵的行最简形与基础解系的取法" src="assets/xiandai-04-fig1.png" /></p>
+<div class="codebox ascii"><div class="bar">ASCII 示意图</div><pre><code>   coefficient matrix A          augmented matrix (A | b)
   +----+----+----+              +----+----+----+----+
   | a11| a12| a13|              | a11| a12| a13| b1 |
   +----+----+----+              +----+----+----+----+
@@ -2898,7 +2898,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
   +----+----+----+----+
   | 0  | 0  |  0 |  0 |
   +----+----+----+----+
-</code></pre>
+</code></pre></div>
 <p>把常数项列添到系数矩阵右侧即得增广矩阵 $(A,b)$；对 $(A,b)$ 整体做初等行变换化为行最简形后，主元所在列对应基本未知量，其余列对应自由未知量，自由未知量的个数等于 $n-r(A)$。</p>
 <div class="mermaid">flowchart TD
     A[&quot;线性方程组 Ax = b&quot;] --&gt; B[&quot;写出增广矩阵 (A|b)&quot;]
@@ -2922,17 +2922,17 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
     I --&gt; J[&quot;再取一个特解, 写成 eta* + 齐次通解&quot;]
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li>把有解条件写成 $r(A)=r(A,b)=n$。 错在把「有解」与「有唯一解」混为一谈。正确的有解条件只是 $r(A)=r(A,b)$，此时若 $r<n$ 就是无穷多解；只有当 $r=n$（即 $r$ 等于未知数个数）才是唯一解。</li>
 <li>认为「方程个数少于未知数个数」时方程组必有无穷多解。 错在漏掉无解的情形。正确的是：方程个数少只保证 $r(A)\le m<n$，此时若有解必为无穷多解，但完全可能 $r(A)<r(A,b)$ 而无解；只有对齐次方程组才能断言必有非零解。</li>
 <li>$|A|=0$ 时仍用克拉默法则求 $x_j=\frac{|A_j|}{|A|}$。 错在分母为零时硬套公式。正确做法：$|A|=0$ 意味着 $r(A)<n$，必须回到增广矩阵用秩判定，分别讨论无解与无穷多解，并对参数取值分类。</li>
 <li>求非齐次通解时只写特解，或只写齐次通解。 错在漏掉结构的一半。正确形式必须是 $\eta^{}+k_1\xi_1+\cdots+k_{n-r}\xi_{n-r}$，且要说明 $k_i$ 为任意常数；另外特解不唯一，任意一个满足 $A\eta^{}=b$ 的向量都可以。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 22 题（解答题，12 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 22 题（解答题，12 分）</strong></p><div class="q-stem">
 <p>设矩阵 $A=\begin{pmatrix} 0 & 1 & a \\ 1 & 0 & 1 \end{pmatrix}$，$B=\begin{pmatrix} 1 & 1 \\ 1 & 1 \\ b & 2 \end{pmatrix}$，二次型 $f(x_1,x_2,x_3)=x^{T}BAx$，已知方程组 $Ax=0$ 的解是 $B^{T}x=0$ 的解，但两个方程组不同解。</p>
 <p>（1）求 $a,b$ 的值；（2）求正交矩阵 $Q$，使变换 $x=Qy$ 将 $f(x_1,x_2,x_3)$ 化为标准形。</p>
-<blockquote>
+</div><blockquote>
 <p>解析（本示例只解第（1）问；第（2）问见「二次型」一章）：</p>
 <p><strong>第一步</strong>，解 $Ax=0$，它的系数矩阵是 $2\times3$ 的，$r(A)=2$，</p>
 <p>故解空间维数为 $3-2=1$。</p>
@@ -2964,7 +2964,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <h3 class="bookmark">特征值与特征向量 <span class="badge hot">高频</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 24%；主要题型：选择、解答（相似对角化、实对称矩阵）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 24%；主要题型：选择、解答（相似对角化、实对称矩阵）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【特征值与特征向量】</h5>
 <ul>
@@ -3074,7 +3074,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <p>⚠️ <strong>秒杀技</strong>：判定「能否正交对角化」先看 $A^{T}=A$ 是否成立。<strong>实对称</strong> 直接下结论「必可正交对角化」，不必再逐个算几何重数。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$A\alpha=\lambda\alpha$（$\alpha\neq0$）$\iff |A-\lambda E|=0$ —— 特征值由特征方程确定，特征向量必须非零</li>
 <li>$\sum\lambda_i=\operatorname{tr}(A)$，$\prod\lambda_i=|A|$ —— 特征值的和等于迹、积等于行列式，用于验算</li>
 <li>$A$ 可对角化 $\iff$ 有 $n$ 个线性无关的特征向量 $\iff$ 每个特征值的几何重数 $=$ 代数重数 —— 对角化的总判据</li>
@@ -3084,8 +3084,8 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <li>实对称矩阵必可对角化，且存在正交阵 $Q$ 使 $Q^{T}AQ=\Lambda$ —— 不同特征值的特征向量自动正交</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="结构图：相似对角化中特征向量按列排列与 A = P Λ P 逆 的矩阵结构" src="assets/xiandai-05-fig1.png" /></p>
-<pre class="ascii"><code>      A         *      P          =      P        *     Lambda
+<p class="fig"><img alt="结构图：相似对角化中特征向量按列排列与 A = P Λ P 逆 的矩阵结构" src="assets/xiandai-05-fig1.png" /></p>
+<div class="codebox ascii"><div class="bar">ASCII 示意图</div><pre><code>      A         *      P          =      P        *     Lambda
   +-------+   +-------+       +-------+-------+   +-------+-------+
   |       |   |   |   |       |   |   |   |   |   | l1    |   0   |
   |   n   | * | a1| a2|   =   | a1| a2| a1| a2| * |   0   |  l2   |
@@ -3102,7 +3102,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
      |  tr(A) = l1 + l2 + ... + ln                   |
      |  det(A) = l1 * l2 * ... * ln                  |
      +-----------------------------------------------+
-</code></pre>
+</code></pre></div>
 <p>图中 $P$ 的每一列是一个特征向量，$A\alpha_i=\lambda_i\alpha_i$ 逐个成立；对角阵 $\Lambda$ 的第 $i$ 个对角元必须与 $P$ 的第 $i$ 列对应，顺序可以调换但不能错配。</p>
 <div class="mermaid">flowchart TD
     A[&quot;n 阶方阵 A&quot;] --&gt; B[&quot;解特征方程 |A - lambda E| = 0&quot;]
@@ -3128,17 +3128,17 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
     I --&gt;|&quot;是&quot;| J[&quot;必可正交对角化, Q^T A Q = Lambda&quot;]
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li>把特征向量只写成「$(\lambda E-A)x=0$ 的解」而漏掉非零要求。 错在把零向量也算作特征向量。正确的是特征向量必须非零；$(A-\lambda E)x=0$ 的零解不算，我们要的是它的基础解系中的非零向量。</li>
 <li>认为「有重特征值就一定不能对角化」。 错在把「有重根」与「不可对角化」等同。正确做法是再看几何重数：例如 $J=\begin{pmatrix}1&1\0&1\end{pmatrix}$ 的二重特征值 $1$ 只对应一个线性无关特征向量（$2-r(E-J)=2-1=1$），故不可对角化；而 $E=\begin{pmatrix}1&0\0&1\end{pmatrix}$ 的二重特征值 $1$ 却对应两个线性无关特征向量，它本身已是对角阵。真正的判据是几何重数是否等于代数重数。</li>
 <li>认为「可对角化」等价于「特征值互异」。 错在把充分条件当充要条件。正确说法：互异特征值只是可对角化的充分条件；有重根时只要每个重根的几何重数补足，仍可对角化，例如单位矩阵 $E$ 只有特征值 $1$，但它本身已是对角阵。</li>
 <li>写出 $P^{-1}AP=\Lambda$ 后不核对列与对角元的对应关系。 错在把特征向量的顺序与特征值的顺序随意调换。正确做法：$P$ 的第 $i$ 列必须是对角阵第 $i$ 个对角元对应的特征向量；另外要注意 $P^{-1}AP$ 与 $PAP^{-1}$ 是两个不同的式子，前者才是相似变换。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 10 题（单项选择题，5 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 10 题（单项选择题，5 分）</strong></p><div class="q-stem">
 <p>设 $A,B$ 均为 2 阶矩阵，且 $AB=BA$，则「$A$ 有两个不相等的特征值」是「$B$ 可对角化」的（　）</p>
 <p>A. 充要条件　　B. 充分非必要条件　　C. 必要非充分条件　　D. 既非充分又非必要条件</p>
-<blockquote>
+</div><blockquote>
 <p>解析：先证充分性。</p>
 <p>设 $A$ 的两个特征值 $\lambda_1\neq\lambda_2$。</p>
 <p>对应特征向量 $\alpha_1,\alpha_2$ 线性无关，构成 $\mathbb{R}^2$ 的一组基。</p>
@@ -3164,7 +3164,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <h3 class="bookmark">二次型 <span class="badge hot">高频</span></h3>
 
 
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 12%；主要题型：选择、解答（正交变换化标准形、正定性、惯性指数）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h4 class="tt">考频统计</h4><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 12%；主要题型：选择、解答（正交变换化标准形、正定性、惯性指数）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h4 class="tt">核心讲解</h4><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h5>【二次型与矩阵表示】</h5>
 <ul>
@@ -3362,7 +3362,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <p>⚠️ <strong>易错点</strong>：把「特征值非负」当成正定，那是半正定。反例 $\begin{pmatrix}1&0\\0&0\end{pmatrix}$ 半正定但不正定。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h4 class="tt">关键结论速记</h4><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$f=x^{T}Ax$，$A=A^{T}$，$a_{ii}$ 是 $x_i^{2}$ 的系数，$a_{ij}=a_{ji}$ 是 $x_ix_j$ 系数的一半 —— 写二次型矩阵时最易错的一步</li>
 <li>正交变换 $x=Qy$ $\Rightarrow$ $f=\lambda_1y_1^{2}+\cdots+\lambda_ny_n^{2}$ —— 标准形系数就是 $A$ 的全部特征值</li>
 <li>$p+q=r(A)$，规范形唯一 —— 惯性定理，正负惯性指数与所用变换无关</li>
@@ -3372,8 +3372,8 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <li>$r(A)<n$ 时二次型必不可能是正定或负定 —— 秩亏立刻排除正定</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h4 class="tt">示意图</h4><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="结构图：二次型的三种形态与正交变换对角线化 A = Q Λ Q 转置" src="assets/xiandai-06-fig1.png" /></p>
-<pre class="ascii"><code>  general form            congruence              standard form
+<p class="fig"><img alt="结构图：二次型的三种形态与正交变换对角线化 A = Q Λ Q 转置" src="assets/xiandai-06-fig1.png" /></p>
+<div class="codebox ascii"><div class="bar">ASCII 示意图</div><pre><code>  general form            congruence              standard form
  +-----------------+     +-------------+     +-----------------+
  |  x^T A x        | --&gt; |  x = C y    | --&gt; |  d1 y1^2 + ...  |
  |  A symmetric    |     |  C invertible|    |  + dn yn^2      |
@@ -3393,7 +3393,7 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
  | y1^2 + ... + yp^2 - y(p+1)^2 - ... - y(p+q)^2     |
  | p = positive index, q = negative index, p+q = r(A)|
  +--------------------------------------------------+
-</code></pre>
+</code></pre></div>
 <p>图中横向是「一般二次型 $\to$ 可逆线性变换 $\to$ 标准形」的合同路线，纵向是正交变换这一特殊情形；正交变换下标准形的系数就是 $A$ 的特征值，而规范形的系数只有 $1,-1,0$，由惯性指数 $p,q$ 唯一决定。</p>
 <div class="mermaid">flowchart TD
     A[&quot;二次型 f = x^T A x&quot;] --&gt; B[&quot;写出对称矩阵 A&quot;]
@@ -3419,17 +3419,17 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
     I --&gt;|&quot;否&quot;| K[&quot;再看特征值符号定惯性指数&quot;]
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h4 class="tt">易错点</h4><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li>写二次型矩阵时把交叉项系数直接填进 $a_{ij}$。 错在忘记对称位置要各分一半。正确做法：$x_ix_j$ 的系数 $c$ 要拆成 $a_{ij}=a_{ji}=\frac{c}{2}$，例如 $f=2x_1x_2$ 的矩阵是 $\begin{pmatrix}0&1\1&0\end{pmatrix}$ 而不是 $\begin{pmatrix}0&2\2&0\end{pmatrix}$。写成非对称矩阵后特征值全错，正交变换也就无从谈起。</li>
 <li>把正交变换下的标准形系数写成任意数，或与特征值顺序错配。 错在脱离特征值去配系数。正确做法：正交变换 $x=Qy$ 下标准形的系数只能是 $A$ 的特征值，且 $Q$ 的第 $i$ 列必须对应第 $i$ 个系数；若只要求写出标准形（不要求写出 $Q$），系数顺序可以任意排列。</li>
 <li>判定正定时只看部分主子式、或把「特征值非负」当成正定。 错在把半正定与正定混淆，也错把「顺序主子式」偷换成「一般主子式」。正确做法：正定必须验证各阶顺序主子式全大于零，或等价地验证特征值全为正。反例：$\begin{pmatrix}1&0\0&0\end{pmatrix}$ 的一阶主子式为 $1,0$，它半正定但不正定；再看 $\begin{pmatrix}-1&0\0&-2\end{pmatrix}$ 这种特征值全负的矩阵，它是负定而非正定。</li>
 <li>把合同的矩阵当成相似矩阵来处理。 错在混用两种等价关系。正确做法：二次型化标准形用的是合同变换 $C^{T}AC$（保持秩与惯性指数），不保持特征值；只有正交变换这一特殊情形才同时是相似变换，此时系数才等于特征值。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h4 class="tt">真题示例</h4><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 22 题（解答题，12 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 22 题（解答题，12 分）</strong></p><div class="q-stem">
 <p>设矩阵 $A=\begin{pmatrix} 0 & 1 & a \\ 1 & 0 & 1 \end{pmatrix}$，$B=\begin{pmatrix} 1 & 1 \\ 1 & 1 \\ b & 2 \end{pmatrix}$，二次型 $f(x_1,x_2,x_3)=x^{T}BAx$，已知方程组 $Ax=0$ 的解是 $B^{T}x=0$ 的解，但两个方程组不同解。</p>
 <p>（1）求 $a,b$ 的值；（2）求正交矩阵 $Q$，使变换 $x=Qy$ 将 $f(x_1,x_2,x_3)$ 化为标准形。</p>
-<blockquote>
+</div><blockquote>
 <p>解析（本例只解第（2）问，$a=1,b=2$ 由第（1）问得到，见「线性方程组」一章）：</p>
 <p><strong>第一步</strong>，代入 $a=1,b=2$ 算出二次型矩阵。</p>
 <p>$$BA=\begin{pmatrix}1&1&2\\1&1&2\\2&2&4\end{pmatrix}$$</p>
@@ -3451,6 +3451,6 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 </blockquote>
 <hr /></div></section>
 <p class="backtop"><a href="#top">↑ 回到顶部</a></p></div></main></div>
-<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong> · 文字与插图 CC BY-NC-SA 4.0（禁止商业使用）· 代码 MIT · 第三方组件见 <a href="THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。 · <a href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
+<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong><span class="ft-sep">·</span>文字与插图 CC BY-NC-SA 4.0（禁止商业使用）<span class="ft-sep">·</span>代码 MIT<span class="ft-sep">·</span>第三方组件见 <a href="THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。<a class="ft-top" href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
 <button class="theme-toggle" type="button" title="切换深色/浅色">◐ 主题</button>
 </body></html>

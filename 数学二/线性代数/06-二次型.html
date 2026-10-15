@@ -17,7 +17,7 @@
 <div class="sb-group"><div class="sb-group-t">高等数学（约 117 分 · 约 78%）</div><a class="sb-chap" href="../高等数学/01-函数极限与连续.html">函数、极限与连续 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/02-导数与微分.html">导数与微分 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/03-中值定理与导数应用.html">中值定理与导数应用 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/04-不定积分.html">不定积分</a><a class="sb-chap" href="../高等数学/05-定积分与反常积分.html">定积分与反常积分 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/06-定积分的几何与物理应用.html">定积分的几何与物理应用 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/07-微分方程.html">微分方程 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/08-数二高数综合与证明专题.html">数二高数综合与证明专题</a><a class="sb-chap" href="../高等数学/09-多元函数微积分学.html">多元函数微积分学 <span class="tag">高频</span></a></div>
 <div class="sb-group"><div class="sb-group-t">线性代数（约 33 分 · 约 22%）</div><a class="sb-chap" href="../线性代数/01-行列式.html">行列式</a><a class="sb-chap" href="../线性代数/02-矩阵.html">矩阵 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/03-向量与向量组.html">向量与向量组 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/04-线性方程组.html">线性方程组 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/05-特征值与特征向量.html">特征值与特征向量 <span class="tag">高频</span></a><a class="sb-chap cur" href="../线性代数/06-二次型.html">二次型 <span class="tag">高频</span></a><div class="tocbox"><a class="toclink" href="#sec-freq">考频统计</a><a class="toclink" href="#sec-core">核心讲解</a><a class="toclink" href="#sec-key">关键结论速记</a><a class="toclink" href="#sec-fig">示意图</a><a class="toclink" href="#sec-err">易错点</a><a class="toclink" href="#sec-real">真题示例</a></div></div></nav><main><div class="inner">
 <header class="chaphead"><h1>二次型</h1><div class="badges"><span class="badge hot">高频考点</span><span class="badge">线性代数</span><span class="badge">建议 4 分</span></div></header>
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 12%；主要题型：选择、解答（正交变换化标准形、正定性、惯性指数）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 12%；主要题型：选择、解答（正交变换化标准形、正定性、惯性指数）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h2 class="tt">核心讲解</h2><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h3>【二次型与矩阵表示】</h3>
 <ul>
@@ -215,7 +215,7 @@
 <p>⚠️ <strong>易错点</strong>：把「特征值非负」当成正定，那是半正定。反例 $\begin{pmatrix}1&0\\0&0\end{pmatrix}$ 半正定但不正定。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h2 class="tt">关键结论速记</h2><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$f=x^{T}Ax$，$A=A^{T}$，$a_{ii}$ 是 $x_i^{2}$ 的系数，$a_{ij}=a_{ji}$ 是 $x_ix_j$ 系数的一半 —— 写二次型矩阵时最易错的一步</li>
 <li>正交变换 $x=Qy$ $\Rightarrow$ $f=\lambda_1y_1^{2}+\cdots+\lambda_ny_n^{2}$ —— 标准形系数就是 $A$ 的全部特征值</li>
 <li>$p+q=r(A)$，规范形唯一 —— 惯性定理，正负惯性指数与所用变换无关</li>
@@ -225,8 +225,8 @@
 <li>$r(A)<n$ 时二次型必不可能是正定或负定 —— 秩亏立刻排除正定</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h2 class="tt">示意图</h2><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="结构图：二次型的三种形态与正交变换对角线化 A = Q Λ Q 转置" src="../assets/xiandai-06-fig1.png" /></p>
-<pre class="ascii"><code>  general form            congruence              standard form
+<p class="fig"><img alt="结构图：二次型的三种形态与正交变换对角线化 A = Q Λ Q 转置" src="../assets/xiandai-06-fig1.png" /></p>
+<div class="codebox ascii"><div class="bar">ASCII 示意图</div><pre><code>  general form            congruence              standard form
  +-----------------+     +-------------+     +-----------------+
  |  x^T A x        | --&gt; |  x = C y    | --&gt; |  d1 y1^2 + ...  |
  |  A symmetric    |     |  C invertible|    |  + dn yn^2      |
@@ -246,7 +246,7 @@
  | y1^2 + ... + yp^2 - y(p+1)^2 - ... - y(p+q)^2     |
  | p = positive index, q = negative index, p+q = r(A)|
  +--------------------------------------------------+
-</code></pre>
+</code></pre></div>
 <p>图中横向是「一般二次型 $\to$ 可逆线性变换 $\to$ 标准形」的合同路线，纵向是正交变换这一特殊情形；正交变换下标准形的系数就是 $A$ 的特征值，而规范形的系数只有 $1,-1,0$，由惯性指数 $p,q$ 唯一决定。</p>
 <div class="mermaid">flowchart TD
     A[&quot;二次型 f = x^T A x&quot;] --&gt; B[&quot;写出对称矩阵 A&quot;]
@@ -272,17 +272,17 @@
     I --&gt;|&quot;否&quot;| K[&quot;再看特征值符号定惯性指数&quot;]
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li>写二次型矩阵时把交叉项系数直接填进 $a_{ij}$。 错在忘记对称位置要各分一半。正确做法：$x_ix_j$ 的系数 $c$ 要拆成 $a_{ij}=a_{ji}=\frac{c}{2}$，例如 $f=2x_1x_2$ 的矩阵是 $\begin{pmatrix}0&1\1&0\end{pmatrix}$ 而不是 $\begin{pmatrix}0&2\2&0\end{pmatrix}$。写成非对称矩阵后特征值全错，正交变换也就无从谈起。</li>
 <li>把正交变换下的标准形系数写成任意数，或与特征值顺序错配。 错在脱离特征值去配系数。正确做法：正交变换 $x=Qy$ 下标准形的系数只能是 $A$ 的特征值，且 $Q$ 的第 $i$ 列必须对应第 $i$ 个系数；若只要求写出标准形（不要求写出 $Q$），系数顺序可以任意排列。</li>
 <li>判定正定时只看部分主子式、或把「特征值非负」当成正定。 错在把半正定与正定混淆，也错把「顺序主子式」偷换成「一般主子式」。正确做法：正定必须验证各阶顺序主子式全大于零，或等价地验证特征值全为正。反例：$\begin{pmatrix}1&0\0&0\end{pmatrix}$ 的一阶主子式为 $1,0$，它半正定但不正定；再看 $\begin{pmatrix}-1&0\0&-2\end{pmatrix}$ 这种特征值全负的矩阵，它是负定而非正定。</li>
 <li>把合同的矩阵当成相似矩阵来处理。 错在混用两种等价关系。正确做法：二次型化标准形用的是合同变换 $C^{T}AC$（保持秩与惯性指数），不保持特征值；只有正交变换这一特殊情形才同时是相似变换，此时系数才等于特征值。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 22 题（解答题，12 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 22 题（解答题，12 分）</strong></p><div class="q-stem">
 <p>设矩阵 $A=\begin{pmatrix} 0 & 1 & a \\ 1 & 0 & 1 \end{pmatrix}$，$B=\begin{pmatrix} 1 & 1 \\ 1 & 1 \\ b & 2 \end{pmatrix}$，二次型 $f(x_1,x_2,x_3)=x^{T}BAx$，已知方程组 $Ax=0$ 的解是 $B^{T}x=0$ 的解，但两个方程组不同解。</p>
 <p>（1）求 $a,b$ 的值；（2）求正交矩阵 $Q$，使变换 $x=Qy$ 将 $f(x_1,x_2,x_3)$ 化为标准形。</p>
-<blockquote>
+</div><blockquote>
 <p>解析（本例只解第（2）问，$a=1,b=2$ 由第（1）问得到，见「线性方程组」一章）：</p>
 <p><strong>第一步</strong>，代入 $a=1,b=2$ 算出二次型矩阵。</p>
 <p>$$BA=\begin{pmatrix}1&1&2\\1&1&2\\2&2&4\end{pmatrix}$$</p>
@@ -303,6 +303,6 @@
 <p>则正交变换 $x=Qy$ 把 $f$ 化为标准形 $f=6y_1^{2}$。</p>
 </blockquote>
 <hr /></div></section><nav class="chapter-nav"><a class="cn-prev" href="05-特征值与特征向量.html" title="键盘 ← 或 k">← 特征值与特征向量</a><a class="cn-next off" href="#" title="键盘 → 或 j">已是最后一章 →</a></nav></div></main></div>
-<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong> · 文字与插图 CC BY-NC-SA 4.0（禁止商业使用）· 代码 MIT · 第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。 · <a href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
+<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong><span class="ft-sep">·</span>文字与插图 CC BY-NC-SA 4.0（禁止商业使用）<span class="ft-sep">·</span>代码 MIT<span class="ft-sep">·</span>第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。<a class="ft-top" href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
 <button class="theme-toggle" type="button" title="切换深色/浅色">◐ 主题</button>
 </body></html>

@@ -17,7 +17,7 @@
 <div class="sb-group"><div class="sb-group-t">高等数学（约 117 分 · 约 78%）</div><a class="sb-chap" href="../高等数学/01-函数极限与连续.html">函数、极限与连续 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/02-导数与微分.html">导数与微分 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/03-中值定理与导数应用.html">中值定理与导数应用 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/04-不定积分.html">不定积分</a><a class="sb-chap" href="../高等数学/05-定积分与反常积分.html">定积分与反常积分 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/06-定积分的几何与物理应用.html">定积分的几何与物理应用 <span class="tag">高频</span></a><a class="sb-chap cur" href="../高等数学/07-微分方程.html">微分方程 <span class="tag">高频</span></a><div class="tocbox"><a class="toclink" href="#sec-freq">考频统计</a><a class="toclink" href="#sec-core">核心讲解</a><a class="toclink" href="#sec-key">关键结论速记</a><a class="toclink" href="#sec-fig">示意图</a><a class="toclink" href="#sec-err">易错点</a><a class="toclink" href="#sec-real">真题示例</a></div><a class="sb-chap" href="../高等数学/08-数二高数综合与证明专题.html">数二高数综合与证明专题</a><a class="sb-chap" href="../高等数学/09-多元函数微积分学.html">多元函数微积分学 <span class="tag">高频</span></a></div>
 <div class="sb-group"><div class="sb-group-t">线性代数（约 33 分 · 约 22%）</div><a class="sb-chap" href="../线性代数/01-行列式.html">行列式</a><a class="sb-chap" href="../线性代数/02-矩阵.html">矩阵 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/03-向量与向量组.html">向量与向量组 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/04-线性方程组.html">线性方程组 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/05-特征值与特征向量.html">特征值与特征向量 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/06-二次型.html">二次型 <span class="tag">高频</span></a></div></nav><main><div class="inner">
 <header class="chaphead"><h1>微分方程</h1><div class="badges"><span class="badge hot">高频考点</span><span class="badge">高等数学</span><span class="badge">建议 9 分</span></div></header>
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 8%；主要题型：选择、填空、解答（一阶与二阶常系数、几何应用）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 8%；主要题型：选择、填空、解答（一阶与二阶常系数、几何应用）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h2 class="tt">核心讲解</h2><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h3>【一阶微分方程：三种类型与通解】</h3>
 <ul>
@@ -176,7 +176,7 @@
 <p>⚠️ <strong>秒杀技</strong>：几何应用题的翻译只需抓住两句话——截距就是"切线方程里令另一个坐标为 $0$"，条件里有变限积分就两边对 $x$ 求导。翻译成等式之后再判类型，比边翻译边解方程稳。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h2 class="tt">关键结论速记</h2><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li><code>一阶线性通解</code> —— $y=e^{-\int P\,dx}\left(\int Qe^{\int P\,dx}dx+C\right)$。使用前必须把 $y'$ 的系数化成 $1$，否则 $P$ 会取错。</li>
 <li><code>可分离变量</code> —— $\frac{dy}{dx}=f(x)g(y)$ 分离为 $\frac{dy}{g(y)}=f(x)\,dx$ 后两边积分；积分前先单独检查 $g(y)=0$ 是否给出被丢掉的常数解。</li>
 <li><code>齐次方程</code> —— $\frac{dy}{dx}=\varphi\left(\frac{y}{x}\right)$ 令 $u=\frac{y}{x}$，得 $u+xu'=\varphi(u)$，分离变量解出 $u$ 后回代。</li>
@@ -187,9 +187,9 @@
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h2 class="tt">示意图</h2><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
 <p>图 1 画的是方程 $y'+y=x$ 的解曲线族 $y=x-1+Ce^{-x}$：四条曲线分别取 $C=-1,0,1,2$，其中 $C=1$ 的那条是过点 $(0,0)$ 的特解，它在 $x=1$ 处取值为 $e^{-1}\approx0.3679$；直线 $y=x-1$（图中虚线，即 $C=0$ 的解）是全部解曲线的斜渐近线，任何一条解曲线与它的竖直距离都是 $Ce^{-x}$，当 $x\to+\infty$ 时趋于 $0$ 但永不等于 $0$。</p>
-<p><img alt="函数图像：一阶线性方程的解曲线族与斜渐近线" src="../assets/gaoshu-07-fig1.png" /></p>
+<p class="fig"><img alt="函数图像：一阶线性方程的解曲线族与斜渐近线" src="../assets/gaoshu-07-fig1.png" /></p>
 <p>图 2 是拿到方程后判定类型、选择解法的流程。</p>
-<p><img alt="解题流程：微分方程类型判定与解法选择" src="../assets/gaoshu-07-fig2.png" /></p>
+<p class="fig"><img alt="解题流程：微分方程类型判定与解法选择" src="../assets/gaoshu-07-fig2.png" /></p>
 <div class="mermaid">flowchart TD
     A[&quot;给出一个微分方程&quot;] --&gt; B{&quot;能把 y 与 x 分到等号两边吗&quot;}
     B --&gt;|&quot;能&quot;| C[&quot;可分离变量 两边积分并检查常数解&quot;]
@@ -212,16 +212,16 @@
     H --&gt;|&quot;否&quot;| J[&quot;看能否降阶 令 p = y&#x27;&quot;]
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li><strong>错在解可分离变量方程时直接除以 $g(y)$，漏掉常数解。</strong> 正确做法是先检查 $g(y)=0$：若 $g(y_0)=0$，则 $y\equiv y_0$ 也是解，它常常在通解中取不到（因为解出通解时除以了 $g(y)$）。</li>
 <li><strong>错在没把方程化成标准形就用通解公式。</strong> 例如 $xy'+y=x^2$ 必须先除以 $x$ 写成 $y'+\frac{1}{x}y=x$，此时 $P=\frac{1}{x}$；若直接用原式的 $P$ 就取错了。另外算 $\int P\,dx$ 时不要漏掉积分常数以外的化简，$C$ 只需在最后写一个。</li>
 <li><strong>错在非齐次方程只写 $Y$ 或只写 $y^*$。</strong> 通解必须是 $Y+y^*$；当自由项的 $\lambda$ 恰是特征根时，特解必须乘 $x^{k}$——例如 $y''-y=e^{x}$ 中 $\lambda=1$ 是单根，应设 $Axe^{x}$ 而不是 $Ae^{x}$。</li>
 <li><strong>错在几何应用题里丢掉初始条件或单位。</strong> 曲线过某点、某时刻的位移与速度都是初始条件，列式时先设 $y=y(x)$ 再翻译题面；解出含 $C$ 的通解后必须代回定出 $C$，否则答案不唯一。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 13 题（填空题，5 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 13 题（填空题，5 分）</strong></p><div class="q-stem">
 <p>微分方程 $y'=\dfrac{1}{(x+y)^2}$ 满足 $y(1)=0$ 的解为 ______。</p>
-<blockquote>
+</div><blockquote>
 <p>解析：</p>
 <ol>
 <li>方程右端只依赖 $x+y$，属 $y'=f(ax+by+c)$ 型。</li>
@@ -251,6 +251,6 @@
 <p>且 $x=1,y=0$ 时 $\arctan(1)-\frac{\pi}{4}=0$，初始条件成立。</p>
 </blockquote>
 <hr /></div></section><nav class="chapter-nav"><a class="cn-prev" href="06-定积分的几何与物理应用.html" title="键盘 ← 或 k">← 定积分的几何与物理应用</a><a class="cn-next" href="08-数二高数综合与证明专题.html" title="键盘 → 或 j">数二高数综合与证明专题 →</a></nav></div></main></div>
-<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong> · 文字与插图 CC BY-NC-SA 4.0（禁止商业使用）· 代码 MIT · 第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。 · <a href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
+<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong><span class="ft-sep">·</span>文字与插图 CC BY-NC-SA 4.0（禁止商业使用）<span class="ft-sep">·</span>代码 MIT<span class="ft-sep">·</span>第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。<a class="ft-top" href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
 <button class="theme-toggle" type="button" title="切换深色/浅色">◐ 主题</button>
 </body></html>

@@ -17,7 +17,7 @@
 <div class="sb-group"><div class="sb-group-t">高等数学（约 117 分 · 约 78%）</div><a class="sb-chap" href="../高等数学/01-函数极限与连续.html">函数、极限与连续 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/02-导数与微分.html">导数与微分 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/03-中值定理与导数应用.html">中值定理与导数应用 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/04-不定积分.html">不定积分</a><a class="sb-chap" href="../高等数学/05-定积分与反常积分.html">定积分与反常积分 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/06-定积分的几何与物理应用.html">定积分的几何与物理应用 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/07-微分方程.html">微分方程 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/08-数二高数综合与证明专题.html">数二高数综合与证明专题</a><a class="sb-chap" href="../高等数学/09-多元函数微积分学.html">多元函数微积分学 <span class="tag">高频</span></a></div>
 <div class="sb-group"><div class="sb-group-t">线性代数（约 33 分 · 约 22%）</div><a class="sb-chap cur" href="../线性代数/01-行列式.html">行列式</a><div class="tocbox"><a class="toclink" href="#sec-freq">考频统计</a><a class="toclink" href="#sec-core">核心讲解</a><a class="toclink" href="#sec-key">关键结论速记</a><a class="toclink" href="#sec-fig">示意图</a><a class="toclink" href="#sec-err">易错点</a><a class="toclink" href="#sec-real">真题示例</a></div><a class="sb-chap" href="../线性代数/02-矩阵.html">矩阵 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/03-向量与向量组.html">向量与向量组 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/04-线性方程组.html">线性方程组 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/05-特征值与特征向量.html">特征值与特征向量 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/06-二次型.html">二次型 <span class="tag">高频</span></a></div></nav><main><div class="inner">
 <header class="chaphead"><h1>行列式</h1><div class="badges"><span class="badge">常规考点</span><span class="badge">线性代数</span><span class="badge">建议 4 分</span></div></header>
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 0 次；涉及年份：2023—2024 年未单独命题（2023—2024 年数二真题逐题定章统计）；分数占比约 12%；主要题型：多为矩阵与方程组计算的中间步骤（按行按列展开、范德蒙德）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 0 次；涉及年份：2023—2024 年未单独命题（2023—2024 年数二真题逐题定章统计）；分数占比约 12%；主要题型：多为矩阵与方程组计算的中间步骤（按行按列展开、范德蒙德）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h2 class="tt">核心讲解</h2><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h3>【行列式定义与性质】</h3>
 <ul>
@@ -126,7 +126,7 @@
 <p>⚠️ <strong>易错点</strong>：$|A|=0$ 只能说明 $A$ <strong>不可逆</strong>，绝不能推出 $A^{*}=O$——当 $r(A)=n-1$ 时 $A^{*}\neq O$，这是伴随矩阵题目最容易丢分的分界点。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h2 class="tt">关键结论速记</h2><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$|A|=0 \iff A$ 不可逆 $\iff r(A)<n \iff Ax=0$ 有非零解 —— 判定「行列式为零」必须换成秩或方程组语言，才接得上后续步骤</li>
 <li>$|AB|=|A|\cdot|B|$，$|kA|=k^{n}|A|$，$|A^{T}|=|A|$，$|A^{-1}|=|A|^{-1}$ —— 行列式与矩阵运算的换算表，注意 $|kA|$ 的 $k$ 要取 $n$ 次幂</li>
 <li>$\begin{vmatrix} A & C \ O & B \end{vmatrix}=|A|\cdot|B|$ —— 分块三角阵，无论 $C$ 是什么</li>
@@ -135,8 +135,8 @@
 <li>$|A|=a_{11}A_{11}+a_{12}A_{12}+\cdots+a_{1n}A_{1n}$ —— 按行展开的定义式，符号由位置 $(i,j)$ 的奇偶决定</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h2 class="tt">示意图</h2><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="结构图：3 阶行列式的代数余子式符号棋盘与分块三角行列式的降阶路径" src="../assets/xiandai-01-fig1.png" /></p>
-<pre class="ascii"><code>+-------------------------------+     +-------------------------------+
+<p class="fig"><img alt="结构图：3 阶行列式的代数余子式符号棋盘与分块三角行列式的降阶路径" src="../assets/xiandai-01-fig1.png" /></p>
+<div class="codebox ascii"><div class="bar">ASCII 示意图</div><pre><code>+-------------------------------+     +-------------------------------+
 |  +  |  -  |  +                |     |  a11  a12  a13  |  c11  c12   |
 |  -  |  +  |  -                |     |  a21  a22  a23  |  c21  c22   |
 |  +  |  -  |  +                |     |  ------+-------+------------- |
@@ -144,13 +144,13 @@
 |  sign of A(i,j) = (-1)^(i+j)  |     |                |  b21  b22   |
 +-------------------------------+     +-------------------------------+
         cofactor sign board              block triangular partition
-</code></pre>
+</code></pre></div>
 <p>图左是代数余子式的符号棋盘，位置 $(i,j)$ 的符号为 $(-1)^{i+j}$；图右是分块上三角阵，其行列式等于两个主对角块行列式之积。</p>
-<pre class="ascii"><code>Step 1   pick a row (or column) with the most zeros
+<div class="codebox ascii"><div class="bar">ASCII 示意图</div><pre><code>Step 1   pick a row (or column) with the most zeros
 Step 2   use  r_i &lt;- r_i + k*r_j  to create more zeros in it
 Step 3   expand along that row : D = sum a(i,j) * A(i,j)
 Step 4   repeat until 2x2 or triangular, then multiply the diagonal
-</code></pre>
+</code></pre></div>
 <div class="mermaid">flowchart TD
     A[&quot;n 阶行列式 D&quot;] --&gt; B{&quot;某行某列零元素多？&quot;}
     B --&gt;|&quot;是&quot;| C[&quot;按该行该列展开降阶&quot;]
@@ -177,16 +177,16 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
     H --&gt; I
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li>把「$|A|=0$」直接当成「$A$ 的所有子式全为零」。 错在混淆了行列式与秩。正确说法是 $|A|=0\iff r(A)\le n-1$；$A$ 完全可能有一个 $n-1$ 阶子式非零（此时 $r(A)=n-1$，$A^{*}\neq O$），这正是伴随矩阵相关题目的分界点。</li>
 <li>代数余子式与余子式的符号搞混，或按行展开时误用了别的行的元素。 错在漏掉 $(-1)^{i+j}$，或写出 $\sum_j a_{kj}A_{ij}$（$k\neq i$）这种不成立的式子。正确做法：$A_{ij}=(-1)^{i+j}M_{ij}$，且按第 $i$ 行展开时只有第 $i$ 行的元素参与相乘，乘的却是其他行元素构成的余子式。</li>
 <li>在行列式里做初等行变换时忘记倍加不改变值、换行要变号。 错在把矩阵的初等变换规则原样搬过来，或用「某行乘 $k$」后不把 $k$ 提出去。正确做法：倍加 $r_i+kr_j$ 不变值；交换两行提一个 $-1$；某行乘 $k$ 则必须在行列式外除以 $k$ 还原。</li>
 <li>分块行列式一律写成 $|A||B|-|C||D|$ 之类。 错在把二阶行列式的展开式硬套到分块矩阵上。正确做法：只有分块三角（或分块对角）时才有 $|A||B|$ 这种干净结论，一般情形必须回到拉普拉斯展开或先消去一角。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2020 年真题改编（填空题，4 分）</strong></p>
+<p class="q-src"><strong>2020 年真题改编（填空题，4 分）</strong></p><div class="q-stem">
 <p>计算行列式 $\begin{vmatrix} a & 0 & -1 & 1 \\ 0 & a & 1 & -1 \\ -1 & 1 & a & 0 \\ 1 & -1 & 0 & a \end{vmatrix}=$ ______。</p>
-<blockquote>
+</div><blockquote>
 <p>解析：第 1 行只有三个非零元，直接按第 1 行展开，$D=aA_{11}+(-1)A_{13}+1\cdot A_{14}$。</p>
 <p>三个三阶余子式都用「造零 + 展开」各降一阶，sympy 复算得 $M_{11}=a^{3}-2a$、$M_{13}=M_{14}=a^{2}$。</p>
 <p>代回并注意符号 $A_{13}=(-1)^{1+3}M_{13}=a^{2}$、$A_{14}=(-1)^{1+4}M_{14}=-a^{2}$：</p>
@@ -195,6 +195,6 @@ Step 4   repeat until 2x2 or triangular, then multiply the diagonal
 <p>与 $a^{2}(a^{2}-4)$ 一致。结论 $a^{4}-4a^{2}$。</p>
 </blockquote>
 <hr /></div></section><nav class="chapter-nav"><a class="cn-prev" href="../高等数学/09-多元函数微积分学.html" title="键盘 ← 或 k">← 多元函数微积分学</a><a class="cn-next" href="02-矩阵.html" title="键盘 → 或 j">矩阵 →</a></nav></div></main></div>
-<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong> · 文字与插图 CC BY-NC-SA 4.0（禁止商业使用）· 代码 MIT · 第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。 · <a href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
+<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong><span class="ft-sep">·</span>文字与插图 CC BY-NC-SA 4.0（禁止商业使用）<span class="ft-sep">·</span>代码 MIT<span class="ft-sep">·</span>第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。<a class="ft-top" href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
 <button class="theme-toggle" type="button" title="切换深色/浅色">◐ 主题</button>
 </body></html>

@@ -17,7 +17,7 @@
 <div class="sb-group"><div class="sb-group-t">高等数学（约 117 分 · 约 78%）</div><a class="sb-chap" href="../高等数学/01-函数极限与连续.html">函数、极限与连续 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/02-导数与微分.html">导数与微分 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/03-中值定理与导数应用.html">中值定理与导数应用 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/04-不定积分.html">不定积分</a><a class="sb-chap" href="../高等数学/05-定积分与反常积分.html">定积分与反常积分 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/06-定积分的几何与物理应用.html">定积分的几何与物理应用 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/07-微分方程.html">微分方程 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/08-数二高数综合与证明专题.html">数二高数综合与证明专题</a><a class="sb-chap cur" href="../高等数学/09-多元函数微积分学.html">多元函数微积分学 <span class="tag">高频</span></a><div class="tocbox"><a class="toclink" href="#sec-freq">考频统计</a><a class="toclink" href="#sec-core">核心讲解</a><a class="toclink" href="#sec-key">关键结论速记</a><a class="toclink" href="#sec-fig">示意图</a><a class="toclink" href="#sec-err">易错点</a><a class="toclink" href="#sec-real">真题示例</a></div></div>
 <div class="sb-group"><div class="sb-group-t">线性代数（约 33 分 · 约 22%）</div><a class="sb-chap" href="../线性代数/01-行列式.html">行列式</a><a class="sb-chap" href="../线性代数/02-矩阵.html">矩阵 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/03-向量与向量组.html">向量与向量组 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/04-线性方程组.html">线性方程组 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/05-特征值与特征向量.html">特征值与特征向量 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/06-二次型.html">二次型 <span class="tag">高频</span></a></div></nav><main><div class="inner">
 <header class="chaphead"><h1>多元函数微积分学</h1><div class="badges"><span class="badge hot">高频考点</span><span class="badge">高等数学</span><span class="badge">建议 16 分</span></div></header>
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 7 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 14%；主要题型：选择、填空、解答（偏导数、全微分、极值、二重积分）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 7 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 14%；主要题型：选择、填空、解答（偏导数、全微分、极值、二重积分）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h2 class="tt">核心讲解</h2><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h3>【二元函数的极限与连续】</h3>
 <ul>
@@ -173,7 +173,7 @@
 <p>⚠️ <strong>易错点</strong>：极坐标换元时漏掉雅可比因子 $r$。面积元素是 $dxdy=r\,drd\theta$ 而不是 $drd\theta$，漏掉 $r$ 会让结果整体差一个量级；另一个高频错误是交换积分次序时不重新定限。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h2 class="tt">关键结论速记</h2><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li><code>二元极限</code> —— $\lim\limits_{(x,y)\to(x_0,y_0)}f(x,y)=A$ 要求沿<strong>任意路径</strong>极限都相同；找两条路径极限不同即可断定极限不存在（常用 $y=kx$）。</li>
 <li><code>可微的定义</code> —— $\Delta z=f_x\Delta x+f_y\Delta y+o(\rho)$，$\rho=\sqrt{\Delta x^2+\Delta y^2}$；判别链条是"偏导连续 $\Rightarrow$ 可微 $\Rightarrow$ 偏导存在且函数连续"，两个反向箭头都不成立。</li>
 <li><code>隐函数求导</code> —— 由 $F(x,y,z)=0$ 确定 $z=z(x,y)$ 时 $\frac{\partial z}{\partial x}=-\frac{F_x}{F_z}$、$\frac{\partial z}{\partial y}=-\frac{F_y}{F_z}$，条件是 $F_z\neq0$；分子的负号最易漏。</li>
@@ -185,9 +185,9 @@
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h2 class="tt">示意图</h2><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
 <p>图 1 是区域 $D=\left\{(x,y):\frac{1}{3}\le xy\le3,\ \frac{1}{3}\le\frac{y}{x}\le3,\ x>0,\ y>0\right\}$ 在第一象限的图像，四条边界曲线的交点为 $\left(\frac{1}{3},1\right)$、$\left(1,\frac{1}{3}\right)$、$(3,1)$、$(1,3)$：$\left(\frac{1}{3},1\right)$ 是 $xy=\frac{1}{3}$ 与 $y=3x$ 的交点，$\left(1,\frac{1}{3}\right)$ 是 $xy=\frac{1}{3}$ 与 $y=\frac{1}{3}x$ 的交点，$(3,1)$ 是 $xy=3$ 与 $y=\frac{1}{3}x$ 的交点，$(1,3)$ 是 $xy=3$ 与 $y=3x$ 的交点。图中同时画出 $u=xy$、$v=\frac{y}{x}$ 的等值线，这族双曲线与射线把 $D$ 映成 $uv$ 平面上以 $\frac{1}{3}$ 与 $3$ 为边的正方形。</p>
-<p><img alt="函数图像：二重积分的积分区域与双曲线坐标变换" src="../assets/gaoshu-09-fig1.png" /></p>
+<p class="fig"><img alt="函数图像：二重积分的积分区域与双曲线坐标变换" src="../assets/gaoshu-09-fig1.png" /></p>
 <p>图 2 是多元函数极值判定与二重积分计算的路线图。</p>
-<p><img alt="解题流程：多元极值判定与二重积分计算路线" src="../assets/gaoshu-09-fig2.png" /></p>
+<p class="fig"><img alt="解题流程：多元极值判定与二重积分计算路线" src="../assets/gaoshu-09-fig2.png" /></p>
 <div class="mermaid">flowchart TD
     A[&quot;多元函数问题&quot;] --&gt; B{&quot;是求极值还是算二重积分&quot;}
     B --&gt;|&quot;求极值&quot;| C[&quot;解 f 对 x 与 f 对 y 同时为零 得驻点&quot;]
@@ -222,16 +222,16 @@
     K --&gt; L
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li><strong>错在用一条路径的极限就断言二元极限存在。</strong> 一元函数只需两侧趋近，二元函数要沿任意路径；沿 $y=kx$ 算出 $\frac{xy}{x^2+y^2}\to\frac{k}{1+k^2}$ 随 $k$ 变化，就足以断定该极限不存在。</li>
 <li><strong>错在把"偏导存在"当成"可微"。</strong> 偏导存在只保证沿坐标轴方向的两条路径，可微要求所有方向；典型反例是 $f(x,y)=\frac{xy}{\sqrt{x^2+y^2}}$（补 $f(0,0)=0$），原点处两个偏导都为 $0$，但沿 $y=x$ 有 $\frac{\Delta z-f_x\Delta x-f_y\Delta y}{\rho}=\frac{1}{2}\not\to0$，故不可微。判别时可算 $\Delta z-f_x\Delta x-f_y\Delta y$ 是否为 $\rho$ 的高阶无穷小。</li>
 <li><strong>错在极坐标换元时漏掉雅可比因子 $r$。</strong> 面积元素是 $dxdy=r\,drd\theta$，不是 $drd\theta$；漏掉 $r$ 会让结果整体差一个量级。</li>
 <li><strong>错在交换积分次序时不重新定限。</strong> 必须重新用不等式描述同一区域再定新的上下限，不能把两个积分号连同上下限直接对调；画图是唯一可靠的办法，定限口诀是"外层常数限、内层函数限，内层上限减下限"。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 17 题（解答题，10 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 17 题（解答题，10 分）</strong></p><div class="q-stem">
 <p>设已知区域 $D$ 是第一象限内的有界区域，它由 $xy=\dfrac{1}{3}$、$xy=3$、$y=\dfrac{1}{3}x$、$y=3x$ 围成，计算 $\displaystyle\iint_D(1+x-y)\,dxdy$。</p>
-<blockquote>
+</div><blockquote>
 <p>解析：</p>
 <ol>
 <li>区域由两族双曲线 $xy=$ 常数与两族射线 $\frac{y}{x}=$ 常数围成。</li>
@@ -265,6 +265,6 @@
 </ol>
 </blockquote>
 <hr /></div></section><nav class="chapter-nav"><a class="cn-prev" href="08-数二高数综合与证明专题.html" title="键盘 ← 或 k">← 数二高数综合与证明专题</a><a class="cn-next" href="../线性代数/01-行列式.html" title="键盘 → 或 j">行列式 →</a></nav></div></main></div>
-<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong> · 文字与插图 CC BY-NC-SA 4.0（禁止商业使用）· 代码 MIT · 第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。 · <a href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
+<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong><span class="ft-sep">·</span>文字与插图 CC BY-NC-SA 4.0（禁止商业使用）<span class="ft-sep">·</span>代码 MIT<span class="ft-sep">·</span>第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。<a class="ft-top" href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
 <button class="theme-toggle" type="button" title="切换深色/浅色">◐ 主题</button>
 </body></html>

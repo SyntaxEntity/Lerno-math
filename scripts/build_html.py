@@ -109,9 +109,13 @@ def md_to_html(text, depth, missing):
                 '<div class="mermaid">%s</div>'
                 '<details><summary>查看该图源码</summary><pre><code>%s</code></pre></details>'
                 % (html.escape(code), html.escape(code)))
+        elif lang == "text":
+            # ASCII 示意图：统一版用 .codebox.ascii（深色面板 + 等宽），
+            # 标题条 .bar 给一个语言标签；U1 之前这里是 <pre class="ascii">。
+            blocks.append('<div class="codebox ascii"><div class="bar">ASCII 示意图</div>'
+                          "<pre><code>%s</code></pre></div>" % html.escape(code))
         else:
-            cls = ' class="ascii"' if lang == "text" else ""
-            blocks.append("<pre%s><code>%s</code></pre>" % (cls, html.escape(code)))
+            blocks.append("<pre><code>%s</code></pre>" % html.escape(code))
         return "\x00B%d\x00" % (len(blocks) - 1)
 
     text = re.sub(r"```(\w*)\n(.*?)```", stash, text, flags=re.S)
@@ -170,13 +174,15 @@ def footer_html(depth):
     prefix = "../" * depth
     return (
         '<footer class="site-footer"><div class="sf-inner">'
-        '<p><strong>%s</strong> · 文字与插图 CC BY-NC-SA 4.0（禁止商业使用）· 代码 MIT'
-        ' · 第三方组件见 <a href="%sTHIRD-PARTY.md">THIRD-PARTY.md</a></p>'
+        '<p><strong>%s</strong><span class="ft-sep">·</span>'
+        '文字与插图 CC BY-NC-SA 4.0（禁止商业使用）<span class="ft-sep">·</span>代码 MIT'
+        '<span class="ft-sep">·</span>第三方组件见 '
+        '<a href="%sTHIRD-PARTY.md">THIRD-PARTY.md</a></p>'
         '<p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，'
         '仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，'
         '口径见 <a href="%sREADME.html">总览</a>。</p>'
         '<p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。'
-        ' · <a href="#top">↑ 返回顶部</a></p>'
+        '<a class="ft-top" href="#top">↑ 返回顶部</a></p>'
         '</div></footer>' % (SITE_NAME, prefix, prefix))
 
 
@@ -360,10 +366,44 @@ def structure_sections(body, base=2):
             '<h%d class="tt">%s</h%d><span class="hint">%s</span></div>'
             '<div class="box">%s</div></section>'
             % (aid.replace("sec-", ""), aid, ic, base, name, base, hint,
-               demote(strip_label(body[st:end]))))
+               enrich_section(aid, demote(strip_label(body[st:end])))))
         cursor = end
     out.append(body[cursor:])
     return "".join(out)
+
+
+def enrich_section(aid, html):
+    """给六段内容补上 U1 统一版的组件类名（PLAN §5.2.2 步骤②）。
+
+    类名属于**渲染层**，所以加在这里而不是写进 `parts/` 的 Markdown——
+    内容源保持纯 Markdown，换样式不用动内容。这些类名与 408 取的是同一套
+    （408 的 assets/CSS-NOTES.md 清单）：`.freq` `.facts` `.errs` `.q-stem`
+    `.q-src` `.fig`，同角色只留一个。
+
+    对应关系：
+      sec-freq  首段 → .freq          考频信息条
+      sec-key   <ul> → ul.facts       结论速记卡
+      sec-err   <ul> → ul.errs        易错卡
+      sec-real  来源行 → .q-src       题干 → 包一层 .q-stem
+      sec-fig   含图段落 → .fig       图容器（mermaid 容器保持 .mermaid）
+    """
+    if aid == "sec-freq":
+        return re.sub(r"<p>", '<p class="freq">', html, count=1)
+    if aid == "sec-key":
+        return html.replace("<ul>", '<ul class="facts">', 1)
+    if aid == "sec-err":
+        return html.replace("<ul>", '<ul class="errs">', 1)
+    if aid == "sec-real":
+        html = re.sub(r"<p><strong>(.+?)</strong></p>",
+                      r'<p class="q-src"><strong>\1</strong></p>', html, count=1)
+        # 来源行之后、解析引用块之前的内容就是题面
+        m = re.search(r'(<p class="q-src">.*?</p>)(.*?)(<blockquote)', html, re.S)
+        if m and m.group(2).strip():
+            html = html[:m.start(2)] + '<div class="q-stem">' + m.group(2) + "</div>" + html[m.end(2):]
+        return html
+    if aid == "sec-fig":
+        return re.sub(r"<p>(<img [^>]*?\s*/?>)</p>", r'<p class="fig">\1</p>', html)
+    return html
 
 
 def chapter_head(body, name, hot, pts, sub_name):

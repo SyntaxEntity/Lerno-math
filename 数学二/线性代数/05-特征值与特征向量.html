@@ -17,7 +17,7 @@
 <div class="sb-group"><div class="sb-group-t">高等数学（约 117 分 · 约 78%）</div><a class="sb-chap" href="../高等数学/01-函数极限与连续.html">函数、极限与连续 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/02-导数与微分.html">导数与微分 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/03-中值定理与导数应用.html">中值定理与导数应用 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/04-不定积分.html">不定积分</a><a class="sb-chap" href="../高等数学/05-定积分与反常积分.html">定积分与反常积分 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/06-定积分的几何与物理应用.html">定积分的几何与物理应用 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/07-微分方程.html">微分方程 <span class="tag">高频</span></a><a class="sb-chap" href="../高等数学/08-数二高数综合与证明专题.html">数二高数综合与证明专题</a><a class="sb-chap" href="../高等数学/09-多元函数微积分学.html">多元函数微积分学 <span class="tag">高频</span></a></div>
 <div class="sb-group"><div class="sb-group-t">线性代数（约 33 分 · 约 22%）</div><a class="sb-chap" href="../线性代数/01-行列式.html">行列式</a><a class="sb-chap" href="../线性代数/02-矩阵.html">矩阵 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/03-向量与向量组.html">向量与向量组 <span class="tag">高频</span></a><a class="sb-chap" href="../线性代数/04-线性方程组.html">线性方程组 <span class="tag">高频</span></a><a class="sb-chap cur" href="../线性代数/05-特征值与特征向量.html">特征值与特征向量 <span class="tag">高频</span></a><div class="tocbox"><a class="toclink" href="#sec-freq">考频统计</a><a class="toclink" href="#sec-core">核心讲解</a><a class="toclink" href="#sec-key">关键结论速记</a><a class="toclink" href="#sec-fig">示意图</a><a class="toclink" href="#sec-err">易错点</a><a class="toclink" href="#sec-real">真题示例</a></div><a class="sb-chap" href="../线性代数/06-二次型.html">二次型 <span class="tag">高频</span></a></div></nav><main><div class="inner">
 <header class="chaphead"><h1>特征值与特征向量</h1><div class="badges"><span class="badge hot">高频考点</span><span class="badge">线性代数</span><span class="badge">建议 8 分</span></div></header>
-<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p>考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 24%；主要题型：选择、解答（相似对角化、实对称矩阵）。</p>
+<section class="sec sec-freq" id="sec-freq"><div class="sec-h"><span class="ic">📊</span><h2 class="tt">考频统计</h2><span class="hint">历年命题分布</span></div><div class="box"><p class="freq">考察次数 3 次；涉及年份：2023、2024（2023—2024 年数二真题逐题定章统计）；分数占比约 24%；主要题型：选择、解答（相似对角化、实对称矩阵）。</p>
 </div></section><section class="sec sec-core" id="sec-core"><div class="sec-h"><span class="ic">📖</span><h2 class="tt">核心讲解</h2><span class="hint">定义 · 公式 · 适用条件</span></div><div class="box"><p></p>
 <h3>【特征值与特征向量】</h3>
 <ul>
@@ -127,7 +127,7 @@
 <p>⚠️ <strong>秒杀技</strong>：判定「能否正交对角化」先看 $A^{T}=A$ 是否成立。<strong>实对称</strong> 直接下结论「必可正交对角化」，不必再逐个算几何重数。</p>
 </blockquote>
 </div></section><section class="sec sec-key" id="sec-key"><div class="sec-h"><span class="ic">⚡</span><h2 class="tt">关键结论速记</h2><span class="hint">考前最后扫一眼</span></div><div class="box"><p></p>
-<ul>
+<ul class="facts">
 <li>$A\alpha=\lambda\alpha$（$\alpha\neq0$）$\iff |A-\lambda E|=0$ —— 特征值由特征方程确定，特征向量必须非零</li>
 <li>$\sum\lambda_i=\operatorname{tr}(A)$，$\prod\lambda_i=|A|$ —— 特征值的和等于迹、积等于行列式，用于验算</li>
 <li>$A$ 可对角化 $\iff$ 有 $n$ 个线性无关的特征向量 $\iff$ 每个特征值的几何重数 $=$ 代数重数 —— 对角化的总判据</li>
@@ -137,8 +137,8 @@
 <li>实对称矩阵必可对角化，且存在正交阵 $Q$ 使 $Q^{T}AQ=\Lambda$ —— 不同特征值的特征向量自动正交</li>
 </ul>
 </div></section><section class="sec sec-fig" id="sec-fig"><div class="sec-h"><span class="ic">📐</span><h2 class="tt">示意图</h2><span class="hint">几何直观与判定流程</span></div><div class="box"><p></p>
-<p><img alt="结构图：相似对角化中特征向量按列排列与 A = P Λ P 逆 的矩阵结构" src="../assets/xiandai-05-fig1.png" /></p>
-<pre class="ascii"><code>      A         *      P          =      P        *     Lambda
+<p class="fig"><img alt="结构图：相似对角化中特征向量按列排列与 A = P Λ P 逆 的矩阵结构" src="../assets/xiandai-05-fig1.png" /></p>
+<div class="codebox ascii"><div class="bar">ASCII 示意图</div><pre><code>      A         *      P          =      P        *     Lambda
   +-------+   +-------+       +-------+-------+   +-------+-------+
   |       |   |   |   |       |   |   |   |   |   | l1    |   0   |
   |   n   | * | a1| a2|   =   | a1| a2| a1| a2| * |   0   |  l2   |
@@ -155,7 +155,7 @@
      |  tr(A) = l1 + l2 + ... + ln                   |
      |  det(A) = l1 * l2 * ... * ln                  |
      +-----------------------------------------------+
-</code></pre>
+</code></pre></div>
 <p>图中 $P$ 的每一列是一个特征向量，$A\alpha_i=\lambda_i\alpha_i$ 逐个成立；对角阵 $\Lambda$ 的第 $i$ 个对角元必须与 $P$ 的第 $i$ 列对应，顺序可以调换但不能错配。</p>
 <div class="mermaid">flowchart TD
     A[&quot;n 阶方阵 A&quot;] --&gt; B[&quot;解特征方程 |A - lambda E| = 0&quot;]
@@ -181,17 +181,17 @@
     I --&gt;|&quot;是&quot;| J[&quot;必可正交对角化, Q^T A Q = Lambda&quot;]
 </code></pre></details>
 </div></section><section class="sec sec-err" id="sec-err"><div class="sec-h"><span class="ic">⚠️</span><h2 class="tt">易错点</h2><span class="hint">错在哪 · 正确是什么</span></div><div class="box"><p></p>
-<ul>
+<ul class="errs">
 <li>把特征向量只写成「$(\lambda E-A)x=0$ 的解」而漏掉非零要求。 错在把零向量也算作特征向量。正确的是特征向量必须非零；$(A-\lambda E)x=0$ 的零解不算，我们要的是它的基础解系中的非零向量。</li>
 <li>认为「有重特征值就一定不能对角化」。 错在把「有重根」与「不可对角化」等同。正确做法是再看几何重数：例如 $J=\begin{pmatrix}1&1\0&1\end{pmatrix}$ 的二重特征值 $1$ 只对应一个线性无关特征向量（$2-r(E-J)=2-1=1$），故不可对角化；而 $E=\begin{pmatrix}1&0\0&1\end{pmatrix}$ 的二重特征值 $1$ 却对应两个线性无关特征向量，它本身已是对角阵。真正的判据是几何重数是否等于代数重数。</li>
 <li>认为「可对角化」等价于「特征值互异」。 错在把充分条件当充要条件。正确说法：互异特征值只是可对角化的充分条件；有重根时只要每个重根的几何重数补足，仍可对角化，例如单位矩阵 $E$ 只有特征值 $1$，但它本身已是对角阵。</li>
 <li>写出 $P^{-1}AP=\Lambda$ 后不核对列与对角元的对应关系。 错在把特征向量的顺序与特征值的顺序随意调换。正确做法：$P$ 的第 $i$ 列必须是对角阵第 $i$ 个对角元对应的特征向量；另外要注意 $P^{-1}AP$ 与 $PAP^{-1}$ 是两个不同的式子，前者才是相似变换。</li>
 </ul>
 </div></section><section class="sec sec-real" id="sec-real"><div class="sec-h"><span class="ic">🎯</span><h2 class="tt">真题示例</h2><span class="hint">题干 · 解析</span></div><div class="box"><p></p>
-<p><strong>2024 年数二第 10 题（单项选择题，5 分）</strong></p>
+<p class="q-src"><strong>2024 年数二第 10 题（单项选择题，5 分）</strong></p><div class="q-stem">
 <p>设 $A,B$ 均为 2 阶矩阵，且 $AB=BA$，则「$A$ 有两个不相等的特征值」是「$B$ 可对角化」的（　）</p>
 <p>A. 充要条件　　B. 充分非必要条件　　C. 必要非充分条件　　D. 既非充分又非必要条件</p>
-<blockquote>
+</div><blockquote>
 <p>解析：先证充分性。</p>
 <p>设 $A$ 的两个特征值 $\lambda_1\neq\lambda_2$。</p>
 <p>对应特征向量 $\alpha_1,\alpha_2$ 线性无关，构成 $\mathbb{R}^2$ 的一组基。</p>
@@ -212,6 +212,6 @@
 <p>故该条件是充分非必要条件，选 B。</p>
 </blockquote>
 <hr /></div></section><nav class="chapter-nav"><a class="cn-prev" href="04-线性方程组.html" title="键盘 ← 或 k">← 线性方程组</a><a class="cn-next" href="06-二次型.html" title="键盘 → 或 j">二次型 →</a></nav></div></main></div>
-<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong> · 文字与插图 CC BY-NC-SA 4.0（禁止商业使用）· 代码 MIT · 第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。 · <a href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
+<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong><span class="ft-sep">·</span>文字与插图 CC BY-NC-SA 4.0（禁止商业使用）<span class="ft-sep">·</span>代码 MIT<span class="ft-sep">·</span>第三方组件见 <a href="../THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="../README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。<a class="ft-top" href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
 <button class="theme-toggle" type="button" title="切换深色/浅色">◐ 主题</button>
 </body></html>

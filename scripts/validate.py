@@ -1561,6 +1561,117 @@ def check_meta(parts_mode, mermaid_skipped=False):
     stats["declared_ranges"] = n_decl
 
 
+# ---------------------------------------------------------------------------
+# F27：site.css 的配色 token 契约（PLAN-对齐与改版 §5.2.2「A 暖纸」表）
+#
+# 为什么要单独立一条：§5.2.2 明令"以那张表为唯一配色依据"，而 token 恰恰是最容易
+# 被顺手改掉、又最难在审阅时发现的东西（改一个色值不会有任何报错，只是"看起来不太对"）。
+# 这条把表**逐字**变成断言：亮色/暗色两套值必须与表一致，废弃旧名不许再出现。
+# 408 侧的对应用法是钉 site.css 的 sha256（共用件哈希），两边互补。
+# ---------------------------------------------------------------------------
+WP_LIGHT = {
+    "--bg": "#f5f2ea", "--panel": "#fdfbf7", "--chip": "#ece7db",
+    "--fg": "#2f2a23", "--fg2": "#57514a", "--mut": "#87806f",
+    "--line": "#e3ddd0", "--line2": "#ede9df",
+    "--acc": "#4338ca", "--acc2": "#6366f1", "--acc-soft": "#e6e6fb",
+    "--code-bg": "#f0ece1", "--ok": "#15803d",
+    "--warn-bg": "#fdf3d8", "--warn-line": "#d9a441",
+    "--real-bg": "#e7f3e9", "--real-line": "#7fb98d",
+    "--sec-freq": "#0369a1", "--sec-key": "#a21caf", "--sec-fig": "#0f766e",
+    "--sec-err": "#b45309", "--sec-real": "#15803d",
+}
+WP_DARK = {
+    "--bg": "#191713", "--panel": "#211e19", "--chip": "#2a2620",
+    "--fg": "#eae4d9", "--fg2": "#c5beb1", "--mut": "#948d80",
+    "--line": "#34302a", "--line2": "#282520",
+    "--acc": "#8aa8ff", "--acc2": "#a9bdff", "--acc-soft": "#1c2340",
+    "--code-bg": "#232019", "--ok": "#4ade80",
+    "--warn-bg": "#33280f", "--warn-line": "#7a6220",
+    "--real-bg": "#12261a", "--real-line": "#2f6b45",
+    "--sec-freq": "#38bdf8", "--sec-key": "#e879f9", "--sec-fig": "#2dd4bf",
+    "--sec-err": "#fbbf24", "--sec-real": "#4ade80",
+}
+WP_SCALAR = {"--radius": "10px", "--mw": "780px", "--topbar-h": "54px"}
+WP_ALIAS = {"--sec-core": "var(--acc)"}
+WP_PRESENT = ["--sans", "--serif", "--sh"]
+WP_DEPRECATED = ["--paper", "--codebg", "--hi", "--warnbg", "--warnbd",
+                 "--realbg", "--realbd", "--dark", "--dark-fg"]
+
+
+def _css_tokens(css, selector):
+    """取出某个选择器块里定义的 `--token:值`（值里的 `;` 前全部保留）。"""
+    # 先去掉注释：块内的 `/* … */` 会与后面的 token 粘在一起
+    # （`/* 非颜色 */\n  --radius:10px` 的键名会变成整个注释），
+    # 第一版就是这样漏掉 --sec-* 与 --radius 的。
+    css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
+    m = re.search(re.escape(selector) + r"\s*\{(.*?)\}", css, re.S)
+    if not m:
+        return {}
+    out = {}
+    for decl in m.group(1).split(";"):
+        if ":" not in decl:
+            continue
+        k, v = decl.split(":", 1)
+        k, v = k.strip(), v.strip()
+        if k.startswith("--"):
+            out[k] = v
+    return out
+
+
+def check_style_tokens():
+    """F27：site.css 的 token 必须与「A 暖纸」表逐字一致，且不含废弃旧名。"""
+    css_path = os.path.join(CONTENT, "assets", "site.css")
+    rp = "数学二/assets/site.css"
+    if not os.path.exists(css_path):
+        err(rp, 0, "F27", "找不到 site.css（外壳样式是共用件，不能缺）")
+        return
+    css = open(css_path, encoding="utf-8").read()
+    light = _css_tokens(css, ":root")
+    dark = _css_tokens(css, "html.dark")
+    checked = 0
+    for token, want in sorted(WP_LIGHT.items()):
+        got = light.get(token)
+        checked += 1
+        if got is None:
+            err(rp, 0, "F27", "缺 token %s（A 暖纸表要求 %s）" % (token, want))
+        elif got.lower() != want:
+            err(rp, 0, "F27", "token %s 亮色值 %s ≠ 表里的 %s" % (token, got, want))
+    for token, want in sorted(WP_DARK.items()):
+        got = dark.get(token)
+        checked += 1
+        if got is None:
+            err(rp, 0, "F27", "暗色缺 token %s（A 暖纸表要求 %s）" % (token, want))
+        elif got.lower() != want:
+            err(rp, 0, "F27", "token %s 暗色值 %s ≠ 表里的 %s" % (token, got, want))
+    for token, want in sorted(WP_SCALAR.items()):
+        got = light.get(token)
+        checked += 1
+        if got is None:
+            err(rp, 0, "F27", "缺非颜色 token %s（应为 %s）" % (token, want))
+        elif got.replace(" ", "") != want:
+            err(rp, 0, "F27", "token %s 的值 %s ≠ 契约的 %s" % (token, got, want))
+    for token, want in sorted(WP_ALIAS.items()):
+        got = light.get(token)
+        checked += 1
+        if got is None:
+            err(rp, 0, "F27", "缺别名 token %s（应写成 %s）" % (token, want))
+        elif got.replace(" ", "") != want:
+            err(rp, 0, "F27", "token %s 应写成 %s，现在是 %s" % (token, want, got))
+    for token in WP_PRESENT:
+        checked += 1
+        if token not in light:
+            err(rp, 0, "F27", "缺非颜色 token %s" % token)
+    for token in WP_DEPRECATED:
+        checked += 1
+        for where, table in (("亮色", light), ("暗色", dark)):
+            if token in table:
+                err(rp, 0, "F27",
+                    "使用了已废弃的旧 token 名 %s（%s块）：PLAN §5.2.2 已列明废弃，请改用新名"
+                    % (token, where))
+    stats["tokens_checked"] = checked
+    stats["tokens_deprecated"] = sum(1 for t in WP_DEPRECATED if t in light or t in dark)
+
+
 def check_completeness():
     """F16：交付物完整性——不得静默缺失。"""
     need = [os.path.join(CONTENT, "README.md"), os.path.join(CONTENT, "index.html")]
@@ -1599,11 +1710,12 @@ def report(title):
     # F26 的体检结果：规则范围、覆盖情况、扫描型受检数、文档里的范围声明数。
     # 「范围」只在这里输出——文档与 CI 一律不要手写（手写的必然漂移，已漂过一次）。
     print("  ★ 规则 F%s—F%s（%d 条，%d 条有 err 路径）｜反向测试覆盖 %d/%d"
-          "｜扫描型受检数 %d 项｜文档/CI 范围声明 %d 处"
+          "｜扫描型受检数 %d 项｜token %d 个（废弃名 %d）｜文档/CI 范围声明 %d 处"
           % (stats.get("rule_min", "?"), stats.get("rule_max", "?"), stats.get("rules", 0),
              stats.get("rules_with_err", 0),
              stats.get("rules_covered", 0), stats.get("rules", 0),
-             stats.get("scanned_checked", 0), stats.get("declared_ranges", 0)))
+             stats.get("scanned_checked", 0), stats.get("tokens_checked", 0),
+             stats.get("tokens_deprecated", 0), stats.get("declared_ranges", 0)))
     print("-" * 78)
     if errors:
         print("  ✗ 错误 %d 条：" % len(errors))
@@ -1683,6 +1795,7 @@ def main():
         stats["hot"] = sum(1 for _, t in T.all_topics() if t[5])
 
     check_figs()                           # F18：两种模式都要跑
+    check_style_tokens()                   # F27：site.css 的 A 暖纸 token 契约
 
     mermaid_skipped = "--no-mermaid" in argv
     if not mermaid_skipped:

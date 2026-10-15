@@ -37,7 +37,9 @@ website/math2-kaoyan/
 │   ├── README.md / README.html  说明（README.md 由 build_readme.py 生成）
 │   ├── 高等数学/ 线性代数/        各章 .md 与 .html
 │   ├── assets/                  matplotlib 生成的 PNG
-│   ├── assets/site.css site.js  外置样式与外壳脚本（类名契约见 PLAN §2.4）
+│   ├── assets/site.css site.js  外置样式与外壳脚本
+│   │                            （**共用件**：408 逐字节复制并钉 sha256；
+│   │                              配色 token 由 F27 按 A 暖纸表强制）
 │   └── katex/  mermaid.min.js   离线运行时
 ├── parts/gaoshu/  parts/xiandai/   ★ 内容源，只写这里
 ├── math2-site/                  ★ 站点构建产物（.gitignore，不入库）
@@ -74,6 +76,8 @@ Python 依赖按用途分两个文件（PLAN §1.2.1）：`scripts/requirements.
 - 站点是完全离线的纯静态页，改完直接用浏览器打开 `index.html` 验证，无需起服务器。
 - **真题示例的解析一律「一步一段 + 关键公式独立成行」**（F25 强制）；
   引用块内相邻 `>` 行会并成同一段，所以每个段落之间**必须写空 `>` 行**。
+- **`assets/site.css` 是共用件**（U1 起，和 `site.js` 一样）：改它必须两边同步、
+  由 408 重钉 sha256；配色 token 以 PLAN §5.2.2「A 暖纸」表为唯一依据，F27 会逐字校验。
 - **加粗的闭合记号后面不能紧跟汉字**（`**…。**汉字` 不闭合，页面会露出 `**`，F24 会报）。
 - 临时依赖放 `.tools/`（已 gitignore，约 478 MB），不要提交 `__pycache__/`。
 

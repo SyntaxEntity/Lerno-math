@@ -187,7 +187,7 @@
     ├── meta.py            单一数据源：全部统计数字只在这里写一次
     ├── build.py           组装成品（注入考频统计行 + 模板骨架 + 空行规范化）
     ├── normalize_md.py    幂等空行规范化器
-    ├── validate.py        形式校验器（范围由它自己输出；每条都有反向测试，
+    ├── validate.py        形式校验器（含 F26 元校验、F27 配色契约）（范围由它自己输出；每条都有反向测试，
     │                      F26 元校验保证两者集合相等）
     ├── verify_math.py     sympy 复算全部数值结果
     ├── extract_papers.py  从真题语料抽取题面，供逐字核对
@@ -847,6 +847,10 @@ python3 scripts/pack_site.py math2-site
 <td>解析排版：真题示例的解析必须一步一段、关键公式独立成行——任一段的行内公式 ≤3 个、纯文字 ≤200 字</td>
 </tr>
 <tr>
+<td>F27</td>
+<td><strong>配色 token 契约</strong>：<code>assets/site.css</code> 的 token 必须与 PLAN §5.2.2「A 暖纸」表逐字一致（亮/暗两套 + 非颜色 + 别名），且不得再出现已废弃的旧名</td>
+</tr>
+<tr>
 <td>F26</td>
 <td><strong>元校验</strong>：规则集合 ≡ 反向测试覆盖集合（缺覆盖即报错）；扫描型规则的受检对象数必须 &gt; 0；文档与 CI 里不得硬编码 F 范围（范围只由校验器输出）</td>
 </tr>
@@ -883,6 +887,6 @@ python3 scripts/pack_site.py math2-site
    请打开 <code>数学二/index.html</code> 看一眼公式与图；若某处渲染异常，页面会显示明确的
    「未加载到公式渲染器 / 该图渲染失败」提示，而不会静默留白。</li>
 </ol></div></main></div>
-<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong> · 文字与插图 CC BY-NC-SA 4.0（禁止商业使用）· 代码 MIT · 第三方组件见 <a href="THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。 · <a href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
+<footer class="site-footer"><div class="sf-inner"><p><strong>考研数学二速成资料</strong><span class="ft-sep">·</span>文字与插图 CC BY-NC-SA 4.0（禁止商业使用）<span class="ft-sep">·</span>代码 MIT<span class="ft-sep">·</span>第三方组件见 <a href="THIRD-PARTY.md">THIRD-PARTY.md</a></p><p>考频数据基于 2023—2024 年数二真题逐题统计，样本量小，仅用于区分必考主线与偶发考点；无法核实的一律标注「考频待补充」，口径见 <a href="README.html">总览</a>。</p><p>完全离线静态页：公式由本地 KaTeX 渲染，图由本地 mermaid 渲染，断网可用。<a class="ft-top" href="#top">↑ 返回顶部</a></p></div></footer><button class="to-top" type="button">↑ 回到顶部</button>
 <button class="theme-toggle" type="button" title="切换深色/浅色">◐ 主题</button>
 </body></html>

@@ -64,6 +64,7 @@ D05H = os.path.join(CONTENT, "高等数学", "05-定积分与反常积分.html")
 G08 = os.path.join(PARTS, "gaoshu", "08-数二高数综合与证明专题.md")
 HOMEH = os.path.join(CONTENT, "index.html")      # 全科单页合集（= 站点首页）
 SITEJS = os.path.join(CONTENT, "assets", "site.js")
+SITECSS = os.path.join(CONTENT, "assets", "site.css")
 READMEmd = os.path.join(CONTENT, "README.md")          # 生成物，F12 比对的两端之一
 VALIDATEpy = os.path.join(HERE, "validate.py")          # F26 读它的规则集合
 SELFpy = os.path.join(HERE, "reverse_tests.py")         # F26 读它的覆盖集合
@@ -425,6 +426,14 @@ def _downgrade_rule_to_warn(t):
     return out
 
 
+
+def _break_style_token(t):
+    """改掉 site.css 里的一个配色 token 值 —— 触发 F27（A 暖纸表是硬契约）。"""
+    old = "--bg:#f5f2ea"
+    assert old in t, "锚点没找到：site.css 的 --bg 亮色值变了"
+    return t.replace(old, "--bg:#f7f7f5", 1)
+
+
 def _dup_heading(t):
     """在**同一章节区块内**重复一个标题（F21 的判据范围）。
 
@@ -555,6 +564,7 @@ case("F26", "删掉一条反向测试用例（H2 覆盖集合不再相等）", S
 case("F26", "把某个扫描型规则的受检数改成 0（H3 空转通过）", VALIDATEpy, _zero_one_scanned_stat, mode="full")
 case("F26", "在文档里硬编码 F 范围（H4 漂移）", AGENTSmd, _hardcode_rule_range, mode="full")
 case("F26", "把一条规则的 err 降级成 warn（只 warn 拦不住发布）", VALIDATEpy, _downgrade_rule_to_warn, mode="full")
+case("F27", "把 site.css 的 --bg 改成表外的色值", SITECSS, _break_style_token)
 case("F22", "site.js 深色类名写错（行为层必须抓到）", SITEJS, _html_break_site_js, mode="full")
 case("F23", "把外置样式内联回页面", D01H, _html_inline_style, mode="full")
 case("F23", "样式表引用不可达", D01H, _html_break_css_ref, mode="full")
