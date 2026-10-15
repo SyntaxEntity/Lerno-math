@@ -234,9 +234,12 @@ def run_mermaid_parser(scan_dir):
     否则写手在「改 parts → validate --parts」这个内层循环里**看不到自己刚写坏的
     mermaid**，要等 build 之后才会暴露——那就等于内层循环没有图形校验。
     """
-    hint = "（装依赖：npm install --prefix .tools --cache /tmp/npm-cache " \
-           "mermaid@12.1.0 katex@0.16.47 jsdom@30.1.2；" \
-           "实在离线就加 --no-mermaid 显式跳过）"
+    # 提示里**不写版本号**：版本只在 tools-package.json 里写一次
+    # （PLAN-对齐与改版 §1.2），这里给的是"怎么按清单装"的命令。
+    hint = ("（装依赖：mkdir -p .tools && "
+            "cp 数学二/scripts/tools-package.json .tools/package.json && "
+            "npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund；"
+            "实在离线就加 --no-mermaid 显式跳过）")
     if not os.path.exists(MERMAID_CHECKER):
         err("数学二/scripts", 0, "F3", "找不到 mermaid 解析器脚本 %s%s"
             % (rel(MERMAID_CHECKER), hint))

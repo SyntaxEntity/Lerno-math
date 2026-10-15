@@ -889,45 +889,60 @@ python3 -m venv .tools/venv
 .tools/venv/bin/python -m pip install -r 数学二/scripts/requirements.txt
 
 # Node 侧（mermaid 真实解析校验 + 站点内置运行时）—— 版本锁在 tools-package.json
-npm install --prefix .tools --cache /tmp/npm-cache mermaid@12.1.0 katex@0.16.47 jsdom@30.1.2
+# 先把清单拷进 .tools/ 再让 npm 按清单装：与 CI（.github/workflows/pages.yml）
+# 走的是同一条路径，因此本地和线上不可能装出两个版本。
+mkdir -p .tools &amp;&amp; cp 数学二/scripts/tools-package.json .tools/package.json
+npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund
 </code></pre>
+<blockquote>
+<p>这里<strong>不再写版本号</strong>：版本只在 <code>requirements.txt</code> 与 <code>tools-package.json</code> 里各写一次，
+工作流、校验器与本文档都从这两个文件读（PLAN-对齐与改版 §1.2 的单一数据源要求）。
+下面这张表<strong>由构建时读取那两个文件生成</strong>，因此永远不会和实际依赖跑偏。</p>
+</blockquote>
 <table>
 <thead>
 <tr>
 <th>组件</th>
 <th>锁定版本</th>
+<th>来源文件</th>
 <th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>mermaid</td>
-<td><code>12.1.0</code></td>
-<td>站点内置图运行时 + F3 真实解析校验</td>
+<td>jsdom</td>
+<td><code>30.1.2</code></td>
+<td><code>tools-package.json</code></td>
+<td>给 mermaid 的 <code>parse()</code> 提供最小 DOM</td>
 </tr>
 <tr>
 <td>katex</td>
 <td><code>0.16.47</code></td>
+<td><code>tools-package.json</code></td>
 <td>站点内置公式运行时（含 60 个字体）</td>
 </tr>
 <tr>
-<td>jsdom</td>
-<td><code>30.1.2</code></td>
-<td>给 mermaid 的 <code>parse()</code> 提供最小 DOM</td>
+<td>mermaid</td>
+<td><code>12.1.0</code></td>
+<td><code>tools-package.json</code></td>
+<td>站点内置图运行时 + F3 真实解析校验</td>
 </tr>
 <tr>
 <td>sympy</td>
 <td><code>1.14.0</code></td>
+<td><code>requirements.txt</code></td>
 <td>全部数值复算（含图上坐标）</td>
 </tr>
 <tr>
 <td>matplotlib</td>
 <td><code>3.11.2</code></td>
+<td><code>requirements.txt</code></td>
 <td>生成 <code>assets/*.png</code></td>
 </tr>
 <tr>
 <td>Markdown</td>
 <td><code>3.11.1</code></td>
+<td><code>requirements.txt</code></td>
 <td>Markdown → HTML</td>
 </tr>
 </tbody>
@@ -955,10 +970,15 @@ python3 数学二/scripts/reverse_tests.py          # 反向测试：每条规�
 python3 数学二/scripts/build_html.py             # 生成 HTML 站点
 node 数学二/scripts/check_mermaid.mjs --strict   # 单独跑 mermaid 真实解析
 
-# 打包成可推送的独立站点（注意：会先清空输出目录）
-python3 数学二/scripts/pack_site.py ../math2-site
+# 打包成待发布的站点目录（仓库内，已 gitignore；注意会先清空输出目录）
+python3 数学二/scripts/pack_site.py math2-site
 </code></pre>
 <blockquote>
+<p><strong>站点不入库、由 CI 现打包</strong>：仓库跟踪的是源码、内容源、生成物与工具链；
+<code>math2-site/</code> 是 <code>pack_site.py</code> 的产物，随 <code>.gitignore</code> 排除。
+发布走 <code>.github/workflows/pages.yml</code>：推 <code>main</code> → 装依赖 → <code>validate.py</code> 门禁
+→ <code>pack_site.py math2-site</code> → 上传 artifact。所以本地要看站点，自己跑一次打包即可
+（或直接打开 <code>数学二/index.html</code>，那同样是离线可用的站点）。</p>
 <p><code>run_all.py</code> 会自动挑一个同时具备 sympy / matplotlib / markdown 的解释器
 （优先用 <code>.tools/venv/</code>），并把 <code>MPLCONFIGDIR</code> 指到 <code>.tools/mplcache</code>
 ——本机 <code>$HOME/.config</code> 是只读的，不设它每次都会退到随机临时目录重建字体缓存。
@@ -1032,8 +1052,9 @@ Node 依赖缺失时它会在开跑前明确报出来，而不是等 F3 静默�
 <h2>八、我无法自验的部分（请你确认）</h2>
 <ol>
 <li><strong>HTML 中的 mermaid 渲染效果</strong>：本环境无浏览器。我能验证的是——
-   15 块 mermaid 源码<strong>全部通过了官方解析器的 <code>parse()</code></strong>（版本与站内运行时一致，
-   均为 12.1.0）、容器数量、脚本可达、锚点齐全、无绝对路径。
+   15 块 mermaid 源码<strong>全部通过了官方解析器的 <code>parse()</code></strong>（解析器版本与站内运行时
+   同源，见 7.1 的依赖表与 <code>tools-package.json</code>）、容器数量、脚本可达、锚点齐全、
+   无绝对路径。
    <strong>实际渲染出的图形请你在浏览器里打开 <code>数学二/index.html</code> 看一眼。</strong>
    若解析器或 node 依赖缺失，校验会直接失败并告诉你装什么，不会静默跳过。</li>
 <li><strong>考频次数的绝对值</strong>：见第三节，只有 2023—2024 两年样本，存在 ±1 次不确定度。

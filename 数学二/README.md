@@ -283,17 +283,24 @@ python3 -m venv .tools/venv
 .tools/venv/bin/python -m pip install -r 数学二/scripts/requirements.txt
 
 # Node 侧（mermaid 真实解析校验 + 站点内置运行时）—— 版本锁在 tools-package.json
-npm install --prefix .tools --cache /tmp/npm-cache mermaid@12.1.0 katex@0.16.47 jsdom@30.1.2
+# 先把清单拷进 .tools/ 再让 npm 按清单装：与 CI（.github/workflows/pages.yml）
+# 走的是同一条路径，因此本地和线上不可能装出两个版本。
+mkdir -p .tools && cp 数学二/scripts/tools-package.json .tools/package.json
+npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund
 ```
 
-| 组件 | 锁定版本 | 用途 |
-| --- | --- | --- |
-| mermaid | `12.1.0` | 站点内置图运行时 + F3 真实解析校验 |
-| katex | `0.16.47` | 站点内置公式运行时（含 60 个字体） |
-| jsdom | `30.1.2` | 给 mermaid 的 `parse()` 提供最小 DOM |
-| sympy | `1.14.0` | 全部数值复算（含图上坐标） |
-| matplotlib | `3.11.2` | 生成 `assets/*.png` |
-| Markdown | `3.11.1` | Markdown → HTML |
+> 这里**不再写版本号**：版本只在 `requirements.txt` 与 `tools-package.json` 里各写一次，
+> 工作流、校验器与本文档都从这两个文件读（PLAN-对齐与改版 §1.2 的单一数据源要求）。
+> 下面这张表**由构建时读取那两个文件生成**，因此永远不会和实际依赖跑偏。
+
+| 组件 | 锁定版本 | 来源文件 | 用途 |
+| --- | --- | --- | --- |
+| jsdom | `30.1.2` | `tools-package.json` | 给 mermaid 的 `parse()` 提供最小 DOM |
+| katex | `0.16.47` | `tools-package.json` | 站点内置公式运行时（含 60 个字体） |
+| mermaid | `12.1.0` | `tools-package.json` | 站点内置图运行时 + F3 真实解析校验 |
+| sympy | `1.14.0` | `requirements.txt` | 全部数值复算（含图上坐标） |
+| matplotlib | `3.11.2` | `requirements.txt` | 生成 `assets/*.png` |
+| Markdown | `3.11.1` | `requirements.txt` | Markdown → HTML |
 
 > **为什么要锁版本**：站点里内置的 `mermaid.min.js` / `katex/` 就是上面这两个版本，
 > 而 F3 用同一个 mermaid 做解析校验——版本漂移会造出「校验过了但页面渲染不出来」
@@ -320,9 +327,15 @@ python3 数学二/scripts/reverse_tests.py          # 反向测试：每条规�
 python3 数学二/scripts/build_html.py             # 生成 HTML 站点
 node 数学二/scripts/check_mermaid.mjs --strict   # 单独跑 mermaid 真实解析
 
-# 打包成可推送的独立站点（注意：会先清空输出目录）
-python3 数学二/scripts/pack_site.py ../math2-site
+# 打包成待发布的站点目录（仓库内，已 gitignore；注意会先清空输出目录）
+python3 数学二/scripts/pack_site.py math2-site
 ```
+
+> **站点不入库、由 CI 现打包**：仓库跟踪的是源码、内容源、生成物与工具链；
+> `math2-site/` 是 `pack_site.py` 的产物，随 `.gitignore` 排除。
+> 发布走 `.github/workflows/pages.yml`：推 `main` → 装依赖 → `validate.py` 门禁
+> → `pack_site.py math2-site` → 上传 artifact。所以本地要看站点，自己跑一次打包即可
+> （或直接打开 `数学二/index.html`，那同样是离线可用的站点）。
 
 > `run_all.py` 会自动挑一个同时具备 sympy / matplotlib / markdown 的解释器
 > （优先用 `.tools/venv/`），并把 `MPLCONFIGDIR` 指到 `.tools/mplcache`
@@ -361,8 +374,9 @@ python3 数学二/scripts/pack_site.py ../math2-site
 ## 八、我无法自验的部分（请你确认）
 
 1. **HTML 中的 mermaid 渲染效果**：本环境无浏览器。我能验证的是——
-   15 块 mermaid 源码**全部通过了官方解析器的 `parse()`**（版本与站内运行时一致，
-   均为 12.1.0）、容器数量、脚本可达、锚点齐全、无绝对路径。
+   15 块 mermaid 源码**全部通过了官方解析器的 `parse()`**（解析器版本与站内运行时
+   同源，见 7.1 的依赖表与 `tools-package.json`）、容器数量、脚本可达、锚点齐全、
+   无绝对路径。
    **实际渲染出的图形请你在浏览器里打开 `数学二/index.html` 看一眼。**
    若解析器或 node 依赖缺失，校验会直接失败并告诉你装什么，不会静默跳过。
 2. **考频次数的绝对值**：见第三节，只有 2023—2024 两年样本，存在 ±1 次不确定度。

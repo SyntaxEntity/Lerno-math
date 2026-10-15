@@ -35,8 +35,11 @@ VENV = os.path.join(ROOT, ".tools", "venv", "bin", "python")
 os.environ.setdefault("MPLCONFIGDIR", os.path.join(ROOT, ".tools", "mplcache"))
 os.makedirs(os.environ["MPLCONFIGDIR"], exist_ok=True)
 
-# 与站点内置运行时**逐字节一致**的版本；换版本会让校验的语法与线上渲染的不是同一个。
-NODE_DEPS = {"mermaid": "12.1.0", "katex": "0.16.47", "jsdom": "30.1.2"}
+# Node 依赖的版本**只写在 tools-package.json 里**（PLAN-对齐与改版 §1.2 单一数据源）。
+# 这里读它、不抄它：CI 装的是同一份清单，所以本地与线上不可能装出两个版本。
+TOOLS_MANIFEST = os.path.join(HERE, "tools-package.json")
+INSTALL_HINT = ("mkdir -p .tools && cp 数学二/scripts/tools-package.json .tools/package.json\n"
+                "    npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund")
 
 
 def _pkg_version(name):
@@ -48,27 +51,39 @@ def _pkg_version(name):
         return None
 
 
+def node_deps():
+    """从 tools-package.json 读出 Node 依赖清单；读不到返回 None。"""
+    try:
+        with open(TOOLS_MANIFEST, encoding="utf-8") as f:
+            return json.load(f).get("dependencies") or {}
+    except Exception as e:                                   # noqa: BLE001
+        print("! 读不到依赖清单 %s：%s"
+              % (os.path.relpath(TOOLS_MANIFEST, ROOT), e))
+        return None
+
+
 def check_node_deps():
-    """检查 .tools/node_modules 里的前端依赖是否就位、版本是否与站点运行时一致。
+    """检查 .tools/node_modules 里的前端依赖是否就位、版本是否与清单一致。
 
     版本漂移必须**在开跑前**报出来：F3 用 `mermaid` 解析、`build_html.py` 用
     `mermaid/dist/mermaid.min.js` 和 `katex/dist` 生成站点运行时——两者版本不同，
     就会出现「校验通过但页面渲染不出来」这种最难查的情况。
     """
-    install = ("npm install --prefix .tools --cache /tmp/npm-cache "
-               + " ".join("%s@%s" % (n, v) if v else n for n, v in NODE_DEPS.items()))
+    want_all = node_deps()
+    if want_all is None:
+        return False
     problems = []
-    for name, want in NODE_DEPS.items():
+    for name, want in want_all.items():
         got = _pkg_version(name)
         if got is None:
             problems.append("缺少 %s" % name)
-        elif want and got != want:
-            problems.append("%s 版本不符：装的是 %s，要求 %s" % (name, got, want))
+        elif got != want:
+            problems.append("%s 版本不符：装的是 %s，清单要求 %s" % (name, got, want))
     if not problems:
         return True
     print("! Node 依赖有问题：%s" % "；".join(problems))
-    print("  重装（版本必须与站点内置运行时一致）：")
-    print("    %s" % install)
+    print("  重装（版本以 数学二/scripts/tools-package.json 为准）：")
+    print("    %s" % INSTALL_HINT)
     return False
 
 

@@ -30,6 +30,7 @@
 本脚本默认**拒绝执行**——否则会连本地提交历史和 `.github/workflows/` 一起删掉。
 要保留这些元数据请加 `--keep-vcs`（打包前移出、打包后放回）；确实要推倒重来加 `--force`。
 """
+import json
 import os
 import re
 import shutil
@@ -114,14 +115,15 @@ International（CC BY-NC-SA 4.0）** 许可。
 
 THIRD_PARTY = """# 第三方组件
 
-本站在浏览器端渲染公式与图表，相关运行库**已随仓库分发**，因此完全离线可用。
+本站在浏览器端渲染公式与图表，相关运行库**已随站点分发**，因此完全离线可用。
 
 | 组件 | 版本 | 许可 | 用途 | 来源 |
 | --- | --- | --- | --- | --- |
-| KaTeX | 0.16.47 | MIT | 公式排版（含 60 个字体文件） | https://katex.org/ |
-| mermaid | 12.1.0 | MIT | 流程图渲染 | https://mermaid.js.org/ |
+{katex_row}
+{mermaid_row}
 
 两者的许可均为 MIT，允许随作品再分发；MIT 许可全文见各组件仓库内的 `LICENSE`。
+版本取自 `数学二/scripts/tools-package.json`（唯一数据源），不在此处另写一份。
 
 ---
 
@@ -133,6 +135,25 @@ THIRD_PARTY = """# 第三方组件
 
 详细口径见站内 `README.html`。
 """
+
+
+def third_party_md():
+    """按 tools-package.json 渲染 THIRD_PARTY.md（版本不在本文件里写死）。"""
+    deps = {}
+    try:
+        with open(os.path.join(SRC, "scripts", "tools-package.json"), encoding="utf-8") as f:
+            deps = json.load(f).get("dependencies", {})
+    except Exception:                                        # noqa: BLE001
+        pass
+
+    def ver(name):
+        return deps.get(name, "见 tools-package.json")
+
+    return THIRD_PARTY.format(
+        katex_row="| KaTeX | %s | MIT | 公式排版（含 60 个字体文件） | https://katex.org/ |"
+                  % ver("katex"),
+        mermaid_row="| mermaid | %s | MIT | 流程图渲染 | https://mermaid.js.org/ |"
+                    % ver("mermaid"))
 
 SITE_GITIGNORE = """# 系统与编辑器
 .DS_Store
@@ -308,7 +329,7 @@ def main():
     with open(os.path.join(out, "LICENSE"), "w", encoding="utf-8") as f:
         f.write(MIT.format(year="2026"))
     for name, body in (("LICENSE-CONTENT", CONTENT_LICENSE),
-                       ("THIRD-PARTY.md", THIRD_PARTY),
+                       ("THIRD-PARTY.md", third_party_md()),
                        ("README.md", SITE_README),
                        (".gitignore", SITE_GITIGNORE)):
         with open(os.path.join(out, name), "w", encoding="utf-8") as f:

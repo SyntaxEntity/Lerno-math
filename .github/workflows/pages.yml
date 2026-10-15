@@ -5,9 +5,15 @@
 # 这样部署的站点永远等于当前源码，也不会让每次改内容都产生一堆 HTML 差异。
 #
 # 为什么用工作流而不是「Deploy from a branch」：
-#   1. 发布前跑一遍 数学二/scripts/validate.py（F1—F18，含 F3 真实 mermaid 解析），
+#   1. 发布前跑一遍 数学二/scripts/validate.py（F1—F21，含 F3 真实 mermaid 解析），
 #      校验不过就不部署——分支部署没有任何地方能挂这道门禁。
 #   2. 自定义工作流不占用「每小时 10 次构建」的软性限制。
+#
+# 依赖版本**只从声明文件读，本文件里不写任何版本号**（PLAN-对齐与改版 §1.2）：
+#   Python → 数学二/scripts/requirements.txt
+#   Node   → 数学二/scripts/tools-package.json（拷成 .tools/package.json 再装）
+# 与验证器 `数学二/scripts/run_all.py` 的 `check_node_deps()` 用的是同一份清单，
+# 所以本地与 CI 不可能装出两个版本。
 name: Deploy static site to Pages
 
 on:
@@ -41,22 +47,26 @@ jobs:
         with:
           node-version: '22'
 
-      # validate.py 只需要 markdown；matplotlib / sympy 只在重跑绘图的生成路径上，
-      # 本站点不重新生成内容，因此 CI 不装它们。
-      - name: 安装 Python 校验依赖
-        run: python3 -m pip install --quiet 'Markdown==3.11.1'
+      # 版本唯一来源是 requirements.txt。它同时含只在生成链路上用的 sympy /
+      # matplotlib（发布前的校验其实只要 Markdown），这里照装不误：
+      # 宁可多花几十秒，也不在 YAML 里再抄一份版本号——那是"同一件事写两遍"，
+      # 迟早会出现本地装 3.11.1、CI 装别的版本这种最难查的偏差。
+      - name: 安装 Python 依赖（读 requirements.txt）
+        run: python3 -m pip install --quiet -r 数学二/scripts/requirements.txt
 
       # F3 用官方 mermaid 解析器逐块真解析（正则查不出「标签含圆括号未加引号」
-      # 这类直接解析失败的写法）。版本必须与站点内置运行时一致，
-      # 否则校验的语法和线上渲染的不是同一个版本。
-      - name: 安装 Node 校验依赖（F3 真实 mermaid 解析）
-        run: >-
+      # 这类直接解析失败的写法）。版本必须与站点内置运行时、以及 .tools 下的
+      # 本地依赖一致，否则校验的语法和线上渲染的不是同一个版本。
+      # .tools/ 已 gitignore，检出时不存在，因此先把清单拷进去，再让 npm 按清单装。
+      - name: 安装 Node 依赖（读 tools-package.json）
+        run: |
+          mkdir -p .tools
+          cp 数学二/scripts/tools-package.json .tools/package.json
           npm install --prefix .tools --cache /tmp/npm-cache --no-audit --no-fund
-          mermaid@12.1.0 katex@0.16.47 jsdom@30.1.2
 
       # 门禁：模板字段、考频数字与 meta.py 逐字一致、图语法、ASCII 对齐、
-      # 真题年份、链接可达、sympy 断言之外的交付物完整性。有 error 即中止部署。
-      - name: 发布前校验（F1—F18）
+      # 真题年份、链接可达、外壳完整性、交付物完整性。有 error 即中止部署。
+      - name: 发布前校验（F1—F21）
         run: python3 数学二/scripts/validate.py
 
       # pack_site.py 只用标准库（os/re/shutil/sys）。
