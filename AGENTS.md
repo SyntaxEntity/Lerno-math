@@ -1,19 +1,19 @@
-# website/math2-kaoyan —— 考研数学二速成复习资料
+# website/Lerno-math —— 考研数学二速成复习资料
 
 本目录是一个**独立 git 仓库**（分支 `main`）。上游工作区说明见
 [`../../AGENTS.md`](../../AGENTS.md)（若你的项目根是本目录，该文件不会被自动加载，
 故要点在此复述）。
 
 📋 **跨项目的对齐与改版规格见 [`../PLAN-对齐与改版.md`](../PLAN-对齐与改版.md)**——
-它同时约束本仓库与 `../408-kaoyan/`，涉及外壳结构、类名、分期与验收。
+它同时约束本仓库与 `../Lerno-cs/`，涉及外壳结构、类名、分期与验收。
 发现规格有问题请回报管理会话改那份文件，**不要在本仓库里自行发明例外**。
 
 ## 一、路径提醒（2026-10-15 工作区重组）
 
 | 旧路径（已失效） | 现在的实际位置 |
 | --- | --- |
-| `UCAS/408-new/` | **`UCAS/website/math2-kaoyan/`**（就是本目录） |
-| `UCAS/408-kaoyan/` | `UCAS/website/408-kaoyan/`（408 项目，与本项目无关） |
+| `UCAS/408-new/` | **`UCAS/website/Lerno-math/`**（就是本目录） |
+| `UCAS/408-kaoyan/` | `UCAS/website/Lerno-cs/`（408 项目，与本项目无关） |
 
 ⚠️ `408-new/` 这个目录名**已废弃且极具误导性**：它原本是 **408 项目**的仓库，
 408 内容搬走后被**数学二**接管。历史会话记录里 `408-new/数学二/…` 就是本目录的
@@ -22,10 +22,26 @@
 另：`math2-site/` 早年的独立 git 仓库历史已移到
 `../.archive/math2-site-git-history/`（5 个提交，`git --git-dir=… log` 可读）。
 
+
+## 一点五、目录改名（2026-10-16）
+
+本仓库目录已改名为**与远端仓库同名**：
+
+| 真实目录（规范路径） | 兼容符号链接（**永久保留，勿删**） |
+| --- | --- |
+| `website/Lerno-math/` | `website/math2-kaoyan` → `Lerno-math` |
+
+⚠️ **符号链接不能删。** 本项目的 agent 会话 cwd 是**旧路径且不可变**；
+DSH 启动时用 `realpath` 规范化会话 cwd，再与工作区记录的规范路径比对，
+相等才保留成员关系（`dsh-workspace/lib/index.js` L880/L905）。
+删掉符号链接 → cwd 无法解析 → **本 agent 会话永久失组**。
+
+本文档里仍出现的旧目录名（如历史迁移表）**保持原样不动**，它们记录的是当时的事实。
+
 ## 二、目录职责
 
 ```
-website/math2-kaoyan/
+website/Lerno-math/
 ├── .github/workflows/pages.yml  Pages 工作流：三道门禁（validate → reverse_tests → verify_math）
 │                                → pack_site → 上传 math2-site
 ├── scripts/                     ★ 工具链（U2 起在仓库根，与 408 一致）
@@ -83,7 +99,7 @@ Python 依赖按用途分两个文件（PLAN §1.2.1）：`scripts/requirements.
 
 ## 五、发布（本项目特有：产物不入库）
 
-> 一至四节与 `../408-kaoyan/AGENTS.md` 的小节顺序、标题保持一致（U4 对齐，2026-10-15）；
+> 一至四节与 `../Lerno-cs/AGENTS.md` 的小节顺序、标题保持一致（U4 对齐，2026-10-15）；
 > 本节是数学二特有的内容（两个项目的产物策略**有意不同**，见 PLAN §5.2.4），故排在最后。
 
 `math2-site/` 是**构建产物，不入库**。发布走 `.github/workflows/pages.yml`：
