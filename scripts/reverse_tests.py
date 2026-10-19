@@ -25,6 +25,7 @@
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -33,8 +34,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 PARTS = os.path.join(ROOT, "parts")
 CONTENT = os.path.join(ROOT, "数学二")
-# 必须用**带 markdown 等依赖的解释器**跑校验器：否则 F14 会静默跳过，
-# 反向测试就会把「依赖缺失」误判成「规则失效」。优先用仓库自带 venv。
+# 优先用仓库自带 venv：它装齐了 markdown/sympy。缺依赖时 F14 现在会**直接报错**
+# （裁定 D-04 ①，原先只 warn 一句就跳过），用系统 python 跑会让整批用例都撞上
+# 同一条 F14 报错，把真正的反例淹没掉。
 _VENV = os.path.join(ROOT, ".tools", "venv", "bin", "python")
 PY = _VENV if os.path.exists(_VENV) else sys.executable
 VALIDATE = os.path.join(HERE, "validate.py")
@@ -68,6 +70,7 @@ SITECSS = os.path.join(CONTENT, "assets", "site.css")
 READMEmd = os.path.join(CONTENT, "README.md")          # 生成物，F12 比对的两端之一
 VALIDATEpy = os.path.join(HERE, "validate.py")          # F26 读它的规则集合
 SELFpy = os.path.join(HERE, "reverse_tests.py")         # F26 读它的覆盖集合
+BUILDHTMLpy = os.path.join(HERE, "build_html.py")       # F22 的锚点自比对要导入它
 AGENTSmd = os.path.join(ROOT, "AGENTS.md")              # F26 的 H4 会扫它
 
 FENCE = "```"
@@ -408,6 +411,17 @@ def _hardcode_rule_range(t):
     return t + "\n<!-- 校验规则 F1—F99 -->\n"
 
 
+def _break_build_html_import(t):
+    """把 build_html 顶部的 `import meta as T` 换成不存在的模块 —— 触发 F22 的导入失败路径。
+
+    check_shell 原来写成 `except ImportError: pass`：生成器一旦导入不了，
+    「生成器锚点清单 ≡ 校验器契约常量」这条自比对就**静默消失**、报告照样全绿。
+    这正是 D-04 ① 点名禁止的形态（判例 D-02 的 F25 静默降级），所以反例要覆盖到。
+    """
+    old = "import meta as T          # noqa: E402"
+    assert old in t, "锚点没找到：build_html.py 顶部的 `import meta as T` 写法变了"
+    return t.replace(old, "import meta_missing_reverse_test as T   # 反例：导入失败", 1)
+
 
 def _downgrade_rule_to_warn(t):
     """把一条规则的 err(...) 降级成 warn(...) —— 门禁从此拦不住它。
@@ -591,6 +605,8 @@ case("F20", "公式块 $$ 定界符丢失（与内容源不等量）", D01H, _ht
 case("F22", "删掉顶栏（外壳形式层）", D01H, _html_drop_topbar, mode="full")
 case("F22", "删掉页脚（外壳形式层）", D01H, _html_drop_footer, mode="full")
 case("F22", "首页少一张科目卡片", HOMEH, _home_drop_card, mode="full")
+case("F22", "生成器 build_html 导入失败（锚点自比对不许静默跳过）", BUILDHTMLpy,
+     _break_build_html_import, mode="full")
 case("F24", "内容源出现无法闭合的加粗（**…。**汉字）", G01, _bold_unclosable)
 case("F24", "成品 HTML 正文残留字面 **", D01H, _html_leftover_stars, mode="full")
 case("F25", "解析里的空 > 行被删（整段并成一段）", G05, _merge_solution_paras)
@@ -641,18 +657,26 @@ def baseline_errors(mode, allow_mermaid):
     return _BASELINE[key]
 
 
-def run_validate(mode, allow_mermaid=False):
+def run_validate(mode, allow_mermaid=False, extra_env=None):
     """跑一次校验器，返回 (errors, warnings, 退出码)。
 
     **必须拿结构化的 errors 而不是"输出里有没有 `[Fxx]` 字样"**：
     后者分不清 error 与 warning，而把一条规则从 error 降级成 warn 就等于门禁不再拦它——
     实测过：把 F24 的 err 改成 warn，正则判据下 61 条用例照样全绿。
     这就是 P4 说的「假通过」，只不过这次假通过的是反向测试自己。
+
+    extra_env 用于**环境类反例**（如把 markdown 弄成不可导入）：
+    这类反例改的是运行时环境，不是某个文件的内容。
     """
     cmd = [PY, VALIDATE, "--json"] + (["--parts"] if mode == "parts" else [])
     if not allow_mermaid:
         cmd.append("--no-mermaid")
-    r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, timeout=900)
+    env = None
+    if extra_env:
+        env = dict(os.environ)
+        env.update(extra_env)
+    r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, timeout=900,
+                       env=env)
     try:
         data = json.loads(r.stdout)
     except Exception as e:                                   # noqa: BLE001
@@ -662,6 +686,49 @@ def run_validate(mode, allow_mermaid=False):
                  % (type(e).__name__, e, (r.stdout[-200:] + r.stderr[-200:]))}, set(),
                 r.returncode)
     return set(data.get("errors", [])), set(data.get("warnings", [])), r.returncode
+
+
+# ---------------------------------------------------------------------------
+# 环境类反例（裁定 D-04 ①：判据不能因依赖/路径变化而静默降级）
+# ---------------------------------------------------------------------------
+def _fake_missing_markdown():
+    """造一个「没有 python-markdown」的导入环境。
+
+    PYTHONPATH 前置一个假模块，`import markdown` 时直接抛 ImportError。
+    为什么不用 `uninstall`：不能为了造反例去动真实 venv；也不能靠改
+    requirements.txt（那只影响 CI，不影响本机解释器）。
+    """
+    d = tempfile.mkdtemp(prefix="rv-nomd-")
+    with open(os.path.join(d, "markdown.py"), "w", encoding="utf-8") as f:
+        f.write('raise ImportError("simulated: 没有 python-markdown")\n')
+    return d
+
+
+def run_env_cases(verbose=False):
+    """环境类反例：把依赖弄坏，断言门禁**报错且退出码非 0**。
+
+    这类反例改的是运行时环境而不是文件内容，所以不走 CASES 那条「改文件→跑→还原」
+    的路径。它证明的正是 D-02/D-04 的教训：门禁的失败必须在**结构化输出**里看得见，
+    不能靠下游 build_html 的 sys.exit 兜底（那条路径没有 --json，反向测试读不到错误，
+    等于"门禁在结构化层面静默"）。
+    """
+    d = _fake_missing_markdown()
+    old_pp = os.environ.get("PYTHONPATH")
+    try:
+        errs, _warns, rc = run_validate(
+            "full", allow_mermaid=False,
+            extra_env={"PYTHONPATH": d + (os.pathsep + old_pp if old_pp else "")})
+        hit = [e for e in errs if "[F14]" in e and "python-markdown" in e]
+        ok = bool(hit) and rc != 0
+        print("  %s %-5s %-42s %s"
+              % ("✓" if ok else "✗", "F14",
+                 "缺 python-markdown（假模块注入）",
+                 "已报错（退出码 %d）" % rc if ok else "**未报错（门禁静默跳过！）**"))
+        if verbose and ok:
+            print("        " + hit[0].strip()[:140])
+        return [("F14", ok)]
+    finally:
+        shutil.rmtree(d, ignore_errors=True)
 
 
 def main():
@@ -729,11 +796,17 @@ def main():
         finally:
             with open(target, "w", encoding="utf-8") as f:
                 f.write(original)
+    # 环境类反例（依赖缺失不许静默跳过）。计进总数，免得"少跑了"看不出来。
+    env_results = run_env_cases(verbose)
+    env_pass = sum(1 for _code, ok in env_results if ok)
+    total = len(CASES) + len(env_results)
+    passed_all = passed + env_pass
+    failed_all = failed + (len(env_results) - env_pass)
     print("-" * 78)
     print("  反向测试：%d 条通过 / %d 条用例，%d 条失败"
-          % (passed, len(CASES), failed))
+          % (passed_all, total, failed_all))
     print("=" * 78)
-    if failed:
+    if failed_all:
         print("✗ 有校验规则未能被反例触发——这些规则实际处于失效状态，必须修。")
         return 1
     print("✓ 每条规则都能被反例触发（校验器确实在工作）")

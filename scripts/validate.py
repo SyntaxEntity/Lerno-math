@@ -634,12 +634,19 @@ def render_check(rp, text):
 
     判据必须是「标记位于**段首**」——若只判「标记是否出现在该段」，
     字段粘连时标记位于段落中间，校验会永远报 0 条（408 实测过的失效判据）。
+
+    **缺依赖必须报错，不许静默跳过（裁定 D-04 ①）**：这条原来写成
+    `warn(…跳过渲染验证)`，与 D-02 的「F25 因路径改名静默降级」是同一类失效——
+    门禁实际没跑，报告却是绿的。现在由 main() 的前置检查先报 F14 并退出非 0，
+    这里保留同一条 err 作为兜底（例如有人绕开 main 直接调用本函数）。
     """
     try:
         import markdown
     except ImportError:
-        warn(rp, 0, "F14", "未安装 python-markdown，跳过渲染验证")
+        err(rp, 0, "F14",
+            "缺少 python-markdown，无法执行渲染验证（缺依赖必须报错，不许静默跳过）")
         return
+    stats["render_checked"] += 1
     labels = ["考频统计", "核心讲解", "关键结论速记", "示意图", "易错点", "真题示例"]
     body = re.sub(r"\$\$.*?\$\$", " ", text, flags=re.S)      # 公式块会干扰分段判定
     html = markdown.markdown(body, extensions=["tables", "fenced_code"])
@@ -893,6 +900,7 @@ def check_links():
             t = m.group(1)
             if t.startswith(("http", "#", "mailto:")):
                 continue
+            stats["links_checked"] += 1
             if t in imgs:
                 # 图片：按约定「相对交付根 数学二/」解析（与 build_html.py 一致）
                 if not os.path.exists(os.path.normpath(os.path.join(CONTENT, t))):
@@ -1171,14 +1179,18 @@ def check_shell():
     anchor_ids = list(SHELL_ANCHORS)
     # 自比对：生成器 build_html.section_anchors() 的清单必须与上面的契约常量一致，
     # 否则"校验器认的"和"生成器产出的"会各说各话（这类分叉肉眼看不出来）。
+    # 导入失败**必须报错**（裁定 D-04 ①）：原来是 `except ImportError: pass`，
+    # 于是只要生成器那边导入不了，这条自比对就静默消失、报告照样全绿。
     try:
         import build_html as _BH
+    except ImportError as e:
+        err("scripts", 0, "F22",
+            "无法导入 build_html 做锚点自比对：%s（不许静默跳过）" % e)
+    else:
         gen = [a for a, _n, _i, _h in _BH.section_anchors()]
         if gen != anchor_ids:
             err("scripts", 0, "F22",
                 "生成器与校验器的六段锚点清单不一致：%s vs %s" % (gen, anchor_ids))
-    except ImportError:
-        pass
     for f in sorted(glob.glob(os.path.join(CONTENT, "*", "*.html"))
                     + glob.glob(os.path.join(CONTENT, "*.html"))):
         rp = rel(f)
@@ -1434,6 +1446,9 @@ SCANNED_FULL_ONLY = [
     ("html_math", "F20 扫到的公式区间"),
     ("shell_pages", "F22 扫到的外壳页"),
     ("shell_js_total", "F22 跑到的 site.js 行为断言"),
+    # D-04 ②：F14/F15 原先只报"有没有错"，不报"看了几项"——没有数字就看不出跑没跑。
+    ("render_checked", "F14 渲染验证的文件"),
+    ("links_checked", "F15 检查到的相对链接"),
 ]
 SCANNED_WITH_MERMAID = ("mermaid_blocks", "F3 扫到的 mermaid 图块")
 
@@ -1853,6 +1868,10 @@ def report(title):
     print("  外壳页 %d 个 | site.js 行为测试通过 %d/%d 条"
           % (stats.get("shell_pages", 0), stats.get("shell_js_ok", 0),
              stats.get("shell_js_total", 0)))
+    # D-04 ②：F14/F15 的「实际检查了 N 项」也要打出来。F14 曾经在缺依赖时
+    # 只 warn 一句就跳过，而摘要行照样全绿——数字为 0 时必须一眼看得见。
+    print("  F14 渲染验证 %d 个 md | F15 相对链接 %d 处"
+          % (stats.get("render_checked", 0), stats.get("links_checked", 0)))
     # F26 的体检结果：规则范围、覆盖情况、扫描型受检数、文档里的范围声明数。
     # 「范围」只在这里输出——文档与 CI 一律不要手写（手写的必然漂移，已漂过一次）。
     print("  ★ 规则 F%s—F%s（%d 条，%d 条有 err 路径）｜反向测试覆盖 %d/%d"
@@ -1881,10 +1900,48 @@ def report(title):
     return 1 if errors else 0
 
 
+def emit(argv, parts_mode):
+    """统一输出（--json / --stats / 人类可读报告）并给出退出码。"""
+    if "--json" in argv:
+        # 机器可读输出：**errors 与 warnings 必须分开**。
+        # 反向测试原来靠正则找 `[Fxx]` 字样，分不清这两者——把一条规则从 error
+        # 降级成 warn（= 门禁不再拦它）时，用例照样"通过"。这就是 P4 要消灭的假通过。
+        print(json.dumps({"errors": errors, "warnings": warnings,
+                          "stats": dict(stats), "parts_mode": parts_mode},
+                         ensure_ascii=False))
+        return 1 if errors else 0
+
+    if "--stats" in argv:
+        for k, v in sorted(per_file.items()):
+            print("%-44s %s" % (k, v))
+        return 0
+    return report("数学二速成资料校验报告（%s）" % ("内容源 parts/" if parts_mode else "成品"))
+
+
+def have_markdown():
+    """F14 的前置依赖：真实 Markdown 渲染器。"""
+    try:
+        import markdown  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
 def main():
     argv = sys.argv[1:]
     parts_mode = "--parts" in argv
     mermaid_blocks = []
+
+    # 裁定 D-04 ①：缺依赖必须报错，不许静默跳过。
+    # 原先只有 render_check 里一句 warn(…跳过渲染验证)，而进程随后会被
+    # build_html 的 sys.exit 带走：退出码虽然非 0，却没有 --json 结构化输出，
+    # 反向测试读不到错误——等于"门禁在结构化层面静默"。这里前置报 F14 并走统一输出。
+    # 只在成品模式检查：--parts 不跑 F14，也不 import build_html，用不到 markdown。
+    if not parts_mode and not have_markdown():
+        err("scripts", 0, "F14",
+            "缺少 python-markdown：F14 渲染验证无法执行"
+            "（pip install -r scripts/requirements.txt）")
+        return emit(argv, parts_mode)
 
     if not parts_mode:
         check_completeness()
@@ -1953,20 +2010,7 @@ def main():
     # F26 元校验放在最后：它要读前面各条规则报告的受检对象数
     check_meta(parts_mode, mermaid_skipped=mermaid_skipped)
 
-    if "--json" in argv:
-        # 机器可读输出：**errors 与 warnings 必须分开**。
-        # 反向测试原来靠正则找 `[Fxx]` 字样，分不清这两者——把一条规则从 error
-        # 降级成 warn（= 门禁不再拦它）时，用例照样"通过"。这就是 P4 要消灭的假通过。
-        print(json.dumps({"errors": errors, "warnings": warnings,
-                          "stats": dict(stats), "parts_mode": parts_mode},
-                         ensure_ascii=False))
-        return 1 if errors else 0
-
-    if "--stats" in argv:
-        for k, v in sorted(per_file.items()):
-            print("%-44s %s" % (k, v))
-        return 0
-    return report("数学二速成资料校验报告（%s）" % ("内容源 parts/" if parts_mode else "成品"))
+    return emit(argv, parts_mode)
 
 
 if __name__ == "__main__":
