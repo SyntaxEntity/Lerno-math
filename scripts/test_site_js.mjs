@@ -243,6 +243,12 @@ process.stdout.write(JSON.stringify({ total: results.length, ok: results.length 
                                       failed: failed.map((r) => ({ name: r.name, error: r.detail })) }) + '\n');
 process.stderr.write(`site.js 行为测试：${results.length - failed.length}/${results.length} 通过\n`);
 for (const r of failed) process.stderr.write(`  ✗ ${r.name}：${r.detail}\n`);
+// 裁定 D-06：失败与通过必须在输出上可区分。本脚本是**组件**（JSON 由 validate.py
+// 消费，失败项会被转成 F22 error），默认不因断言失败退出非 0；但单独跑时那样会
+// 让人以为"跑完就是通过"，所以这里显式提示退出码语义。
+if (failed.length && !process.argv.includes('--strict')) {
+  process.stderr.write('  ↳ 有断言失败；单独跑请加 --strict 以获得非 0 退出码（门禁里由 validate.py 消费 failed 列表并报错）\n');
+}
 
 if (process.argv.includes('--strict') && failed.length) process.exit(1);
 process.exit(0);

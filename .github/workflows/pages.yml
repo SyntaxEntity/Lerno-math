@@ -76,14 +76,19 @@ jobs:
       # validate.py 证明的是「当前内容合规」，这一步证明的是「规则本身有效」；
       # 少了它，一条判据写错的规则可以永远全绿（本项目吃过这个亏）。
       # 它会**临时改文件再还原**，所以必须排在打包之前，且脚本保证无论成败都还原。
+      # 同一门禁里附带打包体检的自测（裁定 D-06：新增检查必须配反例）：
+      # pack_site.py 的密钥扫描用 8 条样本验「该命中的命中、该放过的放过」。
       - name: 发布前校验 · 反向测试（规则本身必须能被触发）
-        run: python3 scripts/reverse_tests.py
+        run: |
+          python3 scripts/reverse_tests.py
+          python3 scripts/pack_site.py --self-test
 
       # 门禁 ③（数值）：sympy 独立复算资料里出现的每一个数值结果，含
       # 「图上标注的关键点坐标 == 符号计算值」。这是本仓库最强的正确性保证，
       # 以前只在本地 run_all.py 里跑、门禁完全没有它——那等于最强的校验游离在
       # 发布路径之外。只依赖 sympy，跑一次约 1.5 秒。
-      # 缺 sympy 时它并非静默跳过：模块级 `import sympy` 直接失败、退出码非 0。
+      # 缺 sympy 时给明确错误并退出非 0（裁定 D-06：不许只剩 traceback，
+      # 那与「没检查」在日志里难以区分）。
       - name: 发布前校验 · 数值（sympy 断言）
         run: python3 scripts/verify_math.py
 

@@ -43,6 +43,47 @@ SRC = os.path.join(ROOT, "数学二")
 # 「输出目录不是纯粹的生成物」时会被保留的元数据（--keep-vcs）
 VCS_KEEP = [".git", ".github"]
 
+# 体检用的密钥形态（裁定 D-06：报告里宣称的检查必须真的存在）。
+# 只认高置信度形态，避免把正文/公式里的普通字符误报成密钥。
+SECRET_PATTERNS = [
+    ("私钥", re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----")),
+    ("GitHub token", re.compile(r"\b(?:ghp|gho|ghs|ghu)_[A-Za-z0-9]{20,}")),
+    ("OpenAI key", re.compile(r"\bsk-[A-Za-z0-9]{32,}")),
+    ("AWS key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
+    ("口令赋值", re.compile(r"(?i)(?:password|passwd|api[_-]?key|secret[_-]?key)"
+                          r"\s*[:=]\s*[\"'][^\"'\s]{8,}[\"']")),
+]
+
+# 密钥扫描的反例表（裁定 D-06：新增门禁必须配反例）。
+# 每条给出「样本 → 期望命中的标签集合」；空集合表示**必须不误报**。
+# 用 `--self-test` 跑，报告打印「N/N 通过」——判断这条检查跑没跑，看数字即可。
+SECRET_SELFTEST = [
+    ("-----BEGIN RSA PRIVATE KEY-----\nMIIE...", {"私钥"}),
+    ("ghp_" + "a1B2c3D4e5F6g7H8i9J0k1L2m3N4", {"GitHub token"}),
+    ("sk-" + "a1B2c3D4e5F6g7H8i9J0k1L2m3N4O5P6", {"OpenAI key"}),
+    ("AKIA" + "ABCDEFGHIJKLMNOP", {"AWS key"}),
+    ('api_key = "a1b2c3d4e5f6g7h8"', {"口令赋值"}),
+    # 正常内容：数学正文、普通代码、渠道名 —— 一条都不许命中
+    ("设 $f(x)=x^2$，则 $f'(x)=2x$。", set()),
+    ("sk-learn 与 sklearn 都是普通词，不是 key。", set()),
+    ("const cacheKey = 'v1';  // 普通字符串", set()),
+]
+
+
+def run_selftest():
+    """跑密钥扫描的反例：既要有命中，也要有不误报。"""
+    ok = 0
+    for sample, want in SECRET_SELFTEST:
+        got = {label for label, pat in SECRET_PATTERNS if pat.search(sample)}
+        hit = got == want
+        ok += hit
+        print("  %s 期望 %-12s 实得 %-12s %s"
+              % ("✓" if hit else "✗", want or "（无）", got or "（无）",
+                 sample.replace("\n", "\\n")[:40]))
+    print("-" * 66)
+    print("  密钥扫描自测：%d / %d 条通过" % (ok, len(SECRET_SELFTEST)))
+    return 0 if ok == len(SECRET_SELFTEST) else 1
+
 # 需要整目录拷贝的静态资源
 COPY_DIRS = ["assets", "katex"]
 # 需要单文件拷贝的运行库
@@ -222,6 +263,8 @@ def main():
         sys.exit(__doc__)
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     flags = {a for a in sys.argv[1:] if a.startswith("--")}
+    if "--self-test" in flags:
+        return run_selftest()
     if not args:
         sys.exit(__doc__)
     keep_vcs = "--keep-vcs" in flags
@@ -346,6 +389,9 @@ def main():
         print("◇ 已放回 %s" % "、".join(VCS_KEEP))
 
     # 4) 体检：不放行任何绝对路径 / 密钥痕迹
+    # 裁定 D-06：报告里宣称的检查必须真的存在。旧版成功行写着「无密钥痕迹」，
+    # 但代码里**根本没有密钥扫描**——「没检查」与「检查通过」在输出上完全一样，
+    # 属于明令禁止的形态。现在补上真扫描，并把实际扫描的文件数打进报告。
     bad = []
 
     def ship_files():
@@ -359,12 +405,28 @@ def main():
             for f in fs:
                 yield r, f
 
+    def secret_hits(t):
+        """返回命中的密钥形态标签（空列表 = 没命中）。
+
+        只认**高置信度**的形态：宁可漏一个不像密钥的，也不要把 minified JS 里
+        的随机串误报成密钥（误报会让这条检查被当成噪音而关掉）。
+        """
+        hits = []
+        for label, pat in SECRET_PATTERNS:
+            if pat.search(t):
+                hits.append(label)
+        return hits
+
+    n_text = 0
     for r, fn in ship_files():
         p = os.path.join(r, fn)
         if fn.endswith((".html", ".md", ".txt")):
             t = open(p, encoding="utf-8", errors="ignore").read()
+            n_text += 1
             if re.search(r"(?<![\w.])/(?:home|Users|root|mnt|media)/", t):
                 bad.append(("绝对路径", os.path.relpath(p, out)))
+            for label in secret_hits(t):
+                bad.append(("疑似%s" % label, os.path.relpath(p, out)))
     n_files = sum(1 for _ in ship_files())
     size = sum(os.path.getsize(os.path.join(r, f)) for r, f in ship_files())
 
@@ -372,6 +434,7 @@ def main():
     print("部署目录：%s" % out)
     print("  文件 %d 个（HTML %d 个）｜ 体积 %.1f MB" % (n_files, n_html, size / 1048576))
     print("  站内链接：改写 %d 处，去掉死链 %d 处" % (fixed, dropped))
+    print("  体检：绝对路径 + 密钥形态，扫描了 %d 个文本文件" % n_text)
     if dead_links:
         # 死链必须**逐条列出来**：上一版只报了个总数「去掉死链 15 处」，
         # 于是「部分首页 15 个章节链接全丢了」这件事在报告里看起来像正常清理。
@@ -386,7 +449,7 @@ def main():
         for kind, rel in bad[:10]:
             print("      %s：%s" % (kind, rel))
         return 1
-    print("  ✓ 体检通过：无绝对路径、无密钥痕迹")
+    print("  ✓ 体检通过：%d 个文本文件里无绝对路径、无密钥形态" % n_text)
     print("-" * 66)
     print("""下一步：
   本目录是**构建产物**，已由仓库根的 .gitignore 排除，不要单独提交或推送。

@@ -26,7 +26,13 @@ import os
 import re
 import sys
 
-import sympy as sp
+try:
+    import sympy as sp
+except ImportError:                                          # 裁定 D-06
+    # 缺依赖必须给出**明确的错误**，不能甩一个 traceback 了事：
+    # 退出码 1 但只有堆栈，与「没检查」在输出上难以区分（CI 日志里尤其如此）。
+    sys.exit("✗ 缺少 sympy：数值复算无法执行。"
+             "安装：python3 -m pip install -r scripts/requirements.txt")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)

@@ -979,9 +979,14 @@ def check_html():
                 continue
             if not os.path.exists(os.path.normpath(os.path.join(d, r))):
                 err(rp, 0, "F16", "引用的图片不存在：%s" % r)
-    # mermaid 运行时
+    # mermaid 运行时（交付物完整性）
+    # 裁定 D-06：原来是 warn「图将回退为源码」——交付物缺一件只出声不拦发布，
+    # 属于「没检查 / 检查通过」分不清的那一类。改为 error。
+    # 注意：页面的 `<script src="…mermaid.min.js">` 存在性检查在上面已经会报，
+    # 这条是兜底（防止将来改成动态加载后，上面那条静态检查失效）。
     if not os.path.exists(os.path.join(CONTENT, "mermaid.min.js")):
-        warn("数学二/mermaid.min.js", 0, "F16", "缺少 mermaid 运行时，图将回退为源码")
+        err("数学二/mermaid.min.js", 0, "F16",
+            "缺少 mermaid 运行时：站点的图会静默回退成源码（离线承诺被破坏）")
 
 
 def check_html_math_and_nav():
@@ -1858,11 +1863,16 @@ def report(title):
     print("  文件 %d | 知识点 %d | ASCII 图 %d | mermaid 图 %d | 图片 %d | 总 %d 字"
           % (len(per_file), stats["sections"], stats["text_figs"], stats["mermaid"],
              stats["img"], stats["chars"]))
+    # 裁定 D-06：跳过与通过必须在输出上可区分。原来 --no-mermaid 时这行打成
+    # 「真实解析通过 0 块」——看起来像「查了但一块都没过」，其实根本没查。
+    mermaid_txt = ("mermaid 真实解析：已跳过（--no-mermaid，未检查）"
+                   if stats.get("mermaid_skipped")
+                   else "mermaid 真实解析通过 %d 块" % stats.get("mermaid_parsed", 0))
     print("  HTML 公式区间 %d 个 | 高频 %d | 原题 %d 道（正文标注 %d 处，含跨章复用） | 改编 %d 道 | "
-          "mermaid 真实解析通过 %d 块 | 绘图脚本 %d 个"
+          "%s | 绘图脚本 %d 个"
           % (stats.get("html_math", 0), stats["hot"],
              stats.get("orig", 0), stats.get("orig_cites", 0),
-             stats.get("adapt", 0), stats.get("mermaid_parsed", 0), stats.get("figs", 0)))
+             stats.get("adapt", 0), mermaid_txt, stats.get("figs", 0)))
     # 外壳行为测试跑了几条也要打出来：**"0 条"必须看得见**，否则 F22 的行为层
     # 会像 F3 曾经那样"静默没跑却显示全绿"。
     print("  外壳页 %d 个 | site.js 行为测试通过 %d/%d 条"
@@ -2004,6 +2014,7 @@ def main():
     check_css_syntax()                     # F28：site.css 的语法自洽
 
     mermaid_skipped = "--no-mermaid" in argv
+    stats["mermaid_skipped"] = 1 if mermaid_skipped else 0
     if not mermaid_skipped:
         run_mermaid_parser(PARTS if parts_mode else CONTENT)
 

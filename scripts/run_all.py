@@ -144,6 +144,11 @@ def main():
         if run("反向测试（每条校验规则注入反例）",
                [PY, os.path.join(HERE, "reverse_tests.py")]) != 0:
             fails.append("reverse_tests")
+    # 打包体检（密钥扫描）的自测：8 条样本验「该命中的命中、该放过的放过」。
+    # 很快，--quick 也跑（裁定 D-06：新增检查必须配反例，且要真的被执行）。
+    if run("打包体检自测（密钥扫描反例）",
+           [PY, os.path.join(HERE, "pack_site.py"), "--self-test"]) != 0:
+        fails.append("pack_site_selftest")
     if run("生成 HTML 站点", [PY, os.path.join(HERE, "build_html.py")]) != 0:
         fails.append("build_html")
     if run("校验（含 HTML 产物）", [PY, os.path.join(HERE, "validate.py")]) != 0:

@@ -74,7 +74,8 @@ python3 scripts/run_all.py --quick # 跳过反向测试与绘图，只重建 + �
 python3 scripts/verify_math.py     # sympy 复算全部数值（含图上坐标）
 python3 scripts/validate.py        # 形式校验（含 F26 元校验；范围由它自己输出，勿手写）
 python3 scripts/reverse_tests.py   # 反向测试：每条规则注入反例，确认它真会报错
-node scripts/test_site_js.mjs      # 单独跑外壳脚本行为测试（jsdom，12 条）
+python3 scripts/pack_site.py --self-test  # 打包体检（密钥扫描）反例自测：8 条样本
+node scripts/test_site_js.mjs --strict  # 单独跑外壳行为测试（jsdom，12 条；失败即非 0 退出）
 python3 scripts/diff_math.py HEAD  # 改解析排版后：证明公式正文一字未改
 ```
 

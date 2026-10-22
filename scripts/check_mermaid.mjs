@@ -130,6 +130,11 @@ process.stdout.write(JSON.stringify({
 
 process.stderr.write(`mermaid 图 ${total} 块（${files.length} 个 md）｜真实解析通过 ${ok}｜失败 ${failed.length}\n`);
 for (const x of failed) process.stderr.write(`  ✗ ${rel(x.file)}:${x.line} ${x.error}\n`);
+// 裁定 D-06：与 test_site_js.mjs 同一约定——本脚本是组件，失败项写在 JSON 的
+// failed 里由 validate.py 转成 error；单独跑时把退出码语义说清楚。
+if (failed.length && !process.argv.includes('--strict')) {
+  process.stderr.write('  ↳ 有解析失败；单独跑请加 --strict 以获得非 0 退出码（门禁里由 validate.py 消费 failed 列表并报错）\n');
+}
 
 if (process.argv.includes('--strict') && failed.length) process.exit(1);
 process.exit(0);
